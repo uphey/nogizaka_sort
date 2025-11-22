@@ -9,7 +9,7 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,600;0,800;1,400&family=Montserrat:wght@300;500;600&family=Noto+Sans+JP:wght@300;500;700&display=swap" rel="stylesheet">
     
-    <!-- HTML2Canvas -->
+    <!-- HTML2Canvas (Using specific version known for better mobile stability) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
@@ -38,6 +38,7 @@
             background: #f3e7f5;
         }
 
+        /* Background */
         .bg-animate {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
             background: linear-gradient(-45deg, #ffffff, #f3e5f5, #e1bee7, #fff);
@@ -75,8 +76,6 @@
         .container {
             flex: 1; width: 100%; max-width: 1000px; margin: 0 auto; padding: 20px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            /* Ensure container stays above the hidden capture card */
-            position: relative; z-index: 5; 
         }
 
         .screen {
@@ -240,16 +239,27 @@
         .btn-restart { background: linear-gradient(135deg, var(--primary) 0%, #9c27b0 100%); color: white; border: none; padding: 16px 40px; font-size: 1rem; font-weight: 700; border-radius: 50px; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(126, 16, 131, 0.3); display: inline-block; }
         .btn-restart:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(126, 16, 131, 0.4); }
 
-        /* --- CAPTURE CARD (FIXED BEHIND CONTENT) --- */
+        /* --- HIDDEN CAPTURE ZONE FOR MOBILE STABILITY --- */
+        #capture-wrapper {
+            /* This is critical for Mobile. It keeps the element in the DOM flow but hidden */
+            height: 0;
+            overflow: hidden;
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            z-index: -100;
+        }
+        
         #capture-container {
-            position: fixed; top: 0; left: 0; z-index: -9999; /* BEHIND EVERYTHING */
-            width: 800px; /* HD Resolution */
+            width: 800px; /* 4:5 Ratio Approx */
             background: linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%);
             padding: 60px 50px; 
             border: 20px solid white; 
             text-align: center;
             font-family: 'Montserrat', sans-serif;
             box-sizing: border-box;
+            /* Position MUST be relative or static inside the wrapper for html2canvas to find it */
+            position: relative; 
         }
         #capture-container::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -378,7 +388,7 @@
         <div class="result-container" id="result-list"></div>
         
         <div class="actions-container">
-            <button class="btn-action btn-save" onclick="saveImage()">📸 Regenerate Image</button>
+            <button class="btn-action btn-save" onclick="saveImage()">📸 Regenerate</button>
             <button class="btn-action btn-share" onclick="shareTwitter()">🐦 Share on X</button>
         </div>
 
@@ -389,14 +399,16 @@
 
 </div>
 
-<!-- PREMIUM CAPTURE NODE (Hidden behind content via Fixed positioning) -->
-<div id="capture-container">
-    <div class="cap-header">NOGIZAKA</div>
-    <div class="cap-sub">Official Top 5 Ranking</div>
-    <div id="capture-list"></div>
-    <div class="cap-footer">
-        <span class="cap-logo-sm">Nogizaka46 Sorter</span>
-        <span id="cap-date" style="color:#666; font-weight:400;"></span>
+<!-- HIDDEN WRAPPER FOR CAPTURE (TEXT ONLY) -->
+<div id="capture-wrapper">
+    <div id="capture-container">
+        <div class="cap-header">NOGIZAKA</div>
+        <div class="cap-sub">Official Top 5 Ranking</div>
+        <div id="capture-list"></div>
+        <div class="cap-footer">
+            <span class="cap-logo-sm">Nogizaka46 Sorter</span>
+            <span id="cap-date" style="color:#666; font-weight:400;"></span>
+        </div>
     </div>
 </div>
 
@@ -470,7 +482,6 @@
             document.getElementById('start-btn').disabled = false;
             document.getElementById('demo-btn').disabled = false;
             
-            // Global proxy usage for data consistency
             members.forEach(m => {
                 m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
             });
@@ -616,7 +627,7 @@
             const m = members[idx];
             const rank = i + 1;
             let score = total > 1 ? Math.round(((total - i) / total) * 100) : 100;
-            if (i < 5) finalTop5.push({ rank: rank, name: m.name, img: m.img, score: score });
+            if (i < 5) finalTop5.push({ rank: rank, name: m.name, score: score });
 
             const div = document.createElement('div');
             let rowClass = 'result-row';
@@ -675,30 +686,27 @@
             `;
         });
 
-        // Wait a moment for fonts to settle
-        document.fonts.ready.then(function () {
-            setTimeout(() => {
-                saveImage();
-            }, 500);
-        });
+        // No images to wait for, just capture
+        setTimeout(() => {
+            const node = document.getElementById('capture-container');
+            html2canvas(node, { 
+                useCORS: true, 
+                scale: 2, 
+                backgroundColor: null,
+                scrollY: 0 
+            }).then(canvas => {
+                document.getElementById('generated-img').src = canvas.toDataURL("image/png");
+                document.getElementById('image-output-area').style.display = "block";
+                document.getElementById('gen-status').style.display = "none";
+            }).catch(err => {
+                console.error(err);
+                document.getElementById('gen-status').innerText = "Image generation failed (Mobile issue)";
+            });
+        }, 500);
     }
 
     function saveImage() {
-        const node = document.getElementById('capture-container');
-        html2canvas(node, { 
-            useCORS: true, 
-            scale: 1.5, // Reduced scale for mobile memory safety
-            backgroundColor: null,
-            scrollY: 0,
-            logging: false
-        }).then(canvas => {
-            document.getElementById('generated-img').src = canvas.toDataURL("image/png");
-            document.getElementById('image-output-area').style.display = "block";
-            document.getElementById('gen-status').style.display = "none";
-        }).catch(err => {
-            console.error(err);
-            document.getElementById('gen-status').innerText = "Image generation failed (Mobile issue)";
-        });
+        autoGenerateImage();
     }
 
     function shareTwitter() {
