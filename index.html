@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,7 +18,6 @@
             --primary-dark: #4a004e;
             --accent: #d8b4e2;
             --gold: #d4af37;
-            --gold-light: #f9f1d8;
             --silver: #a8a9ad;
             --bronze: #cd7f32;
             --text-dark: #2d1b36;
@@ -182,134 +180,103 @@
         .result-header { font-family:'Bodoni Moda'; color:var(--primary); margin-bottom:30px; font-size:2.5rem; text-align:center; text-shadow: 0 2px 10px rgba(126, 16, 131, 0.1); }
         .result-container { width: 100%; max-width: 550px; margin: 0 auto; padding-bottom: 40px; }
 
+        /* HTML List Styles (With Images) */
         .result-row {
             background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border-radius: 16px; padding: 15px 25px; 
             display: flex; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 15px;
             opacity: 0; transform: translateY(20px); border: 1px solid rgba(255,255,255,0.9); transition: transform 0.2s;
         }
-        .result-row:hover { transform: scale(1.01); box-shadow: 0 8px 25px rgba(126, 16, 131, 0.08); }
         .result-row.show { animation: slideUpFade 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         @keyframes slideUpFade { to { opacity: 1; transform: translateY(0); } }
-        @keyframes popIn { 0% { opacity: 0; transform: scale(0.8); } 60% { opacity: 1; transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
 
-        .rank-1 { 
-            background: linear-gradient(135deg, #fffbf0 0%, #fff 100%); border: 2px solid var(--gold); padding: 30px 25px; margin-bottom: 30px; 
-            transform: scale(1.05); opacity: 0; box-shadow: 0 15px 40px rgba(212, 175, 55, 0.25); position: relative; overflow: hidden;
-        }
-        .rank-1::before { content: '👑'; position: absolute; right: -10px; top: -15px; font-size: 6rem; opacity: 0.08; transform: rotate(20deg); pointer-events: none; }
-        .rank-1.show { animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        .rank-1 .rank-num { font-size: 2.8rem; background: linear-gradient(45deg, var(--gold), #e6c86e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 2px 5px rgba(212, 175, 55, 0.2); }
-        .rank-1 .res-thumb { width: 85px; height: 85px; border: 3px solid var(--gold); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3); }
-        .rank-1 .res-name { font-size: 1.5rem; color: #4a3b10; }
-
-        .rank-2 { border-left: 6px solid var(--silver); background: linear-gradient(to right, #fafafa, #fff); }
-        .rank-2 .rank-num { color: var(--silver); font-size: 1.8rem; }
-        .rank-2 .res-thumb { border-color: var(--silver); }
-
-        .rank-3 { border-left: 6px solid var(--bronze); background: linear-gradient(to right, #fffaf5, #fff); }
-        .rank-3 .rank-num { color: var(--bronze); font-size: 1.8rem; }
-        .rank-3 .res-thumb { border-color: var(--bronze); }
+        .rank-1 { border: 2px solid var(--gold); background: linear-gradient(135deg, #fffbf0 0%, #fff 100%); }
+        .rank-1 .rank-num { color: var(--gold); font-size: 2.8rem; }
+        .rank-2 { border-left: 6px solid var(--silver); } .rank-2 .rank-num { color: var(--silver); }
+        .rank-3 { border-left: 6px solid var(--bronze); } .rank-3 .rank-num { color: var(--bronze); }
 
         .rank-num { font-family: 'Bodoni Moda'; font-size: 1.2rem; font-weight: 700; width: 50px; text-align: center; flex-shrink:0; color: #888; }
         .res-thumb { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; margin: 0 20px; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex-shrink:0; }
-        .res-info { flex: 1; z-index: 1; }
-        .res-name { font-family: 'Bodoni Moda'; font-weight: 700; font-size: 1.1rem; line-height: 1.2; color: var(--text-dark); }
-        .res-gen { font-size: 0.75rem; color: #888; margin-top: 4px; font-family: sans-serif; font-weight: 500; }
+        .res-info { flex: 1; }
+        .res-name { font-family: 'Bodoni Moda'; font-weight: 700; font-size: 1.1rem; color: var(--text-dark); }
+        .res-gen { font-size: 0.75rem; color: #888; margin-top: 4px; }
         .res-score { font-size: 0.85rem; font-weight: 700; color: var(--primary); background: rgba(126, 16, 131, 0.05); padding: 5px 12px; border-radius: 15px; margin-right: 10px; }
 
-        /* --- ACTIONS & RESTART --- */
-        .actions-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 40px; }
-        .btn-action { padding: 12px 24px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: 0.3s; border: none; color: white; display: flex; align-items: center; gap: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .btn-save { background: #333; } .btn-save:hover { background: #000; transform: translateY(-2px); }
-        .btn-share { background: #1DA1F2; } .btn-share:hover { background: #0c85d0; transform: translateY(-2px); }
+        /* --- GENERATED IMAGE DISPLAY AREA --- */
+        #image-output-area {
+            text-align: center; margin-bottom: 40px; display: none;
+            animation: slideDown 0.5s ease; width: 100%; max-width: 550px; margin: 0 auto 40px;
+        }
+        #generated-img { width: 100%; border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.15); border: 4px solid white; }
+        .save-instruction {
+            font-size: 0.9rem; color: var(--primary); font-weight: 600;
+            background: rgba(255,255,255,0.6); padding: 8px 20px; border-radius: 20px;
+            display: inline-block; margin-top: 15px;
+        }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* --- ACTIONS --- */
+        .actions-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; }
+        .btn-action { padding: 12px 24px; border-radius: 50px; font-weight: 600; cursor: pointer; border: none; color: white; display: flex; align-items: center; gap: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .btn-share { background: #1DA1F2; } 
         .restart-container { padding-bottom: 100px; text-align: center; }
-        .btn-restart { background: linear-gradient(135deg, var(--primary) 0%, #9c27b0 100%); color: white; border: none; padding: 16px 40px; font-size: 1rem; font-weight: 700; border-radius: 50px; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(126, 16, 131, 0.3); display: inline-block; }
-        .btn-restart:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(126, 16, 131, 0.4); }
+        .btn-restart { background: linear-gradient(135deg, var(--primary) 0%, #9c27b0 100%); color: white; border: none; padding: 16px 40px; font-size: 1rem; font-weight: 700; border-radius: 50px; cursor: pointer; display: inline-block; }
 
-        /* --- PREMIUM CAPTURE CARD (Hidden) --- */
+        /* --- TEXT-ONLY CAPTURE CARD (FIXED FOR MOBILE) --- */
+        #capture-wrapper { height: 0; overflow: hidden; position: absolute; top: 0; left: 0; }
+        
         #capture-container {
-            position: absolute; 
-            top: 0; 
-            left: -9999px; /* Moved off-screen instead of opacity:0 for html2canvas stability */
-            width: 800px; /* Fixed width for high quality */
+            width: 800px; /* Fixed Width */
             background: linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%);
-            padding: 50px; 
+            padding: 60px 50px; 
             border: 20px solid white; 
             text-align: center;
             font-family: 'Montserrat', sans-serif;
             box-sizing: border-box;
         }
-        /* Watermark Overlay */
         #capture-container::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 60H0L30 0Z' fill='%237e1083' fill-opacity='0.03'/%3E%3C/svg%3E");
             opacity: 0.5; pointer-events: none;
         }
 
-        .cap-header { 
-            font-family: 'Bodoni Moda'; font-size: 3.5rem; font-weight: 700; 
-            color: var(--primary); margin-bottom: 5px; 
-            text-shadow: 2px 2px 0 white; position: relative; z-index: 2;
-        }
-        .cap-sub { 
-            font-size: 1.2rem; text-transform: uppercase; letter-spacing: 4px; color: #666; 
-            margin-bottom: 40px; position: relative; z-index: 2; font-weight: 600;
-        }
+        .cap-header { font-family: 'Bodoni Moda'; font-size: 4rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+        .cap-sub { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 6px; color: #666; margin-bottom: 50px; font-weight: 600; }
 
-        /* Capture Rows */
+        /* Text-Only Rows */
         .cap-row {
-            display: flex; align-items: center;
-            background: rgba(255,255,255,0.95);
-            padding: 15px 30px; margin-bottom: 15px;
-            border-radius: 16px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            border: 1px solid rgba(126, 16, 131, 0.1);
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(255,255,255,0.95); padding: 20px 40px; margin-bottom: 20px;
+            border-radius: 12px; border-bottom: 2px solid rgba(126, 16, 131, 0.1);
             position: relative; z-index: 2;
         }
 
-        /* Rank 1 Gold Card */
+        /* Rank 1 Special Text */
         .cap-row.cap-rank-1 {
-            background: linear-gradient(to right, #fff, #fffcf0);
-            border: 2px solid var(--gold);
-            padding: 25px 30px; margin-bottom: 30px;
-            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
+            background: linear-gradient(to right, #fff, #fffcf0); 
+            border: 3px solid var(--gold);
+            padding: 35px 40px; margin-bottom: 35px;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
         }
-        .cap-row.cap-rank-1 .cap-rank { color: var(--gold); font-size: 3rem; }
-        .cap-row.cap-rank-1 .cap-img { border-color: var(--gold); width: 90px; height: 90px; }
-        .cap-row.cap-rank-1 .cap-name { font-size: 1.8rem; color: #4a3b10; }
-        .cap-row.cap-rank-1::after {
-            content: '👑'; position: absolute; right: 30px; top: -10px; font-size: 3rem; opacity: 0.15; transform: rotate(15deg);
-        }
+        .cap-row.cap-rank-1 .cap-rank { color: var(--gold); font-size: 4rem; }
+        .cap-row.cap-rank-1 .cap-name { font-size: 3rem; color: #4a3b10; }
+        .cap-row.cap-rank-1 .cap-score { background: var(--gold); color: white; }
 
-        .cap-row.cap-rank-2 { border-left: 8px solid var(--silver); }
-        .cap-row.cap-rank-3 { border-left: 8px solid var(--bronze); }
+        .cap-row.cap-rank-2 { border-left: 10px solid var(--silver); }
+        .cap-row.cap-rank-3 { border-left: 10px solid var(--bronze); }
 
-        .cap-rank { 
-            font-family: 'Bodoni Moda'; font-size: 2rem; font-weight: 700; 
-            width: 60px; color: #888; margin-right: 25px; 
-        }
-        .cap-img { 
-            width: 70px; height: 70px; border-radius: 50%; object-fit: cover; 
-            border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-        }
-        .cap-name { 
-            font-family: 'Bodoni Moda'; font-size: 1.5rem; font-weight: 700; 
-            color: var(--text-dark); flex: 1; text-align: left; padding-left: 25px; 
-        }
+        .cap-rank { font-family: 'Bodoni Moda'; font-size: 2.5rem; font-weight: 700; width: 80px; color: #888; text-align:left; }
+        .cap-name { font-family: 'Bodoni Moda'; font-size: 2rem; font-weight: 700; color: var(--text-dark); text-align: left; flex:1; }
         
-        /* Capture Score */
         .cap-score {
-            font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700;
-            color: var(--primary); background: rgba(126, 16, 131, 0.08);
-            padding: 6px 15px; border-radius: 20px; margin-left: auto; white-space: nowrap;
+            font-family: 'Montserrat', sans-serif; font-size: 1.3rem; font-weight: 700;
+            color: var(--primary); background: rgba(126, 16, 131, 0.1);
+            padding: 8px 20px; border-radius: 30px; white-space: nowrap;
         }
         
         .cap-footer { 
-            margin-top: 50px; font-size: 1rem; color: var(--primary); 
-            border-top: 1px solid rgba(126, 16, 131, 0.2); padding-top: 25px;
-            display: flex; justify-content: space-between; align-items: center;
-            position: relative; z-index: 2; font-weight: 600;
+            margin-top: 60px; font-size: 1.2rem; color: var(--primary); 
+            border-top: 2px solid rgba(126, 16, 131, 0.2); padding-top: 30px;
+            display: flex; justify-content: space-between; font-weight: 600;
         }
 
         /* --- MODAL --- */
@@ -323,9 +290,9 @@
         .modal-tag { font-size: 0.85rem; color: var(--primary); font-weight: 600; background: rgba(126, 16, 131, 0.1); padding: 6px 16px; border-radius: 20px; display: inline-block; }
         .modal-body { padding: 25px; display: grid; gap: 12px; }
         .media-btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; background: white; border: 1px solid #ddd; color: #333; box-shadow: 0 4px 6px rgba(0,0,0,0.03); }
-        .btn-google { border-color: #ddd; color: #555; } .btn-google:hover { background: #f8f9fa; border-color: #aaa; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-        .btn-pinterest { border-color: #e60023; color: #e60023; } .btn-pinterest:hover { background: #e60023; color: white; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(230, 0, 35, 0.3); }
-        .btn-youtube { border-color: #ff0000; color: #ff0000; } .btn-youtube:hover { background: #ff0000; color: white; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(255, 0, 0, 0.3); }
+        .btn-google { border-color: #ddd; color: #555; } 
+        .btn-pinterest { border-color: #e60023; color: #e60023; } 
+        .btn-youtube { border-color: #ff0000; color: #ff0000; } 
 
     </style>
 </head>
@@ -383,20 +350,16 @@
     <div id="result-screen" class="screen">
         <h2 class="result-header">Final Ranking</h2>
         
-        <!-- AUTO GENERATED IMAGE -->
-        <div id="img-loading" style="text-align:center; padding:20px; display:none;">
-            <span class="dot"></span> <span style="color:var(--primary); font-weight:600;">Generating Ranking Card...</span>
-        </div>
-        <div id="result-img-wrapper" style="width:100%; max-width:550px; margin:0 auto 30px; display:none; flex-direction:column; align-items:center;">
-            <img id="result-generated-img" style="width:100%; border-radius:16px; box-shadow:0 10px 40px rgba(126, 16, 131, 0.15); border:1px solid rgba(255,255,255,0.5);" src="">
-            <p style="font-size:0.75rem; color:#666; margin-top:10px; font-weight:500;">Long-press (Mobile) or Right-click (PC) to Save</p>
+        <!-- GENERATED IMAGE DISPLAYS HERE (Auto) -->
+        <div id="image-output-area">
+            <div id="gen-status" style="color:#888; font-size:0.9rem; margin-bottom:10px;">Generating certificate...</div>
+            <img id="generated-img" alt="Ranking Certificate">
+            <div class="save-instruction">👆 Long press to save to Photos</div>
         </div>
 
         <div class="result-container" id="result-list"></div>
         
-        <!-- Action Buttons -->
         <div class="actions-container">
-            <button class="btn-action btn-save" onclick="handleSaveClick()">📸 Download Image</button>
             <button class="btn-action btn-share" onclick="shareTwitter()">🐦 Share on X</button>
         </div>
 
@@ -407,18 +370,20 @@
 
 </div>
 
-<!-- PREMIUM CAPTURE NODE (Hidden) -->
-<div id="capture-container">
-    <div class="cap-header">NOGIZAKA</div>
-    <div class="cap-sub">Official Top 5 Ranking</div>
-    <div id="capture-list"></div>
-    <div class="cap-footer">
-        <span class="cap-logo-sm">Nogizaka46 Sorter</span>
-        <span id="cap-date" style="color:#666; font-weight:400;"></span>
+<!-- HIDDEN WRAPPER FOR CAPTURE (TEXT ONLY) -->
+<div id="capture-wrapper">
+    <div id="capture-container">
+        <div class="cap-header">NOGIZAKA</div>
+        <div class="cap-sub">Official Top 5 Ranking</div>
+        <div id="capture-list"></div>
+        <div class="cap-footer">
+            <span class="cap-logo-sm">Nogizaka46 Sorter</span>
+            <span id="cap-date" style="color:#666; font-weight:400;"></span>
+        </div>
     </div>
 </div>
 
-<!-- MEMBER INFO MODAL -->
+<!-- MODAL -->
 <div class="modal-backdrop" id="modal" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -449,7 +414,6 @@
     let battlesCount = 0;
     let isAnimating = false;
     let finalTop5 = [];
-    let generatedImgData = null;
 
     async function init() {
         const status = document.getElementById('status');
@@ -489,7 +453,6 @@
             document.getElementById('start-btn').disabled = false;
             document.getElementById('demo-btn').disabled = false;
             
-            // Global proxy usage for data consistency
             members.forEach(m => {
                 m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
             });
@@ -601,7 +564,6 @@
         img.src = member.img;
         document.getElementById(`name-${side}`).innerText = member.name;
         document.getElementById(`gen-${side}`).innerText = member.gen;
-        
         const btn = document.querySelector(`#name-${side}`).parentElement.querySelector('.btn-profile');
         btn.dataset.name = member.name; btn.dataset.gen = member.gen; btn.dataset.date = member.date; btn.dataset.img = member.img;
     }
@@ -632,12 +594,11 @@
         const total = list.length;
         finalTop5 = [];
 
-        // Render List
         list.forEach((idx, i) => {
             const m = members[idx];
             const rank = i + 1;
             let score = total > 1 ? Math.round(((total - i) / total) * 100) : 100;
-            if (i < 5) finalTop5.push({ rank: rank, name: m.name, img: m.img, score: score });
+            if (i < 5) finalTop5.push({ rank: rank, name: m.name, score: score });
 
             const div = document.createElement('div');
             let rowClass = 'result-row';
@@ -646,6 +607,7 @@
             else if (rank === 3) rowClass += ' rank-3';
 
             div.className = rowClass;
+            
             let delay = 0;
             if (rank === 1) delay = 100;
             else if (rank === 2) delay = 800;
@@ -667,104 +629,51 @@
             c.appendChild(div);
         });
 
-        // Auto generate image
-        setTimeout(generateResultCard, 500);
+        // Auto Generate TEXT ONLY Image
+        autoGenerateImage();
     }
 
-    async function generateResultCard() {
-        const loading = document.getElementById('img-loading');
-        const wrapper = document.getElementById('result-img-wrapper');
-        const imgDisplay = document.getElementById('result-generated-img');
+    /* --- AUTO GENERATE (TEXT ONLY FOR MOBILE) --- */
+    function autoGenerateImage() {
         const capList = document.getElementById('capture-list');
-        
-        loading.style.display = 'block';
-        wrapper.style.display = 'none';
-        generatedImgData = null;
-
-        // Reset capture list
         capList.innerHTML = '';
+        
         const now = new Date();
         document.getElementById('cap-date').innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        
+        finalTop5.forEach(m => {
+            let rankClass = '';
+            if(m.rank === 1) rankClass = 'cap-rank-1';
+            else if(m.rank === 2) rankClass = 'cap-rank-2';
+            else if(m.rank === 3) rankClass = 'cap-rank-3';
 
-        // Build Capture DOM with preloaded CORS images
-        const imgPromises = finalTop5.map(m => {
-            return new Promise((resolve) => {
-                let rankClass = '';
-                if(m.rank === 1) rankClass = 'cap-rank-1';
-                else if(m.rank === 2) rankClass = 'cap-rank-2';
-                else if(m.rank === 3) rankClass = 'cap-rank-3';
-
-                // Higher Res Proxy
-                const highResUrl = m.img.replace("w=400", "w=500&h=500&fit=cover");
-
-                const row = document.createElement('div');
-                row.className = `cap-row ${rankClass}`;
-                row.innerHTML = `
+            // TEXT ONLY STRUCTURE
+            capList.innerHTML += `
+                <div class="cap-row ${rankClass}">
                     <div class="cap-rank">${m.rank}</div>
-                    <div class="img-placeholder" style="width:70px; height:70px;"></div>
                     <div class="cap-name">${m.name}</div>
                     <div class="cap-score">${m.score} pts</div>
-                `;
-                if(m.rank===1) {
-                    row.querySelector('.img-placeholder').style.width = '90px';
-                    row.querySelector('.img-placeholder').style.height = '90px';
-                }
-                capList.appendChild(row);
-
-                const imgObj = new Image();
-                imgObj.crossOrigin = "anonymous"; 
-                imgObj.onload = function() {
-                    imgObj.className = "cap-img";
-                    row.querySelector('.img-placeholder').replaceWith(imgObj);
-                    resolve();
-                };
-                imgObj.onerror = function() {
-                    console.error("Img load error", highResUrl);
-                    // Keep placeholder or fallback
-                    resolve();
-                };
-                imgObj.src = highResUrl;
-            });
+                </div>
+            `;
         });
 
-        try {
-            await Promise.all(imgPromises);
-            // Small buffer for rendering
-            await new Promise(r => setTimeout(r, 200));
-
+        // No images to wait for, just capture
+        setTimeout(() => {
             const node = document.getElementById('capture-container');
-            const canvas = await html2canvas(node, {
-                useCORS: true,
-                scale: 2,
+            html2canvas(node, { 
+                useCORS: true, 
+                scale: 2, 
                 backgroundColor: null,
-                scrollY: 0,
-                windowWidth: 1200
+                scrollY: 0 
+            }).then(canvas => {
+                document.getElementById('generated-img').src = canvas.toDataURL("image/png");
+                document.getElementById('image-output-area').style.display = "block";
+                document.getElementById('gen-status').style.display = "none";
+            }).catch(err => {
+                console.error(err);
+                document.getElementById('gen-status').innerText = "Image generation failed (Mobile issue)";
             });
-
-            generatedImgData = canvas.toDataURL("image/png");
-            imgDisplay.src = generatedImgData;
-            
-            loading.style.display = 'none';
-            wrapper.style.display = 'flex';
-
-        } catch(e) {
-            console.error(e);
-            loading.innerText = "Could not generate card automatically.";
-        }
-    }
-
-    function handleSaveClick() {
-        if(generatedImgData) {
-            const link = document.createElement('a');
-            link.download = `nogizaka_ranking_${Date.now()}.png`;
-            link.href = generatedImgData;
-            link.click();
-        } else {
-            // Retry generation if it failed or wasn't ready
-            generateResultCard().then(() => {
-                if(generatedImgData) handleSaveClick();
-            });
-        }
+        }, 500);
     }
 
     function shareTwitter() {
@@ -779,24 +688,24 @@
     }
 
     function restartSorter() {
-        queue = []; history = []; currentMerge = null; battlesCount = 0; generatedImgData = null;
+        queue = []; history = []; currentMerge = null; battlesCount = 0;
         document.getElementById('result-screen').classList.remove('active');
         document.getElementById('result-list').innerHTML = '';
-        document.getElementById('result-img-wrapper').style.display = 'none';
         document.getElementById('progress-fill').style.width = '0%';
         document.getElementById('progress-txt').innerText = '0%';
+        
+        document.getElementById('image-output-area').style.display = 'none';
+        document.getElementById('generated-img').src = "";
+        document.getElementById('gen-status').style.display = "block";
+        document.getElementById('gen-status').innerText = "Creating certificate...";
+
         document.getElementById('start-screen').classList.add('active');
         initWall();
     }
 
     function openModal(e, side) {
         e.stopPropagation();
-        let btn;
-        if (e.target.classList.contains('btn-profile')) btn = e.target;
-        else btn = e.target.closest('.btn-profile');
-        
-        if(!btn) return;
-
+        const btn = e.currentTarget;
         const name = btn.dataset.name;
         document.getElementById('m-img').src = btn.dataset.img;
         document.getElementById('m-name').innerText = name;
@@ -808,9 +717,7 @@
         document.getElementById('modal').classList.add('active');
     }
     function closeModal() { document.getElementById('modal').classList.remove('active'); }
-    function handleError(img) { 
-        img.src = "https://placehold.co/400x533/e0dce0/7e1083?text=No+Image";
-    }
+    function handleError(img) { img.style.opacity = 0.5; }
 
     init();
 </script>
