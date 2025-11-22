@@ -178,10 +178,10 @@
         @media (max-height: 650px) { .battle-card { max-width: 180px; padding: 8px; } .card-name { font-size: 1rem; } .logo { font-size: 1.5rem; } .container { padding: 10px; } }
 
         /* --- RESULTS --- */
-        .result-header { font-family:'Bodoni Moda'; color:var(--primary); margin-bottom:20px; font-size:2.5rem; text-align:center; text-shadow: 0 2px 10px rgba(126, 16, 131, 0.1); }
-        .result-container { width: 100%; max-width: 550px; margin: 0 auto; padding-bottom: 20px; }
+        .result-header { font-family:'Bodoni Moda'; color:var(--primary); margin-bottom:30px; font-size:2.5rem; text-align:center; text-shadow: 0 2px 10px rgba(126, 16, 131, 0.1); }
+        .result-container { width: 100%; max-width: 550px; margin: 0 auto; padding-bottom: 40px; }
 
-        /* Section Header "All Ranking" */
+        /* Section Header */
         .section-header {
             font-family: 'Bodoni Moda'; font-size: 1.8rem; color: #666; 
             text-align: center; margin: 40px 0 20px; position: relative;
@@ -240,7 +240,7 @@
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- ACTIONS --- */
-        .actions-container { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; width:100%; max-width:600px; }
+        .actions-container { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; width:100%; max-width:600px; margin-left: auto; margin-right: auto; }
         .btn-action { padding: 12px 20px; border-radius: 50px; font-weight: 600; cursor: pointer; border: none; color: white; display: flex; align-items: center; gap: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); font-size: 0.9rem; }
         
         .btn-x { background: #000; } .btn-x:hover { background: #222; transform: translateY(-2px); }
@@ -282,11 +282,11 @@
         /* Rank 1 Gold Card */
         .cap-row.cap-rank-1 {
             background: linear-gradient(to right, #fff, #fffcf0); border: 2px solid var(--gold);
-            padding: 35px 30px; margin-bottom: 30px; box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
+            padding: 25px 30px; margin-bottom: 30px; box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
         }
-        .cap-row.cap-rank-1 .cap-rank { color: var(--gold); font-size: 3.5rem; }
-        .cap-row.cap-rank-1 .cap-img { border-color: var(--gold); width: 120px; height: 120px; }
-        .cap-row.cap-rank-1 .cap-name { font-size: 2.2rem; color: #4a3b10; }
+        .cap-row.cap-rank-1 .cap-rank { color: var(--gold); font-size: 3rem; }
+        .cap-row.cap-rank-1 .cap-img { border-color: var(--gold); width: 100px; height: 100px; } /* Smaller Rank 1 Img */
+        .cap-row.cap-rank-1 .cap-name { font-size: 1.8rem; color: #4a3b10; }
         .cap-row.cap-rank-1::after { content: '👑'; position: absolute; right: 30px; top: -10px; font-size: 3rem; opacity: 0.15; transform: rotate(15deg); }
 
         .cap-row.cap-rank-2 { border-left: 8px solid var(--silver); }
@@ -295,6 +295,7 @@
         .cap-rank { font-family: 'Bodoni Moda'; font-size: 2rem; font-weight: 700; width: 60px; color: #888; margin-right: 25px; }
         .cap-img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .cap-name { font-family: 'Bodoni Moda'; font-size: 1.5rem; font-weight: 700; color: var(--text-dark); flex: 1; text-align: left; padding-left: 25px; }
+        
         .cap-score { font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--primary); background: rgba(126, 16, 131, 0.08); padding: 6px 15px; border-radius: 20px; margin-left: auto; white-space: nowrap; }
         
         .cap-footer { 
@@ -376,9 +377,9 @@
     <div id="result-screen" class="screen">
         <h2 class="result-header">Result</h2>
         
-        <!-- GENERATED IMAGE DISPLAYS HERE (Auto) -->
+        <!-- AUTO GENERATED IMAGE DISPLAY -->
         <div id="image-output-area">
-            <div id="gen-status" style="color:#888; font-size:0.9rem; margin-bottom:10px;">Creating certificate...</div>
+            <div id="gen-status" style="color:#888; font-size:0.9rem; margin-bottom:10px;">Generating certificate...</div>
             <img id="generated-img" alt="Ranking Certificate">
             <div class="save-instruction">👆 Long press to save to Photos</div>
         </div>
@@ -408,7 +409,7 @@
 
 </div>
 
-<!-- PREMIUM CAPTURE NODE (Hidden behind content via Fixed positioning) -->
+<!-- PREMIUM CAPTURE NODE (Hidden behind content) -->
 <div id="capture-container">
     <div class="cap-header">NOGIZAKA46</div>
     <div class="cap-sub">Top 5 Oshi Member</div>
@@ -702,7 +703,7 @@
         // Header (Updated Text)
         const headerHTML = `
             <div style="position:relative; z-index:2;">
-                <div style="font-family:'Bodoni Moda'; font-size:3.5rem; font-weight:700; color:#7e1083; margin-bottom:5px; text-shadow:2px 2px 0 white;">Nogizaka46</div>
+                <div style="font-family:'Bodoni Moda'; font-size:3.5rem; font-weight:700; color:#7e1083; margin-bottom:5px; text-shadow:2px 2px 0 white;">NOGIZAKA46</div>
                 <div style="font-size:1.2rem; text-transform:uppercase; letter-spacing:4px; color:#666; margin-bottom:40px; font-weight:600;">Top 5 Oshi Member</div>
             </div>
         `;
@@ -725,16 +726,16 @@
             let rankSize = '2rem';
             let nameSize = '1.5rem';
             
-            // Updated Rank 1 Styles (Larger)
+            // Updated Rank 1 Styles (Compacted)
             if (m.rank === 1) {
-                bgStyle = 'background:linear-gradient(to right,#fff,#fffcf0); border:2px solid #d4af37; box-shadow:0 15px 40px rgba(212,175,55,0.2); padding: 40px 30px;';
+                bgStyle = 'background:linear-gradient(to right,#fff,#fffcf0); border:2px solid #d4af37; box-shadow:0 15px 40px rgba(212,175,55,0.2); padding: 25px 30px;';
                 rankColor = '#d4af37';
                 nameColor = '#4a3b10';
                 imgBorder = '#d4af37';
-                // Rank 1 Specifics
-                imgSize = '120px';
-                rankSize = '3.5rem';
-                nameSize = '2.2rem';
+                // Adjusted Rank 1 Sizes
+                imgSize = '100px'; // Reduced from 120
+                rankSize = '3rem'; // Reduced from 3.5
+                nameSize = '2rem'; // Reduced from 2.2
             } else if (m.rank === 2) {
                 bgStyle += 'border-left:8px solid #a8a9ad;';
             } else if (m.rank === 3) {
@@ -745,7 +746,7 @@
             const row = document.createElement('div');
             // Default padding
             let rowPadding = '15px 30px';
-            if(m.rank === 1) rowPadding = '40px 30px'; // Much taller for Rank 1
+            if(m.rank === 1) rowPadding = '25px 30px'; // Reduced from 40
 
             row.style.cssText = `display:flex; align-items:center; padding:${rowPadding}; margin-bottom:15px; border-radius:16px; ${bgStyle}`;
             
