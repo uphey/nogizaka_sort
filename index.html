@@ -227,20 +227,15 @@
         .btn-restart:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(126, 16, 131, 0.4); }
 
         /* --- PREMIUM CAPTURE CARD (Hidden) --- */
-        /* FIX: Use a wrapper with 0 height instead of negative coordinates */
-        #capture-wrapper {
-            position: absolute; top: 0; left: 0; width: 0; height: 0; overflow: hidden; z-index: -100;
-        }
-
         #capture-container {
-            width: 800px; /* Fixed width for consistency */
+            position: absolute; left: -9999px; top: 0;
+            width: 800px; /* 4:5 Ratio Approx */
             background: linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%);
             padding: 50px; 
             border: 20px solid white; 
             text-align: center;
             font-family: 'Montserrat', sans-serif;
             box-sizing: border-box;
-            position: relative;
         }
         /* Watermark Overlay */
         #capture-container::before {
@@ -314,24 +309,16 @@
             position: relative; z-index: 2; font-weight: 600;
         }
 
-        /* --- MODAL (PROFILE & IMAGE SAVE) --- */
+        /* --- MODAL --- */
         .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(45, 27, 54, 0.6); backdrop-filter: blur(8px); z-index: 1000; display: none; justify-content: center; align-items: center; }
         .modal-backdrop.active { display: flex; }
-        .modal-content { background: #fff; width: 90%; max-width: 380px; border-radius: 24px; overflow: hidden; animation: zoomIn 0.3s; position: relative; }
+        .modal-content { background: #fff; width: 90%; max-width: 380px; border-radius: 24px; overflow: hidden; animation: zoomIn 0.3s; }
         @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        
-        /* Profile specific */
         .modal-header { background: linear-gradient(135deg, #fdfbfd 0%, #f4eef5 100%); padding: 30px 20px; text-align: center; position: relative; }
-        .close-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 1.5rem; color: #888; cursor: pointer; z-index: 5; }
+        .close-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 1.5rem; color: #888; cursor: pointer; }
         .modal-avatar { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; margin: 0 auto 15px; border: 4px solid white; box-shadow: 0 10px 20px rgba(126, 16, 131, 0.15); }
         .modal-tag { font-size: 0.85rem; color: var(--primary); font-weight: 600; background: rgba(126, 16, 131, 0.1); padding: 6px 16px; border-radius: 20px; display: inline-block; }
         .modal-body { padding: 25px; display: grid; gap: 12px; }
-        
-        /* Save Result specific */
-        #modal-result-content { text-align: center; padding: 20px; background: white; }
-        .generated-image { width: 100%; height: auto; border-radius: 12px; border: 1px solid #ddd; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .save-hint { font-size: 0.9rem; color: #666; margin-top: 15px; background: #f5f5f5; padding: 10px; border-radius: 8px; }
-
         .media-btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; background: white; border: 1px solid #ddd; color: #333; box-shadow: 0 4px 6px rgba(0,0,0,0.03); }
         .btn-google { border-color: #ddd; color: #555; } .btn-google:hover { background: #f8f9fa; border-color: #aaa; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
         .btn-pinterest { border-color: #e60023; color: #e60023; } .btn-pinterest:hover { background: #e60023; color: white; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(230, 0, 35, 0.3); }
@@ -376,11 +363,11 @@
         <div class="battle-area">
             <div class="battle-card" onclick="vote('left')">
                 <div class="card-img-frame"><img id="img-left" class="card-img" src="" onerror="handleError(this)"></div>
-                <div class="card-content"><div class="card-name" id="name-left">Name</div><div class="card-gen" id="gen-left">Gen</div><button class="btn-profile" onclick="openProfile(event, 'left')"><span>✦</span> Profile & Media</button></div>
+                <div class="card-content"><div class="card-name" id="name-left">Name</div><div class="card-gen" id="gen-left">Gen</div><button class="btn-profile" onclick="openModal(event, 'left')"><span>✦</span> Profile & Media</button></div>
             </div>
             <div class="battle-card" onclick="vote('right')">
                 <div class="card-img-frame"><img id="img-right" class="card-img" src="" onerror="handleError(this)"></div>
-                <div class="card-content"><div class="card-name" id="name-right">Name</div><div class="card-gen" id="gen-right">Gen</div><button class="btn-profile" onclick="openProfile(event, 'right')"><span>✦</span> Profile & Media</button></div>
+                <div class="card-content"><div class="card-name" id="name-right">Name</div><div class="card-gen" id="gen-right">Gen</div><button class="btn-profile" onclick="openModal(event, 'right')"><span>✦</span> Profile & Media</button></div>
             </div>
         </div>
         <div class="control-row">
@@ -397,7 +384,7 @@
         
         <!-- Action Buttons -->
         <div class="actions-container">
-            <button class="btn-action btn-save" onclick="generateAndShowImage()" id="save-btn">📸 Save Image</button>
+            <button class="btn-action btn-save" onclick="saveImage()">📸 Save Image</button>
             <button class="btn-action btn-share" onclick="shareTwitter()">🐦 Share on X</button>
         </div>
 
@@ -408,24 +395,22 @@
 
 </div>
 
-<!-- PREMIUM CAPTURE NODE (Hidden in wrapper) -->
-<div id="capture-wrapper">
-    <div id="capture-container">
-        <div class="cap-header">NOGIZAKA</div>
-        <div class="cap-sub">Official Top 5 Ranking</div>
-        <div id="capture-list"></div>
-        <div class="cap-footer">
-            <span class="cap-logo-sm">Nogizaka46 Sorter</span>
-            <span id="cap-date" style="color:#666; font-weight:400;"></span>
-        </div>
+<!-- PREMIUM CAPTURE NODE (Hidden) -->
+<div id="capture-container">
+    <div class="cap-header">NOGIZAKA</div>
+    <div class="cap-sub">Official Top 5 Ranking</div>
+    <div id="capture-list"></div>
+    <div class="cap-footer">
+        <span class="cap-logo-sm">Nogizaka46 Sorter</span>
+        <span id="cap-date" style="color:#666; font-weight:400;"></span>
     </div>
 </div>
 
 <!-- PROFILE MODAL -->
-<div class="modal-backdrop" id="profile-modal" onclick="closeModal('profile-modal')">
+<div class="modal-backdrop" id="modal" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
-            <button class="close-btn" onclick="closeModal('profile-modal')">&times;</button>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
             <img id="m-img" class="modal-avatar" src="">
             <h3 id="m-name" style="font-family:'Bodoni Moda'; color:var(--primary); margin-bottom:10px;">Name</h3>
             <div id="m-meta" class="modal-tag">Gen • Birthdate</div>
@@ -438,14 +423,16 @@
     </div>
 </div>
 
-<!-- IMAGE RESULT MODAL -->
-<div class="modal-backdrop" id="image-modal" onclick="closeModal('image-modal')">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <button class="close-btn" onclick="closeModal('image-modal')">&times;</button>
-        <div id="modal-result-content">
-            <h3 style="margin-bottom:15px; color:var(--primary);">Your Ranking</h3>
-            <img id="final-image" class="generated-image" src="" alt="Result">
-            <div class="save-hint">👆 <b>Long Press</b> the image to save it to your photos.</div>
+<!-- DOWNLOAD PREVIEW MODAL (for mobile fallback) -->
+<div class="modal-backdrop" id="download-preview" onclick="closePreview()">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width:480px;">
+        <div class="modal-header">
+            <button class="close-btn" onclick="closePreview()">&times;</button>
+            <h3 style="font-family:'Bodoni Moda'; color:var(--primary); margin-bottom:10px;">Save Image</h3>
+            <p style="font-size:0.85rem; color:#555;">Long-press the image below to save or share.</p>
+        </div>
+        <div class="modal-body" style="padding:16px;">
+            <img id="download-preview-img" style="width:100%; display:block; border-radius:16px;" alt="Nogizaka Top 5 Result">
         </div>
     </div>
 </div>
@@ -611,6 +598,7 @@
 
     function renderCard(side, member) {
         const img = document.getElementById(`img-${side}`);
+        // Reset opacity just in case logic fails
         img.style.opacity = ""; 
         img.src = member.img;
         
@@ -677,34 +665,32 @@
                     <div class="res-gen" style="font-size:0.7rem; color:var(--primary); background:rgba(126,16,131,0.08); padding:2px 8px; border-radius:10px; display:inline-block; margin-top:4px;">${m.gen}</div>
                 </div>
                 <div class="res-score">${score} pts</div>
-                <button class="btn-profile" style="width:auto; padding:6px 12px; border-radius:50%; margin-left:10px;" data-name="${m.name}" data-gen="${m.gen}" data-date="${m.date}" data-img="${m.img}" onclick="openProfile(event)">✦</button>
+                <button class="btn-profile" style="width:auto; padding:6px 12px; border-radius:50%; margin-left:10px;" data-name="${m.name}" data-gen="${m.gen}" data-date="${m.date}" data-img="${m.img}" onclick="openModal(event)">✦</button>
             `;
             c.appendChild(div);
         });
     }
 
-    // --- FIX FOR MOBILE IMAGE SAVING --- //
-    
-    function generateAndShowImage() {
-        const btn = document.getElementById('save-btn');
-        const origText = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '⏳ Generating...';
+    // ----- NEW: Mobile-friendly saveImage -----
+    function saveImage() {
+        if (finalTop5.length === 0) {
+            alert("Please finish a ranking first.");
+            return;
+        }
 
         const capList = document.getElementById('capture-list');
         capList.innerHTML = '';
         
         const now = new Date();
-        document.getElementById('cap-date').innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('cap-date').innerText =
+            now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         
-        // Populate capture container
         finalTop5.forEach(m => {
             let rankClass = '';
             if(m.rank === 1) rankClass = 'cap-rank-1';
             else if(m.rank === 2) rankClass = 'cap-rank-2';
             else if(m.rank === 3) rankClass = 'cap-rank-3';
 
-            // High res for capture
             const highResImg = m.img.replace("w=400", "w=300&h=300&fit=cover");
 
             capList.innerHTML += `
@@ -717,41 +703,70 @@
             `;
         });
 
-        // Helper to preload images
         const node = document.getElementById('capture-container');
-        const images = Array.from(node.querySelectorAll('img'));
-        const promises = images.map(img => {
-            return new Promise((resolve) => {
-                if (img.complete) resolve();
-                else { img.onload = resolve; img.onerror = resolve; }
-            });
-        });
 
-        Promise.all(promises).then(() => {
-            // Slight delay to ensure rendering is complete on mobile
-            setTimeout(() => {
-                html2canvas(node, { 
-                    useCORS: true, 
-                    scale: 2, 
-                    backgroundColor: null,
-                    width: 800 // Force width to match CSS
-                }).then(canvas => {
-                    const dataUrl = canvas.toDataURL("image/png");
-                    
-                    // SHOW IN MODAL
-                    document.getElementById('final-image').src = dataUrl;
-                    document.getElementById('image-modal').classList.add('active');
-                    
-                    btn.disabled = false;
-                    btn.innerHTML = origText;
-                }).catch(err => {
-                    console.error(err);
-                    alert("Capture failed. Please try a manual screenshot.");
-                    btn.disabled = false;
-                    btn.innerHTML = origText;
-                });
-            }, 500);
+        // Detect basic mobile and download support
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const supportsDownload = 'download' in document.createElement('a');
+
+        html2canvas(node, { 
+            useCORS: true, 
+            scale: 2, 
+            backgroundColor: null 
+        }).then(canvas => {
+            const fileName = `nogi_top5_${Date.now()}.png`;
+
+            // Desktop with proper download support
+            if (!isMobile && supportsDownload) {
+                const dataURL = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.href = dataURL;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                return;
+            }
+
+            // Try native share on mobile (if available)
+            if (navigator.share && navigator.canShare) {
+                canvas.toBlob(blob => {
+                    if (!blob) return showPreview(canvas); // fallback
+                    const file = new File([blob], fileName, { type: 'image/png' });
+                    if (!navigator.canShare({ files: [file] })) {
+                        showPreview(canvas);
+                        return;
+                    }
+                    navigator.share({
+                        files: [file],
+                        title: 'Nogizaka46 Top 5',
+                        text: 'My Nogizaka46 sorter result!'
+                    }).catch(() => {
+                        // user cancelled or share failed -> preview fallback
+                        showPreview(canvas);
+                    });
+                }, 'image/png');
+                return;
+            }
+
+            // Fallback for iOS / older Android: preview image for long-press save
+            showPreview(canvas);
+        }).catch(err => {
+            console.error(err);
+            alert("Save failed. Please check your connection or try a normal screenshot.");
         });
+    }
+
+    function showPreview(canvas) {
+        try {
+            const dataURL = canvas.toDataURL('image/png');
+            const imgEl = document.getElementById('download-preview-img');
+            imgEl.src = dataURL;
+            document.getElementById('download-preview').classList.add('active');
+        } catch (e) {
+            console.error(e);
+            alert("Could not create a preview. Please try taking a normal screenshot instead.");
+        }
     }
 
     function shareTwitter() {
@@ -775,7 +790,7 @@
         initWall();
     }
 
-    function openProfile(e) {
+    function openModal(e, side) {
         e.stopPropagation();
         const btn = e.currentTarget;
         const name = btn.dataset.name;
@@ -786,12 +801,13 @@
         document.getElementById('link-google').href = `https://www.google.com/search?q=${q}&tbm=isch`;
         document.getElementById('link-pinterest').href = `https://www.pinterest.com/search/pins/?q=${q}`;
         document.getElementById('link-youtube').href = `https://www.youtube.com/results?search_query=${q}`;
-        document.getElementById('profile-modal').classList.add('active');
+        document.getElementById('modal').classList.add('active');
     }
-    
-    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-    
+    function closeModal() { document.getElementById('modal').classList.remove('active'); }
+    function closePreview() { document.getElementById('download-preview').classList.remove('active'); }
+
     function handleError(img) { 
+        // Set a fallback image instead of fading out
         img.src = "https://placehold.co/400x533/e0dce0/7e1083?text=No+Image";
     }
 
