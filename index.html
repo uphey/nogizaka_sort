@@ -9,7 +9,7 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,600;0,800;1,400&family=Montserrat:wght@300;500;600&family=Noto+Sans+JP:wght@300;500;700&display=swap" rel="stylesheet">
     
-    <!-- HTML2Canvas -->
+    <!-- HTML2Canvas (Latest Version) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
@@ -226,9 +226,10 @@
         .btn-restart { background: linear-gradient(135deg, var(--primary) 0%, #9c27b0 100%); color: white; border: none; padding: 16px 40px; font-size: 1rem; font-weight: 700; border-radius: 50px; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(126, 16, 131, 0.3); display: inline-block; }
         .btn-restart:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(126, 16, 131, 0.4); }
 
-        /* --- PREMIUM CAPTURE CARD (Mobile Fix: Fixed position but hidden z-index) --- */
+        /* --- PREMIUM CAPTURE CARD (Hidden/Opacity Fix for iOS) --- */
         #capture-container {
-            position: fixed; top: 0; left: 0; z-index: -9999; 
+            position: fixed; top: 0; left: 0; 
+            z-index: -100; /* Behind content but valid in DOM */
             width: 800px; 
             background: linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%);
             padding: 50px; 
@@ -236,28 +237,19 @@
             text-align: center;
             font-family: 'Montserrat', sans-serif;
             box-sizing: border-box;
-            visibility: hidden;
+            opacity: 0; /* iOS workaround: use opacity instead of visibility:hidden */
+            pointer-events: none;
         }
         
-        #capture-container.capturing { visibility: visible; }
-
         #capture-container::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 60H0L30 0Z' fill='%237e1083' fill-opacity='0.03'/%3E%3C/svg%3E");
             opacity: 0.5; pointer-events: none;
         }
 
-        .cap-header { 
-            font-family: 'Bodoni Moda'; font-size: 3.5rem; font-weight: 700; 
-            color: var(--primary); margin-bottom: 5px; 
-            text-shadow: 2px 2px 0 white; position: relative; z-index: 2;
-        }
-        .cap-sub { 
-            font-size: 1.2rem; text-transform: uppercase; letter-spacing: 4px; color: #666; 
-            margin-bottom: 40px; position: relative; z-index: 2; font-weight: 600;
-        }
+        .cap-header { font-family: 'Bodoni Moda'; font-size: 3.5rem; font-weight: 700; color: var(--primary); margin-bottom: 5px; text-shadow: 2px 2px 0 white; position: relative; z-index: 2; }
+        .cap-sub { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 4px; color: #666; margin-bottom: 40px; position: relative; z-index: 2; font-weight: 600; }
 
-        /* Capture Rows */
         .cap-row {
             display: flex; align-items: center;
             background: rgba(255,255,255,0.95);
@@ -268,42 +260,27 @@
             position: relative; z-index: 2;
         }
 
-        /* Rank 1 Gold Card */
         .cap-row.cap-rank-1 {
             background: linear-gradient(to right, #fff, #fffcf0);
-            border: 2px solid var(--gold);
-            padding: 25px 30px; margin-bottom: 30px;
+            border: 2px solid var(--gold); padding: 25px 30px; margin-bottom: 30px;
             box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
         }
         .cap-row.cap-rank-1 .cap-rank { color: var(--gold); font-size: 3rem; }
         .cap-row.cap-rank-1 .cap-img { border-color: var(--gold); width: 90px; height: 90px; }
         .cap-row.cap-rank-1 .cap-name { font-size: 1.8rem; color: #4a3b10; }
-        .cap-row.cap-rank-1::after {
-            content: '👑'; position: absolute; right: 30px; top: -10px; font-size: 3rem; opacity: 0.15; transform: rotate(15deg);
-        }
+        .cap-row.cap-rank-1::after { content: '👑'; position: absolute; right: 30px; top: -10px; font-size: 3rem; opacity: 0.15; transform: rotate(15deg); }
 
         .cap-row.cap-rank-2 { border-left: 8px solid var(--silver); }
         .cap-row.cap-rank-3 { border-left: 8px solid var(--bronze); }
 
-        .cap-rank { 
-            font-family: 'Bodoni Moda'; font-size: 2rem; font-weight: 700; 
-            width: 60px; color: #888; margin-right: 25px; 
-        }
-        .cap-img { 
-            width: 70px; height: 70px; border-radius: 50%; object-fit: cover; 
-            border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-        }
-        .cap-name { 
-            font-family: 'Bodoni Moda'; font-size: 1.5rem; font-weight: 700; 
-            color: var(--text-dark); flex: 1; text-align: left; padding-left: 25px; 
-        }
-        
+        .cap-rank { font-family: 'Bodoni Moda'; font-size: 2rem; font-weight: 700; width: 60px; color: #888; margin-right: 25px; }
+        .cap-img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .cap-name { font-family: 'Bodoni Moda'; font-size: 1.5rem; font-weight: 700; color: var(--text-dark); flex: 1; text-align: left; padding-left: 25px; }
         .cap-score {
             font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700;
             color: var(--primary); background: rgba(126, 16, 131, 0.08);
             padding: 6px 15px; border-radius: 20px; margin-left: auto; white-space: nowrap;
         }
-        
         .cap-footer { 
             margin-top: 50px; font-size: 1rem; color: var(--primary); 
             border-top: 1px solid rgba(126, 16, 131, 0.2); padding-top: 25px;
@@ -400,7 +377,7 @@
 
 </div>
 
-<!-- PREMIUM CAPTURE NODE (Hidden) -->
+<!-- PREMIUM CAPTURE NODE (Hidden but Rendered) -->
 <div id="capture-container">
     <div class="cap-header">NOGIZAKA</div>
     <div class="cap-sub">Official Top 5 Ranking</div>
@@ -411,7 +388,7 @@
     </div>
 </div>
 
-<!-- PROFILE MODAL -->
+<!-- MODAL -->
 <div class="modal-backdrop" id="modal" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -675,9 +652,9 @@
         document.getElementById('cap-date').innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         
         const node = document.getElementById('capture-container');
-        node.style.visibility = 'visible'; // Make visible for rendering
-
-        // 1. Fetch all images as Base64
+        // iOS Fix: Opacity 0 allows rendering while hidden
+        
+        // 1. Fetch all images as Base64 (Bypass CORS)
         const promises = finalTop5.map(async (m) => {
             // High-res proxy URL
             const proxyUrl = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=200&h=200&fit=cover&output=webp";
@@ -694,7 +671,7 @@
                 });
             } catch (e) {
                 console.error("Fetch failed for", m.name, e);
-                return { ...m, base64: m.img }; // Fallback to original URL (might fail CORS)
+                return { ...m, base64: m.img }; 
             }
         });
 
@@ -721,10 +698,10 @@
         setTimeout(() => {
             html2canvas(node, { 
                 useCORS: true, 
-                scale: 2, 
-                backgroundColor: null 
+                scale: 2, // Lower scale safe for mobile
+                backgroundColor: null,
+                allowTaint: true
             }).then(canvas => {
-                node.style.visibility = 'hidden';
                 btn.innerText = originalText;
                 btn.disabled = false;
                 
@@ -733,10 +710,9 @@
                 document.getElementById('save-modal').classList.add('active');
             }).catch(err => {
                 console.error(err);
-                node.style.visibility = 'hidden';
                 btn.innerText = originalText;
                 btn.disabled = false;
-                alert("Image generation failed.");
+                alert("Image generation failed. Please screenshot manually.");
             });
         }, 500);
     }
