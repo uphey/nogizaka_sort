@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -216,27 +217,22 @@
         .res-gen { font-size: 0.75rem; color: #888; margin-top: 4px; font-family: sans-serif; font-weight: 500; }
         .res-score { font-size: 0.85rem; font-weight: 700; color: var(--primary); background: rgba(126, 16, 131, 0.05); padding: 5px 12px; border-radius: 15px; margin-right: 10px; }
 
-        /* --- GENERATED IMAGE AREA --- */
-        .generated-wrapper { width: 100%; max-width: 550px; margin: 0 auto 30px auto; display: none; animation: slideDown 0.5s ease; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .generated-img { width: 100%; border-radius: 16px; border: 4px solid white; box-shadow: 0 10px 40px rgba(0,0,0,0.15); }
-        .loading-gen { font-size: 0.9rem; font-weight: 600; color: var(--primary); margin-bottom: 20px; display: none; text-align: center; }
-        .save-hint { text-align: center; font-size: 0.85rem; color: #666; margin-top: 10px; background: rgba(255,255,255,0.6); display: inline-block; padding: 5px 15px; border-radius: 20px; }
-
         /* --- ACTIONS & RESTART --- */
         .actions-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 40px; }
         .btn-action { padding: 12px 24px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: 0.3s; border: none; color: white; display: flex; align-items: center; gap: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .btn-save { background: #333; } .btn-save:hover { background: #000; transform: translateY(-2px); }
         .btn-share { background: #1DA1F2; } .btn-share:hover { background: #0c85d0; transform: translateY(-2px); }
 
         .restart-container { padding-bottom: 100px; text-align: center; }
         .btn-restart { background: linear-gradient(135deg, var(--primary) 0%, #9c27b0 100%); color: white; border: none; padding: 16px 40px; font-size: 1rem; font-weight: 700; border-radius: 50px; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(126, 16, 131, 0.3); display: inline-block; }
         .btn-restart:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(126, 16, 131, 0.4); }
 
-        /* --- PREMIUM CAPTURE CARD (Hidden Wrapper) --- */
-        #capture-wrapper { height: 0; overflow: hidden; position: absolute; top: 0; left: 0; z-index: -100; }
+        /* --- PREMIUM CAPTURE CARD (Hidden) --- */
         #capture-container {
-            width: 800px; /* 4:5 Ratio */
+            position: absolute; 
+            top: 0; 
+            left: -9999px; /* Moved off-screen instead of opacity:0 for html2canvas stability */
+            width: 800px; /* Fixed width for high quality */
             background: linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%);
             padding: 50px; 
             border: 20px solid white; 
@@ -244,41 +240,77 @@
             font-family: 'Montserrat', sans-serif;
             box-sizing: border-box;
         }
+        /* Watermark Overlay */
         #capture-container::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 60H0L30 0Z' fill='%237e1083' fill-opacity='0.03'/%3E%3C/svg%3E");
             opacity: 0.5; pointer-events: none;
         }
 
-        .cap-header { font-family: 'Bodoni Moda'; font-size: 3.5rem; font-weight: 700; color: var(--primary); margin-bottom: 5px; text-shadow: 2px 2px 0 white; position: relative; z-index: 2; }
-        .cap-sub { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 4px; color: #666; margin-bottom: 40px; position: relative; z-index: 2; font-weight: 600; }
-
-        .cap-row {
-            display: flex; align-items: center;
-            background: rgba(255,255,255,0.95); padding: 15px 30px; margin-bottom: 15px;
-            border-radius: 16px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            border: 1px solid rgba(126, 16, 131, 0.1); position: relative; z-index: 2;
+        .cap-header { 
+            font-family: 'Bodoni Moda'; font-size: 3.5rem; font-weight: 700; 
+            color: var(--primary); margin-bottom: 5px; 
+            text-shadow: 2px 2px 0 white; position: relative; z-index: 2;
+        }
+        .cap-sub { 
+            font-size: 1.2rem; text-transform: uppercase; letter-spacing: 4px; color: #666; 
+            margin-bottom: 40px; position: relative; z-index: 2; font-weight: 600;
         }
 
+        /* Capture Rows */
+        .cap-row {
+            display: flex; align-items: center;
+            background: rgba(255,255,255,0.95);
+            padding: 15px 30px; margin-bottom: 15px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid rgba(126, 16, 131, 0.1);
+            position: relative; z-index: 2;
+        }
+
+        /* Rank 1 Gold Card */
         .cap-row.cap-rank-1 {
-            background: linear-gradient(to right, #fff, #fffcf0); border: 2px solid var(--gold);
-            padding: 25px 30px; margin-bottom: 30px; box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
+            background: linear-gradient(to right, #fff, #fffcf0);
+            border: 2px solid var(--gold);
+            padding: 25px 30px; margin-bottom: 30px;
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
         }
         .cap-row.cap-rank-1 .cap-rank { color: var(--gold); font-size: 3rem; }
         .cap-row.cap-rank-1 .cap-img { border-color: var(--gold); width: 90px; height: 90px; }
         .cap-row.cap-rank-1 .cap-name { font-size: 1.8rem; color: #4a3b10; }
-        .cap-row.cap-rank-1::after { content: '👑'; position: absolute; right: 30px; top: -10px; font-size: 3rem; opacity: 0.15; transform: rotate(15deg); }
+        .cap-row.cap-rank-1::after {
+            content: '👑'; position: absolute; right: 30px; top: -10px; font-size: 3rem; opacity: 0.15; transform: rotate(15deg);
+        }
 
         .cap-row.cap-rank-2 { border-left: 8px solid var(--silver); }
         .cap-row.cap-rank-3 { border-left: 8px solid var(--bronze); }
 
-        .cap-rank { font-family: 'Bodoni Moda'; font-size: 2rem; font-weight: 700; width: 60px; color: #888; margin-right: 25px; }
-        .cap-img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .cap-name { font-family: 'Bodoni Moda'; font-size: 1.5rem; font-weight: 700; color: var(--text-dark); flex: 1; text-align: left; padding-left: 25px; }
+        .cap-rank { 
+            font-family: 'Bodoni Moda'; font-size: 2rem; font-weight: 700; 
+            width: 60px; color: #888; margin-right: 25px; 
+        }
+        .cap-img { 
+            width: 70px; height: 70px; border-radius: 50%; object-fit: cover; 
+            border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+        }
+        .cap-name { 
+            font-family: 'Bodoni Moda'; font-size: 1.5rem; font-weight: 700; 
+            color: var(--text-dark); flex: 1; text-align: left; padding-left: 25px; 
+        }
         
-        .cap-score { font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--primary); background: rgba(126, 16, 131, 0.08); padding: 6px 15px; border-radius: 20px; margin-left: auto; white-space: nowrap; }
+        /* Capture Score */
+        .cap-score {
+            font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700;
+            color: var(--primary); background: rgba(126, 16, 131, 0.08);
+            padding: 6px 15px; border-radius: 20px; margin-left: auto; white-space: nowrap;
+        }
         
-        .cap-footer { margin-top: 50px; font-size: 1rem; color: var(--primary); border-top: 1px solid rgba(126, 16, 131, 0.2); padding-top: 25px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 2; font-weight: 600; }
+        .cap-footer { 
+            margin-top: 50px; font-size: 1rem; color: var(--primary); 
+            border-top: 1px solid rgba(126, 16, 131, 0.2); padding-top: 25px;
+            display: flex; justify-content: space-between; align-items: center;
+            position: relative; z-index: 2; font-weight: 600;
+        }
 
         /* --- MODAL --- */
         .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(45, 27, 54, 0.6); backdrop-filter: blur(8px); z-index: 1000; display: none; justify-content: center; align-items: center; }
@@ -351,18 +383,20 @@
     <div id="result-screen" class="screen">
         <h2 class="result-header">Final Ranking</h2>
         
-        <!-- GENERATED IMAGE (Auto Inserted Here) -->
-        <div id="gen-loading" class="loading-gen">✨ Generating Certificate...</div>
-        <div class="generated-wrapper" id="generated-wrapper">
-            <img id="generated-img" class="generated-img" src="" alt="Ranking Certificate">
-            <div style="text-align:center;">
-                <span class="save-hint">👆 Long press to save</span>
-            </div>
+        <!-- AUTO GENERATED IMAGE -->
+        <div id="img-loading" style="text-align:center; padding:20px; display:none;">
+            <span class="dot"></span> <span style="color:var(--primary); font-weight:600;">Generating Ranking Card...</span>
+        </div>
+        <div id="result-img-wrapper" style="width:100%; max-width:550px; margin:0 auto 30px; display:none; flex-direction:column; align-items:center;">
+            <img id="result-generated-img" style="width:100%; border-radius:16px; box-shadow:0 10px 40px rgba(126, 16, 131, 0.15); border:1px solid rgba(255,255,255,0.5);" src="">
+            <p style="font-size:0.75rem; color:#666; margin-top:10px; font-weight:500;">Long-press (Mobile) or Right-click (PC) to Save</p>
         </div>
 
         <div class="result-container" id="result-list"></div>
         
+        <!-- Action Buttons -->
         <div class="actions-container">
+            <button class="btn-action btn-save" onclick="handleSaveClick()">📸 Download Image</button>
             <button class="btn-action btn-share" onclick="shareTwitter()">🐦 Share on X</button>
         </div>
 
@@ -373,20 +407,18 @@
 
 </div>
 
-<!-- HIDDEN WRAPPER FOR CAPTURE -->
-<div id="capture-wrapper">
-    <div id="capture-container">
-        <div class="cap-header">NOGIZAKA</div>
-        <div class="cap-sub">Official Top 5 Ranking</div>
-        <div id="capture-list"></div>
-        <div class="cap-footer">
-            <span class="cap-logo-sm">Nogizaka46 Sorter</span>
-            <span id="cap-date" style="color:#666; font-weight:400;"></span>
-        </div>
+<!-- PREMIUM CAPTURE NODE (Hidden) -->
+<div id="capture-container">
+    <div class="cap-header">NOGIZAKA</div>
+    <div class="cap-sub">Official Top 5 Ranking</div>
+    <div id="capture-list"></div>
+    <div class="cap-footer">
+        <span class="cap-logo-sm">Nogizaka46 Sorter</span>
+        <span id="cap-date" style="color:#666; font-weight:400;"></span>
     </div>
 </div>
 
-<!-- MODAL -->
+<!-- MEMBER INFO MODAL -->
 <div class="modal-backdrop" id="modal" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -417,6 +449,7 @@
     let battlesCount = 0;
     let isAnimating = false;
     let finalTop5 = [];
+    let generatedImgData = null;
 
     async function init() {
         const status = document.getElementById('status');
@@ -456,6 +489,7 @@
             document.getElementById('start-btn').disabled = false;
             document.getElementById('demo-btn').disabled = false;
             
+            // Global proxy usage for data consistency
             members.forEach(m => {
                 m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
             });
@@ -567,6 +601,7 @@
         img.src = member.img;
         document.getElementById(`name-${side}`).innerText = member.name;
         document.getElementById(`gen-${side}`).innerText = member.gen;
+        
         const btn = document.querySelector(`#name-${side}`).parentElement.querySelector('.btn-profile');
         btn.dataset.name = member.name; btn.dataset.gen = member.gen; btn.dataset.date = member.date; btn.dataset.img = member.img;
     }
@@ -597,6 +632,7 @@
         const total = list.length;
         finalTop5 = [];
 
+        // Render List
         list.forEach((idx, i) => {
             const m = members[idx];
             const rank = i + 1;
@@ -631,71 +667,104 @@
             c.appendChild(div);
         });
 
-        // AUTO GENERATE IMAGE
-        prepareCaptureCard();
-        generateImageAuto();
+        // Auto generate image
+        setTimeout(generateResultCard, 500);
     }
 
-    function prepareCaptureCard() {
+    async function generateResultCard() {
+        const loading = document.getElementById('img-loading');
+        const wrapper = document.getElementById('result-img-wrapper');
+        const imgDisplay = document.getElementById('result-generated-img');
         const capList = document.getElementById('capture-list');
-        capList.innerHTML = '';
         
+        loading.style.display = 'block';
+        wrapper.style.display = 'none';
+        generatedImgData = null;
+
+        // Reset capture list
+        capList.innerHTML = '';
         const now = new Date();
         document.getElementById('cap-date').innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        
-        finalTop5.forEach(m => {
-            let rankClass = '';
-            if(m.rank === 1) rankClass = 'cap-rank-1';
-            else if(m.rank === 2) rankClass = 'cap-rank-2';
-            else if(m.rank === 3) rankClass = 'cap-rank-3';
 
-            const proxyImg = m.img.replace("w=400", "w=300&h=300&fit=cover");
+        // Build Capture DOM with preloaded CORS images
+        const imgPromises = finalTop5.map(m => {
+            return new Promise((resolve) => {
+                let rankClass = '';
+                if(m.rank === 1) rankClass = 'cap-rank-1';
+                else if(m.rank === 2) rankClass = 'cap-rank-2';
+                else if(m.rank === 3) rankClass = 'cap-rank-3';
 
-            capList.innerHTML += `
-                <div class="cap-row ${rankClass}">
+                // Higher Res Proxy
+                const highResUrl = m.img.replace("w=400", "w=500&h=500&fit=cover");
+
+                const row = document.createElement('div');
+                row.className = `cap-row ${rankClass}`;
+                row.innerHTML = `
                     <div class="cap-rank">${m.rank}</div>
-                    <img class="cap-img" src="${proxyImg}" crossorigin="anonymous">
+                    <div class="img-placeholder" style="width:70px; height:70px;"></div>
                     <div class="cap-name">${m.name}</div>
                     <div class="cap-score">${m.score} pts</div>
-                </div>
-            `;
-        });
-    }
+                `;
+                if(m.rank===1) {
+                    row.querySelector('.img-placeholder').style.width = '90px';
+                    row.querySelector('.img-placeholder').style.height = '90px';
+                }
+                capList.appendChild(row);
 
-    function generateImageAuto() {
-        document.getElementById('gen-loading').style.display = 'block';
-        document.getElementById('generated-wrapper').style.display = 'none';
-
-        const node = document.getElementById('capture-container');
-        
-        // Ensure images inside capture container are loaded
-        const images = Array.from(node.querySelectorAll('img'));
-        const promises = images.map(img => {
-            if (img.complete) return Promise.resolve();
-            return new Promise((resolve) => {
-                img.onload = resolve;
-                img.onerror = resolve; // Resolve even on error to proceed
+                const imgObj = new Image();
+                imgObj.crossOrigin = "anonymous"; 
+                imgObj.onload = function() {
+                    imgObj.className = "cap-img";
+                    row.querySelector('.img-placeholder').replaceWith(imgObj);
+                    resolve();
+                };
+                imgObj.onerror = function() {
+                    console.error("Img load error", highResUrl);
+                    // Keep placeholder or fallback
+                    resolve();
+                };
+                imgObj.src = highResUrl;
             });
         });
 
-        Promise.all(promises).then(() => {
-            // Slight delay to ensure rendering stability
-            setTimeout(() => {
-                html2canvas(node, { 
-                    useCORS: true, 
-                    scale: 2, 
-                    backgroundColor: null 
-                }).then(canvas => {
-                    const dataUrl = canvas.toDataURL("image/png");
-                    document.getElementById('generated-img').src = dataUrl;
-                    document.getElementById('gen-loading').style.display = 'none';
-                    document.getElementById('generated-wrapper').style.display = 'block';
-                }).catch(err => {
-                    console.error(err);
-                    document.getElementById('gen-loading').innerText = "⚠️ Image Generation Failed";
-                });
-            }, 500);
-        });
+        try {
+            await Promise.all(imgPromises);
+            // Small buffer for rendering
+            await new Promise(r => setTimeout(r, 200));
+
+            const node = document.getElementById('capture-container');
+            const canvas = await html2canvas(node, {
+                useCORS: true,
+                scale: 2,
+                backgroundColor: null,
+                scrollY: 0,
+                windowWidth: 1200
+            });
+
+            generatedImgData = canvas.toDataURL("image/png");
+            imgDisplay.src = generatedImgData;
+            
+            loading.style.display = 'none';
+            wrapper.style.display = 'flex';
+
+        } catch(e) {
+            console.error(e);
+            loading.innerText = "Could not generate card automatically.";
+        }
+    }
+
+    function handleSaveClick() {
+        if(generatedImgData) {
+            const link = document.createElement('a');
+            link.download = `nogizaka_ranking_${Date.now()}.png`;
+            link.href = generatedImgData;
+            link.click();
+        } else {
+            // Retry generation if it failed or wasn't ready
+            generateResultCard().then(() => {
+                if(generatedImgData) handleSaveClick();
+            });
+        }
     }
 
     function shareTwitter() {
@@ -710,10 +779,10 @@
     }
 
     function restartSorter() {
-        queue = []; history = []; currentMerge = null; battlesCount = 0;
+        queue = []; history = []; currentMerge = null; battlesCount = 0; generatedImgData = null;
         document.getElementById('result-screen').classList.remove('active');
         document.getElementById('result-list').innerHTML = '';
-        document.getElementById('generated-wrapper').style.display = 'none';
+        document.getElementById('result-img-wrapper').style.display = 'none';
         document.getElementById('progress-fill').style.width = '0%';
         document.getElementById('progress-txt').innerText = '0%';
         document.getElementById('start-screen').classList.add('active');
@@ -722,7 +791,12 @@
 
     function openModal(e, side) {
         e.stopPropagation();
-        const btn = e.currentTarget;
+        let btn;
+        if (e.target.classList.contains('btn-profile')) btn = e.target;
+        else btn = e.target.closest('.btn-profile');
+        
+        if(!btn) return;
+
         const name = btn.dataset.name;
         document.getElementById('m-img').src = btn.dataset.img;
         document.getElementById('m-name').innerText = name;
@@ -734,7 +808,9 @@
         document.getElementById('modal').classList.add('active');
     }
     function closeModal() { document.getElementById('modal').classList.remove('active'); }
-    function handleError(img) { img.style.opacity = 0.5; }
+    function handleError(img) { 
+        img.src = "https://placehold.co/400x533/e0dce0/7e1083?text=No+Image";
+    }
 
     init();
 </script>
