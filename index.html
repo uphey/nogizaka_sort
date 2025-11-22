@@ -226,10 +226,20 @@
         .btn-restart { background: linear-gradient(135deg, var(--primary) 0%, #9c27b0 100%); color: white; border: none; padding: 16px 40px; font-size: 1rem; font-weight: 700; border-radius: 50px; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(126, 16, 131, 0.3); display: inline-block; }
         .btn-restart:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(126, 16, 131, 0.4); }
 
-        /* --- DYNAMIC CAPTURE STYLES --- */
-        /* These styles will be injected into the generated image container */
-        .capture-wrapper {
-            width: 800px; /* 4:5 Ratio Target Width */
+        /* --- MOBILE-SAFE CAPTURE CONTAINER --- */
+        /* This container is inserted into the DOM but hidden from user view */
+        #capture-wrapper-hidden {
+            position: absolute;
+            top: 0; left: 0;
+            width: 1px; height: 1px;
+            overflow: hidden; /* Hide content from user */
+            pointer-events: none;
+            z-index: -1000;
+        }
+
+        /* The actual card style inside the hidden wrapper */
+        .capture-card {
+            width: 800px; /* 4:5 Ratio Target */
             background: linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%);
             padding: 60px;
             border: 20px solid white;
@@ -237,7 +247,7 @@
             font-family: 'Montserrat', sans-serif;
             box-sizing: border-box;
             position: relative;
-            /* Ensure backgrounds print */
+            /* Force background printing */
             -webkit-print-color-adjust: exact;
         }
         
@@ -276,7 +286,10 @@
         .cap-row.cap-rank-1 .cap-rank { color: var(--gold); font-size: 3rem; }
         .cap-row.cap-rank-1 .cap-img { border-color: var(--gold); width: 90px; height: 90px; }
         .cap-row.cap-rank-1 .cap-name { font-size: 1.8rem; color: #4a3b10; }
-        
+        .cap-row.cap-rank-1::after {
+            content: '👑'; position: absolute; right: 30px; top: -10px; font-size: 3rem; opacity: 0.15; transform: rotate(15deg);
+        }
+
         .cap-row.cap-rank-2 { border-left: 8px solid var(--silver); }
         .cap-row.cap-rank-3 { border-left: 8px solid var(--bronze); }
 
@@ -645,31 +658,30 @@
         });
     }
 
-    /* --- DYNAMIC CAPTURE FUNCTION (MOBILE SAFE) --- */
+    /* --- MOBILE-SAFE DYNAMIC RENDERER --- */
     async function saveImage() {
         const btn = document.getElementById('btn-save-img');
         const originalText = btn.innerText;
         btn.innerText = "⏳ Generating...";
         btn.disabled = true;
 
-        // 1. CREATE DYNAMIC CONTAINER
-        let container = document.createElement('div');
-        container.className = 'capture-wrapper';
-        container.style.position = 'absolute';
-        container.style.top = '0';
-        container.style.left = '-9999px';
-        container.style.zIndex = '-1';
+        // Create hidden wrapper
+        const wrapper = document.createElement('div');
+        wrapper.id = 'capture-wrapper-hidden';
+        
+        const card = document.createElement('div');
+        card.className = 'capture-card';
         
         const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
+        // Build HTML
         let html = `
             <div class="capture-watermark"></div>
             <div class="cap-header">NOGIZAKA</div>
             <div class="cap-sub">Official Top 5 Ranking</div>
         `;
 
-        // 2. LOAD IMAGES (PRE-FETCH BASE64)
-        // We need to convert images to Base64 so HTML2Canvas doesn't taint them.
+        // Pre-fetch images
         const memberPromises = finalTop5.map(async (m) => {
             const proxyUrl = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=200&h=200&fit=cover&output=webp";
             try {
@@ -681,14 +693,12 @@
                     reader.readAsDataURL(blob);
                 });
             } catch (e) {
-                console.error(e);
-                return { ...m, base64: m.img }; // Fallback
+                return { ...m, base64: m.img };
             }
         });
 
         const membersWithData = await Promise.all(memberPromises);
 
-        // 3. BUILD ROWS
         membersWithData.forEach(m => {
             let rankClass = '';
             if(m.rank === 1) rankClass = 'cap-rank-1';
@@ -712,29 +722,28 @@
             </div>
         `;
 
-        container.innerHTML = html;
-        document.body.appendChild(container);
+        card.innerHTML = html;
+        wrapper.appendChild(card);
+        document.body.appendChild(wrapper);
 
-        // 4. WAIT FOR DOM RENDER & CAPTURE
-        // Even with base64, we give the browser a moment to paint the DOM
+        // Capture
         setTimeout(() => {
-            html2canvas(container, { 
+            html2canvas(card, { 
                 useCORS: true, 
                 scale: 2, 
-                backgroundColor: null 
+                backgroundColor: null,
+                logging: false
             }).then(canvas => {
-                // Cleanup
-                document.body.removeChild(container);
+                document.body.removeChild(wrapper);
                 btn.innerText = originalText;
                 btn.disabled = false;
                 
-                // Show Modal
                 const imgData = canvas.toDataURL();
                 document.getElementById('save-preview').src = imgData;
                 document.getElementById('save-modal').classList.add('active');
             }).catch(err => {
                 console.error(err);
-                document.body.removeChild(container);
+                if(document.body.contains(wrapper)) document.body.removeChild(wrapper);
                 btn.innerText = originalText;
                 btn.disabled = false;
                 alert("Failed to generate image.");
