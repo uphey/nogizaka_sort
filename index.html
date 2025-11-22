@@ -324,6 +324,9 @@
         .btn-pinterest { border-color: #e60023; color: #e60023; } .btn-pinterest:hover { background: #e60023; color: white; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(230, 0, 35, 0.3); }
         .btn-youtube { border-color: #ff0000; color: #ff0000; } .btn-youtube:hover { background: #ff0000; color: white; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(255, 0, 0, 0.3); }
 
+        /* --- SAVE MODAL (NEW) --- */
+        .save-preview-img { width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .save-tip { font-size: 0.85rem; color: #666; margin-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -406,7 +409,7 @@
     </div>
 </div>
 
-<!-- MODAL -->
+<!-- PROFILE MODAL -->
 <div class="modal-backdrop" id="modal" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -419,6 +422,18 @@
             <a id="link-google" href="#" target="_blank" class="media-btn btn-google">🔍 Google Images</a>
             <a id="link-pinterest" href="#" target="_blank" class="media-btn btn-pinterest">📌 Pinterest</a>
             <a id="link-youtube" href="#" target="_blank" class="media-btn btn-youtube">▶ YouTube</a>
+        </div>
+    </div>
+</div>
+
+<!-- SAVE IMAGE PREVIEW MODAL (NEW) -->
+<div class="modal-backdrop" id="save-modal" onclick="closeSaveModal()">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width:400px; padding:20px;">
+        <div style="text-align:center;">
+            <h3 style="font-family:'Bodoni Moda'; color:var(--primary); margin-bottom:15px;">Your Ranking</h3>
+            <img id="save-preview" class="save-preview-img" src="">
+            <p class="save-tip">Long press the image to save to your Photos.</p>
+            <button class="btn-main" onclick="closeSaveModal()">Close</button>
         </div>
     </div>
 </div>
@@ -475,14 +490,7 @@
             status.innerHTML = `<span class="dot"></span> ${members.length} Members Loaded`;
             document.getElementById('start-btn').disabled = false;
             document.getElementById('demo-btn').disabled = false;
-            
-            // Global proxy usage for data consistency
-            members.forEach(m => {
-                m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
-            });
-
             initWall();
-
         } catch (e) {
             status.innerHTML = `⚠ Fetch Error. Using backup data.`;
             loadBackup();
@@ -519,9 +527,6 @@
             {name: "Endo Sakura", gen: "4th Gen", date:"2001.10.03", img: IMG_BASE+"endo_sakura.jpg"},
             {name: "Yoda Yuuki", gen: "3rd Gen", date:"2000.05.05", img: IMG_BASE+"yoda_yuuki.jpg"}
         ];
-        members.forEach(m => {
-            m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
-        });
     }
 
     function startSort() {
@@ -584,13 +589,10 @@
 
     function renderCard(side, member) {
         const img = document.getElementById(`img-${side}`);
-        // Reset opacity just in case logic fails
         img.style.opacity = ""; 
         img.src = member.img;
-        
         document.getElementById(`name-${side}`).innerText = member.name;
         document.getElementById(`gen-${side}`).innerText = member.gen;
-        
         const btn = document.querySelector(`#name-${side}`).parentElement.querySelector('.btn-profile');
         btn.dataset.name = member.name; btn.dataset.gen = member.gen; btn.dataset.date = member.date; btn.dataset.img = member.img;
     }
@@ -657,6 +659,7 @@
         });
     }
 
+    /* --- SAVE IMAGE TO MODAL --- */
     function saveImage() {
         const capList = document.getElementById('capture-list');
         capList.innerHTML = '';
@@ -670,16 +673,12 @@
             else if(m.rank === 2) rankClass = 'cap-rank-2';
             else if(m.rank === 3) rankClass = 'cap-rank-3';
 
-            // Use high-quality square crop from proxy for final image
-            // We already have proxy URL stored in members, but let's ensure high res
-            // Extract the original URL from the proxy wrapper if needed, or just reuse
-            // Simple trick: Replace width parameter
-            const highResImg = m.img.replace("w=400", "w=300&h=300&fit=cover");
+            const proxyImg = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=200&h=200&fit=cover&output=webp";
 
             capList.innerHTML += `
                 <div class="cap-row ${rankClass}">
                     <div class="cap-rank">${m.rank}</div>
-                    <img class="cap-img" src="${highResImg}" crossorigin="anonymous">
+                    <img class="cap-img" src="${proxyImg}" crossorigin="anonymous">
                     <div class="cap-name">${m.name}</div>
                     <div class="cap-score">${m.score} pts</div>
                 </div>
@@ -688,19 +687,23 @@
 
         const node = document.getElementById('capture-container');
         
+        // Mobile Fix: Show Modal instead of trying to auto-download
         html2canvas(node, { 
             useCORS: true, 
             scale: 2, 
             backgroundColor: null 
         }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `nogi_top5_${Date.now()}.png`;
-            link.href = canvas.toDataURL();
-            link.click();
+            const imgData = canvas.toDataURL();
+            document.getElementById('save-preview').src = imgData;
+            document.getElementById('save-modal').classList.add('active');
         }).catch(err => {
             console.error(err);
-            alert("Save failed. Please check internet or use screenshot.");
+            alert("Image generation failed.");
         });
+    }
+
+    function closeSaveModal() {
+        document.getElementById('save-modal').classList.remove('active');
     }
 
     function shareTwitter() {
@@ -739,7 +742,6 @@
     }
     function closeModal() { document.getElementById('modal').classList.remove('active'); }
     function handleError(img) { 
-        // Set a fallback image instead of fading out
         img.src = "https://placehold.co/400x533/e0dce0/7e1083?text=No+Image";
     }
 
