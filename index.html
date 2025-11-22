@@ -228,7 +228,7 @@
         }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- ACTIONS & RESTART --- */
+        /* --- ACTIONS --- */
         .actions-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 40px; }
         .btn-action { padding: 12px 24px; border-radius: 50px; font-weight: 600; cursor: pointer; border: none; color: white; display: flex; align-items: center; gap: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .btn-save { background: #333; } .btn-save:hover { background: #000; transform: translateY(-2px); }
@@ -308,7 +308,7 @@
     <div id="result-screen" class="screen">
         <h2 class="result-header">Final Ranking</h2>
         
-        <!-- AUTO GENERATED IMAGE DISPLAY -->
+        <!-- GENERATED IMAGE DISPLAYS HERE (Auto) -->
         <div id="image-output-area">
             <div id="gen-status" style="color:#888; font-size:0.9rem; margin-bottom:10px;">Generating certificate...</div>
             <img id="generated-img" alt="Ranking Certificate">
@@ -399,6 +399,7 @@
             document.getElementById('start-btn').disabled = false;
             document.getElementById('demo-btn').disabled = false;
             
+            // Global proxy usage
             members.forEach(m => {
                 m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
             });
@@ -544,7 +545,7 @@
             const m = members[idx];
             const rank = i + 1;
             let score = total > 1 ? Math.round(((total - i) / total) * 100) : 100;
-            if (i < 5) finalTop5.push({ rank: rank, name: m.name, score: score });
+            if (i < 5) finalTop5.push({ rank: rank, name: m.name, img: m.img, score: score });
 
             const div = document.createElement('div');
             let rowClass = 'result-row';
@@ -575,88 +576,142 @@
             c.appendChild(div);
         });
 
-        // TRIGGER GENERATION
+        // TRIGGER AUTO GENERATE (New logic)
         generateResultImage();
     }
 
-    /* --- DYNAMIC DOM GENERATION (Fixes Mobile Rendering) --- */
+    /* --- MOBILE-SAFE IMAGE GENERATOR (Dynamic DOM Injection) --- */
     function generateResultImage() {
-        // Create temporary container attached to body (not hidden by display:none)
+        // 1. Create a temporary fixed container off-screen-ish (but visible to DOM)
+        // We put it far right so user can't see it, but browser renders it.
         const tempContainer = document.createElement('div');
         tempContainer.style.position = 'fixed';
         tempContainer.style.top = '0';
-        // Move slightly offscreen but ensure it's rendered
-        tempContainer.style.left = '100vw'; 
-        tempContainer.style.width = '600px';
+        tempContainer.style.left = '200vw'; // Far right
+        tempContainer.style.width = '800px';
+        tempContainer.style.height = '1000px'; // Force 4:5 ratio height
         tempContainer.style.background = 'linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%)';
-        tempContainer.style.padding = '40px';
-        tempContainer.style.border = '15px solid white';
+        tempContainer.style.padding = '50px';
+        tempContainer.style.border = '20px solid white';
+        tempContainer.style.boxSizing = 'border-box';
         tempContainer.style.fontFamily = "'Montserrat', sans-serif";
         tempContainer.style.textAlign = 'center';
+        tempContainer.style.display = 'flex';
+        tempContainer.style.flexDirection = 'column';
+        tempContainer.style.justifyContent = 'center'; // Center content vertically
         
-        // Build HTML String
-        let html = `
-            <div style="font-family:'Bodoni Moda'; font-size:3rem; font-weight:700; color:#7e1083; margin-bottom:5px; text-shadow:2px 2px 0 white;">NOGIZAKA</div>
-            <div style="font-size:1rem; text-transform:uppercase; letter-spacing:4px; color:#666; margin-bottom:30px; font-weight:600;">Official Top 5 Ranking</div>
+        // Watermark
+        const watermark = document.createElement('div');
+        watermark.style.position = 'absolute';
+        watermark.style.top = '0'; watermark.style.left = '0';
+        watermark.style.width = '100%'; watermark.style.height = '100%';
+        watermark.style.backgroundImage = 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M30 0L60 60H0L30 0Z\' fill=\'%237e1083\' fill-opacity=\'0.03\'/%3E%3C/svg%3E")';
+        watermark.style.opacity = '0.5';
+        tempContainer.appendChild(watermark);
+
+        // Header
+        const headerHTML = `
+            <div style="position:relative; z-index:2;">
+                <div style="font-family:'Bodoni Moda'; font-size:3.5rem; font-weight:700; color:#7e1083; margin-bottom:5px; text-shadow:2px 2px 0 white;">NOGIZAKA</div>
+                <div style="font-size:1.2rem; text-transform:uppercase; letter-spacing:4px; color:#666; margin-bottom:40px; font-weight:600;">Official Top 5 Ranking</div>
+            </div>
         `;
+        
+        // List Container
+        const listContainer = document.createElement('div');
+        listContainer.style.position = 'relative';
+        listContainer.style.zIndex = '2';
+        listContainer.style.width = '100%';
+
+        // Images to load promise
+        const imagePromises = [];
 
         finalTop5.forEach(m => {
-            let bgStyle = 'background:rgba(255,255,255,0.9); box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid rgba(126,16,131,0.1);';
+            let bgStyle = 'background:rgba(255,255,255,0.95); box-shadow:0 5px 20px rgba(0,0,0,0.05); border:1px solid rgba(126,16,131,0.1);';
             let rankColor = '#888';
             let nameColor = '#2d1b36';
+            let imgBorder = '#fff';
             
             if (m.rank === 1) {
-                bgStyle = 'background:linear-gradient(to right,#fff,#fffcf0); border:2px solid #d4af37; box-shadow:0 10px 25px rgba(212,175,55,0.2);';
+                bgStyle = 'background:linear-gradient(to right,#fff,#fffcf0); border:2px solid #d4af37; box-shadow:0 15px 40px rgba(212,175,55,0.2);';
                 rankColor = '#d4af37';
                 nameColor = '#4a3b10';
+                imgBorder = '#d4af37';
             } else if (m.rank === 2) {
                 bgStyle += 'border-left:8px solid #a8a9ad;';
             } else if (m.rank === 3) {
                 bgStyle += 'border-left:8px solid #cd7f32;';
             }
 
-            html += `
-                <div style="display:flex; align-items:center; justify-content:space-between; padding:15px 30px; margin-bottom:15px; border-radius:12px; ${bgStyle}">
-                    <div style="font-family:'Bodoni Moda'; font-size:2rem; font-weight:700; width:50px; text-align:left; color:${rankColor};">${m.rank}</div>
-                    <div style="font-family:'Bodoni Moda'; font-size:1.5rem; font-weight:700; color:${nameColor}; flex:1; text-align:left; padding-left:15px;">${m.name}</div>
-                    <div style="font-family:'Montserrat'; font-size:1rem; font-weight:700; color:#7e1083; background:rgba(126,16,131,0.1); padding:5px 12px; border-radius:20px;">${m.score} pts</div>
-                </div>
+            // Create Row Element
+            const row = document.createElement('div');
+            row.style.cssText = `display:flex; align-items:center; padding:15px 30px; margin-bottom:15px; border-radius:16px; ${bgStyle}`;
+            
+            // Create Image with Proxy & CrossOrigin
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            // High quality square
+            img.src = m.img.replace("w=400", "w=200&h=200&fit=cover");
+            img.style.cssText = `width:70px; height:70px; border-radius:50%; object-fit:cover; border:3px solid ${imgBorder}; box-shadow:0 4px 10px rgba(0,0,0,0.1); flex-shrink:0;`;
+            
+            // Push promise
+            imagePromises.push(new Promise(resolve => {
+                img.onload = resolve;
+                img.onerror = resolve; // Resolve even on error to not block
+            }));
+
+            // Inner HTML
+            row.innerHTML = `
+                <div style="font-family:'Bodoni Moda'; font-size:2rem; font-weight:700; width:60px; color:${rankColor}; margin-right:25px;">${m.rank}</div>
             `;
+            row.appendChild(img);
+            row.innerHTML += `
+                <div style="font-family:'Bodoni Moda'; font-size:1.5rem; font-weight:700; color:${nameColor}; flex:1; text-align:left; padding-left:25px;">${m.name}</div>
+                <div style="font-family:'Montserrat'; font-size:1.1rem; font-weight:700; color:#7e1083; background:rgba(126,16,131,0.08); padding:6px 15px; border-radius:20px; margin-left:auto; white-space:nowrap;">${m.score} pts</div>
+            `;
+            
+            listContainer.appendChild(row);
         });
 
+        // Footer
         const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        html += `
-            <div style="margin-top:40px; font-size:0.9rem; color:#7e1083; border-top:2px solid rgba(126,16,131,0.2); padding-top:20px; display:flex; justify-content:space-between; font-weight:600;">
-                <span>Nogizaka46 Sorter</span>
+        const footerHTML = `
+            <div style="margin-top:50px; font-size:1rem; color:#7e1083; border-top:1px solid rgba(126,16,131,0.2); padding-top:25px; display:flex; justify-content:space-between; font-weight:600; position:relative; z-index:2;">
+                <span style="font-family:'Bodoni Moda';">Nogizaka46 Sorter</span>
                 <span style="color:#666; font-weight:400;">${dateStr}</span>
             </div>
         `;
 
-        tempContainer.innerHTML = html;
+        // Assemble
+        tempContainer.innerHTML = headerHTML;
+        tempContainer.appendChild(listContainer);
+        tempContainer.innerHTML += footerHTML;
         document.body.appendChild(tempContainer);
 
-        // Wait for DOM to settle, then capture
-        setTimeout(() => {
-            html2canvas(tempContainer, {
-                scale: 1.5, // Safe scale for mobile
-                backgroundColor: null,
-                logging: false
-            }).then(canvas => {
-                document.getElementById('generated-img').src = canvas.toDataURL("image/png");
-                document.getElementById('image-output-area').style.display = "block";
-                document.getElementById('gen-status').style.display = "none";
-                
-                // Clean up
-                document.body.removeChild(tempContainer);
-            }).catch(e => {
-                console.error(e);
-                document.getElementById('gen-status').innerText = "Generation failed. Please screenshot manually.";
-                document.body.removeChild(tempContainer);
-            });
-        }, 500);
+        // Wait for images -> Capture -> Display -> Cleanup
+        Promise.all(imagePromises).then(() => {
+            // Slight delay to ensure rendering
+            setTimeout(() => {
+                html2canvas(tempContainer, {
+                    scale: 1.5, // Mobile safe scale
+                    useCORS: true,
+                    backgroundColor: null
+                }).then(canvas => {
+                    document.getElementById('generated-img').src = canvas.toDataURL("image/png");
+                    document.getElementById('image-output-area').style.display = "block";
+                    document.getElementById('gen-status').style.display = "none";
+                    
+                    document.body.removeChild(tempContainer);
+                }).catch(err => {
+                    console.error(err);
+                    document.getElementById('gen-status').innerText = "Generation Failed. Try taking a screenshot.";
+                    document.body.removeChild(tempContainer);
+                });
+            }, 500);
+        });
     }
 
-    // Manual Trigger Reuse
+    // Manual Trigger
     function regenerateImage() {
         document.getElementById('generated-img').src = "";
         document.getElementById('gen-status').style.display = "block";
