@@ -228,8 +228,8 @@
 
         /* --- PREMIUM CAPTURE CARD (Hidden) --- */
         #capture-container {
-            position: absolute; left: -9999px; top: 0;
-            width: 800px; /* 4:5 Ratio Approx */
+            position: fixed; left: -9999px; top: 0; z-index: -9999;
+            width: 800px; /* Fixed width for consistent canvas render */
             background: linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%);
             padding: 50px; 
             border: 20px solid white; 
@@ -406,7 +406,25 @@
     </div>
 </div>
 
-<!-- PROFILE MODAL -->
+<!-- SAVE IMAGE MODAL (NEW) -->
+<div class="modal-backdrop" id="save-modal" onclick="closeSaveModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <button class="close-btn" onclick="closeSaveModal()">&times;</button>
+            <h3 style="font-family:'Bodoni Moda'; color:var(--primary); margin-bottom:5px;">Ranking Card</h3>
+        </div>
+        <div class="modal-body" style="padding:20px;">
+            <img id="save-preview" style="width:100%; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.1); margin-bottom:15px;" src="">
+            <p style="font-size:0.85rem; color:#666; margin-bottom:20px;">
+                <strong>Mobile Users:</strong> Long-press the image to save it to your photos.<br>
+                <strong>Desktop:</strong> Click the button below.
+            </p>
+            <a id="btn-dl-img" href="#" class="btn-action btn-save" style="justify-content:center; width:100%; text-decoration:none;">Download Image</a>
+        </div>
+    </div>
+</div>
+
+<!-- MEMBER INFO MODAL -->
 <div class="modal-backdrop" id="modal" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -419,20 +437,6 @@
             <a id="link-google" href="#" target="_blank" class="media-btn btn-google">🔍 Google Images</a>
             <a id="link-pinterest" href="#" target="_blank" class="media-btn btn-pinterest">📌 Pinterest</a>
             <a id="link-youtube" href="#" target="_blank" class="media-btn btn-youtube">▶ YouTube</a>
-        </div>
-    </div>
-</div>
-
-<!-- DOWNLOAD PREVIEW MODAL (for mobile fallback) -->
-<div class="modal-backdrop" id="download-preview" onclick="closePreview()">
-    <div class="modal-content" onclick="event.stopPropagation()" style="max-width:480px;">
-        <div class="modal-header">
-            <button class="close-btn" onclick="closePreview()">&times;</button>
-            <h3 style="font-family:'Bodoni Moda'; color:var(--primary); margin-bottom:10px;">Save Image</h3>
-            <p style="font-size:0.85rem; color:#555;">Long-press the image below to save or share.</p>
-        </div>
-        <div class="modal-body" style="padding:16px;">
-            <img id="download-preview-img" style="width:100%; display:block; border-radius:16px;" alt="Nogizaka Top 5 Result">
         </div>
     </div>
 </div>
@@ -490,6 +494,7 @@
             document.getElementById('start-btn').disabled = false;
             document.getElementById('demo-btn').disabled = false;
             
+            // Global proxy usage for data consistency
             members.forEach(m => {
                 m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
             });
@@ -597,6 +602,7 @@
 
     function renderCard(side, member) {
         const img = document.getElementById(`img-${side}`);
+        // Reset opacity just in case logic fails
         img.style.opacity = ""; 
         img.src = member.img;
         
@@ -637,7 +643,7 @@
             const m = members[idx];
             const rank = i + 1;
             let score = total > 1 ? Math.round(((total - i) / total) * 100) : 100;
-            if (i < 5) finalTop5.push({ rank: rank, name: m.name, img: m.img, score: score, gen: m.gen });
+            if (i < 5) finalTop5.push({ rank: rank, name: m.name, img: m.img, score: score });
 
             const div = document.createElement('div');
             let rowClass = 'result-row';
@@ -670,260 +676,101 @@
     }
 
     function saveImage() {
-        if (!finalTop5.length) {
-            alert("Please finish a ranking first.");
-            return;
-        }
+        const btn = document.querySelector('.btn-save');
+        const originalContent = btn.innerHTML;
+        
+        // 1. UI Feedback to show something is happening
+        btn.innerHTML = '<span>⏳</span> Generating...';
+        btn.style.opacity = '0.7';
+        btn.disabled = true;
 
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-        if (isMobile) {
-            // On mobile, avoid html2canvas (often fails due to cross-origin/file issues)
-            const canvas = buildTextOnlyCanvas();
-            downloadOrShareFromCanvas(canvas);
-        } else {
-            // Desktop: try full fancy capture via html2canvas first
-            buildHtmlCapture().catch(err => {
-                console.error("html2canvas failed, falling back to simple canvas:", err);
-                const fallback = buildTextOnlyCanvas();
-                downloadOrShareFromCanvas(fallback);
-            });
-        }
-    }
-
-    // Build the hidden HTML node for desktop capture (with member photos)
-    function buildHtmlCapture() {
-        return new Promise((resolve, reject) => {
-            try {
-                const capList = document.getElementById('capture-list');
-                capList.innerHTML = '';
-
-                const now = new Date();
-                document.getElementById('cap-date').innerText =
-                    now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
-                finalTop5.forEach(m => {
-                    let rankClass = '';
-                    if (m.rank === 1) rankClass = 'cap-rank-1';
-                    else if (m.rank === 2) rankClass = 'cap-rank-2';
-                    else if (m.rank === 3) rankClass = 'cap-rank-3';
-
-                    const highResImg = m.img.replace("w=400", "w=300&h=300&fit=cover");
-
-                    capList.innerHTML += `
-                        <div class="cap-row ${rankClass}">
-                            <div class="cap-rank">${m.rank}</div>
-                            <img class="cap-img" src="${highResImg}" crossorigin="anonymous">
-                            <div class="cap-name">${m.name}</div>
-                            <div class="cap-score">${m.score} pts</div>
-                        </div>
-                    `;
-                });
-
-                const node = document.getElementById('capture-container');
-
-                html2canvas(node, {
-                    useCORS: true,
-                    allowTaint: false,
-                    scale: 2,
-                    backgroundColor: null
-                }).then(canvas => {
-                    downloadOrShareFromCanvas(canvas);
-                    resolve();
-                }).catch(err => {
-                    reject(err);
-                });
-            } catch (e) {
-                reject(e);
-            }
-        });
-    }
-
-    // Very robust: draw a simple, text-only result card using Canvas API (no external images)
-    function buildTextOnlyCanvas() {
-        const canvas = document.createElement('canvas');
-        const width = 900;
-        const height = 1200;
-        canvas.width = width;
-        canvas.height = height;
-
-        const ctx = canvas.getContext('2d');
-
-        // Background gradient
-        const grad = ctx.createLinearGradient(0, 0, width, height);
-        grad.addColorStop(0, "#fffbf5");
-        grad.addColorStop(1, "#f3e7f5");
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, width, height);
-
-        // Header
-        ctx.fillStyle = "#7e1083";
-        ctx.font = "bold 60px 'Bodoni Moda', 'Times New Roman', serif";
-        ctx.textAlign = "center";
-        ctx.fillText("NOGIZAKA", width / 2, 110);
-
-        ctx.font = "600 20px 'Montserrat', sans-serif";
-        ctx.fillStyle = "#666";
-        ctx.fillText("Official Top 5 Ranking", width / 2, 150);
-
-        // Date
+        // 2. Populate the Hidden Container with the results
+        const capList = document.getElementById('capture-list');
+        capList.innerHTML = '';
+        
         const now = new Date();
-        ctx.font = "400 18px 'Montserrat', sans-serif";
-        ctx.fillStyle = "#555";
-        ctx.fillText(
-            now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
-            width / 2,
-            185
-        );
+        document.getElementById('cap-date').innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        
+        // We track image loading to ensure html2canvas doesn't capture white squares
+        const imgPromises = [];
 
-        // Entries
-        const startY = 260;
-        const rowHeight = 130;
-        finalTop5.forEach((m, index) => {
-            const y = startY + index * rowHeight;
+        finalTop5.forEach(m => {
+            let rankClass = '';
+            if(m.rank === 1) rankClass = 'cap-rank-1';
+            else if(m.rank === 2) rankClass = 'cap-rank-2';
+            else if(m.rank === 3) rankClass = 'cap-rank-3';
 
-            // Row card
-            ctx.fillStyle = "rgba(255,255,255,0.9)";
-            ctx.strokeStyle = index === 0 ? "#d4af37" :
-                              index === 1 ? "#a8a9ad" :
-                              index === 2 ? "#cd7f32" : "rgba(126,16,131,0.15)";
-            ctx.lineWidth = index <= 2 ? 4 : 2;
-            const radius = 22;
-            const x = 70;
-            const cardWidth = width - 140;
-            const cardHeight = rowHeight - 30;
+            // Request a slightly higher res image for the card
+            const highResImg = m.img.replace("w=400", "w=500&h=500&fit=cover");
+            
+            const row = document.createElement('div');
+            row.className = `cap-row ${rankClass}`;
+            row.innerHTML = `
+                <div class="cap-rank">${m.rank}</div>
+                <img class="cap-img" src="${highResImg}" crossorigin="anonymous">
+                <div class="cap-name">${m.name}</div>
+                <div class="cap-score">${m.score} pts</div>
+            `;
+            capList.appendChild(row);
 
-            roundRect(ctx, x, y, cardWidth, cardHeight, radius, true, true);
-
-            // Rank
-            ctx.fillStyle = ctx.strokeStyle;
-            ctx.font = index === 0
-                ? "bold 44px 'Bodoni Moda', serif"
-                : "bold 34px 'Bodoni Moda', serif";
-            ctx.textAlign = "left";
-            ctx.fillText(m.rank.toString(), x + 25, y + 55);
-
-            // Name
-            ctx.fillStyle = "#2d1b36";
-            ctx.font = "700 28px 'Bodoni Moda', serif";
-            ctx.fillText(m.name, x + 90, y + 55);
-
-            // Score + gen
-            ctx.font = "600 18px 'Montserrat', sans-serif";
-            ctx.fillStyle = "#7e1083";
-            ctx.fillText(`${m.score} pts`, x + 90, y + 90);
-
-            ctx.font = "500 16px 'Montserrat', sans-serif";
-            ctx.fillStyle = "#777";
-            ctx.fillText(m.gen || "", x + 220, y + 90);
+            // Create a promise that resolves when image loads or fails
+            const imgEl = row.querySelector('img');
+            imgPromises.push(new Promise((resolve) => {
+                if (imgEl.complete) resolve();
+                else {
+                    imgEl.onload = resolve;
+                    imgEl.onerror = resolve; // Don't block execution on error
+                }
+            }));
         });
 
-        // Footer
-        ctx.textAlign = "center";
-        ctx.font = "500 16px 'Montserrat', sans-serif";
-        ctx.fillStyle = "#7e1083";
-        ctx.fillText("Generated by Nogizaka46 Sorter", width / 2, height - 40);
-
-        return canvas;
-    }
-
-    // Helper to draw a rounded rectangle
-    function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
-        if (typeof stroke === "undefined") {
-            stroke = true;
-        }
-        if (typeof radius === "undefined") {
-            radius = 5;
-        }
-        if (typeof radius === "number") {
-            radius = { tl: radius, tr: radius, br: radius, bl: radius };
-        } else {
-            const defaultRadius = { tl: 0, tr: 0, br: 0, bl: 0 };
-            for (let side in defaultRadius) {
-                radius[side] = radius[side] || defaultRadius[side];
-            }
-        }
-        ctx.beginPath();
-        ctx.moveTo(x + radius.tl, y);
-        ctx.lineTo(x + width - radius.tr, y);
-        ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
-        ctx.lineTo(x + width, y + height - radius.br);
-        ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
-        ctx.lineTo(x + radius.bl, y + height);
-        ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
-        ctx.lineTo(x, y + radius.tl);
-        ctx.quadraticCurveTo(x, y, x + radius.tl, y);
-        ctx.closePath();
-        if (fill) {
-            ctx.fill();
-        }
-        if (stroke) {
-            ctx.stroke();
-        }
-    }
-
-    // Unified logic to either download the canvas as PNG or share/preview it
-    function downloadOrShareFromCanvas(canvas) {
-        const fileName = `nogi_top5_${Date.now()}.png`;
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        const supportsDownload = "download" in document.createElement("a");
-
-        // Desktop with proper download support
-        if (!isMobile && supportsDownload) {
-            const dataURL = canvas.toDataURL("image/png");
-            const link = document.createElement("a");
-            link.href = dataURL;
-            link.download = fileName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            return;
-        }
-
-        // Use Web Share API if available on mobile
-        if (navigator.share && navigator.canShare) {
-            canvas.toBlob(blob => {
-                if (!blob) {
-                    showPreview(canvas);
-                    return;
-                }
-                const file = new File([blob], fileName, { type: "image/png" });
-                if (!navigator.canShare({ files: [file] })) {
-                    showPreview(canvas);
-                    return;
-                }
-                navigator.share({
-                    files: [file],
-                    title: "Nogizaka46 Top 5",
-                    text: "My Nogizaka46 sorter result!"
-                }).catch(() => {
-                    showPreview(canvas);
+        // 3. Execute html2canvas only after images are ready
+        Promise.all(imgPromises).then(() => {
+            // Slight delay to allow DOM reflow
+            setTimeout(() => {
+                const node = document.getElementById('capture-container');
+                
+                // Mobile fix: html2canvas is sensitive to scroll position.
+                // We set scrollY to negative window scroll to offset it, 
+                // or assume the fixed position handles it (since we used fixed).
+                
+                html2canvas(node, { 
+                    useCORS: true, 
+                    scale: 2, // Higher quality
+                    backgroundColor: null,
+                    // Force specific window width context to prevent mobile layout shifting in capture
+                    windowWidth: 1000, 
+                    scrollY: -window.scrollY
+                }).then(canvas => {
+                    const dataUrl = canvas.toDataURL("image/png");
+                    
+                    // 4. Show the new Modal
+                    const preview = document.getElementById('save-preview');
+                    const dlBtn = document.getElementById('btn-dl-img');
+                    
+                    preview.src = dataUrl;
+                    dlBtn.href = dataUrl;
+                    dlBtn.download = `nogizaka_ranking_${Date.now()}.png`;
+                    
+                    document.getElementById('save-modal').classList.add('active');
+                    
+                    // Reset Button
+                    btn.innerHTML = originalContent;
+                    btn.style.opacity = '1';
+                    btn.disabled = false;
+                }).catch(err => {
+                    console.error(err);
+                    alert("Could not generate image. Please try taking a regular screenshot.");
+                    btn.innerHTML = originalContent;
+                    btn.style.opacity = '1';
+                    btn.disabled = false;
                 });
-            }, "image/png");
-            return;
-        }
-
-        // Fallback: show a preview so the user can long-press to save
-        showPreview(canvas);
+            }, 150);
+        });
     }
 
-    function showPreview(canvas) {
-        try {
-            const dataURL = canvas.toDataURL("image/png");
-            const imgEl = document.getElementById("download-preview-img");
-            imgEl.src = dataURL;
-            document.getElementById("download-preview").classList.add("active");
-        } catch (e) {
-            console.error(e);
-            alert("Could not create a preview. Please try taking a normal screenshot instead.");
-        }
-    }
-
-    function closePreview() {
-        const el = document.getElementById("download-preview");
-        if (el) {
-            el.classList.remove("active");
-        }
+    function closeSaveModal() {
+        document.getElementById('save-modal').classList.remove('active');
     }
 
     function shareTwitter() {
@@ -949,7 +796,13 @@
 
     function openModal(e, side) {
         e.stopPropagation();
-        const btn = e.currentTarget;
+        let btn;
+        // Handle if clicked on the button directly or its icon span
+        if (e.target.classList.contains('btn-profile')) btn = e.target;
+        else btn = e.target.closest('.btn-profile');
+        
+        if(!btn) return;
+
         const name = btn.dataset.name;
         document.getElementById('m-img').src = btn.dataset.img;
         document.getElementById('m-name').innerText = name;
@@ -962,6 +815,7 @@
     }
     function closeModal() { document.getElementById('modal').classList.remove('active'); }
     function handleError(img) { 
+        // Set a fallback image instead of fading out
         img.src = "https://placehold.co/400x533/e0dce0/7e1083?text=No+Image";
     }
 
