@@ -178,8 +178,18 @@
         @media (max-height: 650px) { .battle-card { max-width: 180px; padding: 8px; } .card-name { font-size: 1rem; } .logo { font-size: 1.5rem; } .container { padding: 10px; } }
 
         /* --- RESULTS --- */
-        .result-header { font-family:'Bodoni Moda'; color:var(--primary); margin-bottom:30px; font-size:2.5rem; text-align:center; text-shadow: 0 2px 10px rgba(126, 16, 131, 0.1); }
-        .result-container { width: 100%; max-width: 550px; margin: 0 auto; padding-bottom: 40px; }
+        .result-header { font-family:'Bodoni Moda'; color:var(--primary); margin-bottom:20px; font-size:2.5rem; text-align:center; text-shadow: 0 2px 10px rgba(126, 16, 131, 0.1); }
+        .result-container { width: 100%; max-width: 550px; margin: 0 auto; padding-bottom: 20px; }
+
+        /* Section Header "All Ranking" */
+        .section-header {
+            font-family: 'Bodoni Moda'; font-size: 1.8rem; color: #666; 
+            text-align: center; margin: 40px 0 20px; position: relative;
+        }
+        .section-header::after {
+            content: ''; display: block; width: 60px; height: 3px; background: var(--accent);
+            margin: 10px auto 0;
+        }
 
         .result-row {
             background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border-radius: 16px; padding: 15px 25px; 
@@ -218,8 +228,8 @@
 
         /* --- GENERATED IMAGE DISPLAY --- */
         #image-output-area {
-            text-align: center; margin-bottom: 40px; display: none;
-            animation: slideDown 0.5s ease; width: 100%; max-width: 550px; margin: 0 auto 40px;
+            text-align: center; margin-bottom: 20px; display: none;
+            animation: slideDown 0.5s ease; width: 100%; max-width: 550px; margin: 0 auto 20px;
         }
         #generated-img { width: 100%; border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.15); border: 4px solid white; }
         .save-instruction {
@@ -230,13 +240,70 @@
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- ACTIONS --- */
-        .actions-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 40px; }
-        .btn-action { padding: 12px 24px; border-radius: 50px; font-weight: 600; cursor: pointer; border: none; color: white; display: flex; align-items: center; gap: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .btn-save { background: #333; } .btn-save:hover { background: #000; transform: translateY(-2px); }
-        .btn-share { background: #1DA1F2; } .btn-share:hover { background: #0c85d0; transform: translateY(-2px); }
+        .actions-container { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; width:100%; max-width:600px; }
+        .btn-action { padding: 12px 20px; border-radius: 50px; font-weight: 600; cursor: pointer; border: none; color: white; display: flex; align-items: center; gap: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); font-size: 0.9rem; }
+        
+        .btn-x { background: #000; } .btn-x:hover { background: #222; transform: translateY(-2px); }
+        .btn-threads { background: #000; } .btn-threads:hover { background: #222; transform: translateY(-2px); }
+        .btn-system { background: #555; } .btn-system:hover { background: #777; transform: translateY(-2px); }
+
         .restart-container { padding-bottom: 100px; text-align: center; }
         .btn-restart { background: linear-gradient(135deg, var(--primary) 0%, #9c27b0 100%); color: white; border: none; padding: 16px 40px; font-size: 1rem; font-weight: 700; border-radius: 50px; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(126, 16, 131, 0.3); display: inline-block; }
         .btn-restart:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(126, 16, 131, 0.4); }
+
+        /* --- CAPTURE CARD (FIXED BEHIND CONTENT) --- */
+        #capture-container {
+            position: fixed; top: 0; left: 0; z-index: -9999; /* BEHIND EVERYTHING */
+            width: 800px; /* HD Resolution */
+            background: linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%);
+            padding: 60px 50px; 
+            border: 20px solid white; 
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            box-sizing: border-box;
+        }
+        #capture-container::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 60H0L30 0Z' fill='%237e1083' fill-opacity='0.03'/%3E%3C/svg%3E");
+            opacity: 0.5; pointer-events: none;
+        }
+
+        .cap-header { font-family: 'Bodoni Moda'; font-size: 3.5rem; font-weight: 700; color: var(--primary); margin-bottom: 5px; text-shadow: 2px 2px 0 white; position: relative; z-index: 2; }
+        .cap-sub { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 4px; color: #666; margin-bottom: 40px; position: relative; z-index: 2; font-weight: 600; }
+
+        /* Capture Rows */
+        .cap-row {
+            display: flex; align-items: center;
+            background: rgba(255,255,255,0.95); padding: 15px 30px; margin-bottom: 15px;
+            border-radius: 16px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid rgba(126, 16, 131, 0.1); position: relative; z-index: 2;
+        }
+
+        /* Rank 1 Gold Card */
+        .cap-row.cap-rank-1 {
+            background: linear-gradient(to right, #fff, #fffcf0); border: 2px solid var(--gold);
+            padding: 35px 30px; margin-bottom: 30px; box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
+        }
+        .cap-row.cap-rank-1 .cap-rank { color: var(--gold); font-size: 3.5rem; }
+        .cap-row.cap-rank-1 .cap-img { border-color: var(--gold); width: 120px; height: 120px; }
+        .cap-row.cap-rank-1 .cap-name { font-size: 2.2rem; color: #4a3b10; }
+        .cap-row.cap-rank-1::after { content: '👑'; position: absolute; right: 30px; top: -10px; font-size: 3rem; opacity: 0.15; transform: rotate(15deg); }
+
+        .cap-row.cap-rank-2 { border-left: 8px solid var(--silver); }
+        .cap-row.cap-rank-3 { border-left: 8px solid var(--bronze); }
+
+        .cap-rank { font-family: 'Bodoni Moda'; font-size: 2rem; font-weight: 700; width: 60px; color: #888; margin-right: 25px; }
+        .cap-img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .cap-name { font-family: 'Bodoni Moda'; font-size: 1.5rem; font-weight: 700; color: var(--text-dark); flex: 1; text-align: left; padding-left: 25px; }
+        .cap-score { font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--primary); background: rgba(126, 16, 131, 0.08); padding: 6px 15px; border-radius: 20px; margin-left: auto; white-space: nowrap; }
+        
+        .cap-footer { 
+            margin-top: 50px; font-size: 1rem; color: var(--primary); 
+            border-top: 1px solid rgba(126, 16, 131, 0.2); padding-top: 25px;
+            display: flex; justify-content: space-between; align-items: center;
+            position: relative; z-index: 2; font-weight: 600;
+        }
+        .cap-logo-sm { font-family: 'Montserrat'; font-weight: 700; letter-spacing: 1px; }
 
         /* --- MODAL --- */
         .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(45, 27, 54, 0.6); backdrop-filter: blur(8px); z-index: 1000; display: none; justify-content: center; align-items: center; }
@@ -307,27 +374,49 @@
 
     <!-- RESULTS SCREEN -->
     <div id="result-screen" class="screen">
-        <h2 class="result-header">Final Ranking</h2>
+        <h2 class="result-header">Result</h2>
         
         <!-- GENERATED IMAGE DISPLAYS HERE (Auto) -->
         <div id="image-output-area">
-            <div id="gen-status" style="color:#888; font-size:0.9rem; margin-bottom:10px;">Generating certificate...</div>
+            <div id="gen-status" style="color:#888; font-size:0.9rem; margin-bottom:10px;">Creating certificate...</div>
             <img id="generated-img" alt="Ranking Certificate">
             <div class="save-instruction">👆 Long press to save to Photos</div>
         </div>
 
-        <div class="result-container" id="result-list"></div>
-        
+        <!-- SHARE BUTTONS -->
         <div class="actions-container">
-            <button class="btn-action btn-save" onclick="regenerateImage()">📸 Regenerate Image</button>
-            <button class="btn-action btn-share" onclick="shareTwitter()">🐦 Share on X</button>
+            <button class="btn-action btn-x" onclick="shareX()">
+                <span>✖</span> Post on X
+            </button>
+            <button class="btn-action btn-threads" onclick="shareThreads()">
+                <span>@</span> Threads
+            </button>
+            <button class="btn-action btn-system" onclick="shareNative()">
+                <span>🔗</span> Share / Copy
+            </button>
         </div>
+
+        <!-- SECTION HEADER -->
+        <div class="section-header">All Ranking</div>
+
+        <div class="result-container" id="result-list"></div>
 
         <div class="restart-container">
             <button class="btn-restart" onclick="restartSorter()">Sort Again</button>
         </div>
     </div>
 
+</div>
+
+<!-- PREMIUM CAPTURE NODE (Hidden behind content via Fixed positioning) -->
+<div id="capture-container">
+    <div class="cap-header">NOGIZAKA46</div>
+    <div class="cap-sub">Top 5 Oshi Member</div>
+    <div id="capture-list"></div>
+    <div class="cap-footer">
+        <span class="cap-logo-sm">N46Sorter</span>
+        <span id="cap-date" style="color:#666; font-weight:400;"></span>
+    </div>
 </div>
 
 <!-- MODAL -->
@@ -638,7 +727,7 @@
             
             // Updated Rank 1 Styles (Larger)
             if (m.rank === 1) {
-                bgStyle = 'background:linear-gradient(to right,#fff,#fffcf0); border:2px solid #d4af37; box-shadow:0 15px 40px rgba(212,175,55,0.2); padding: 25px 30px;';
+                bgStyle = 'background:linear-gradient(to right,#fff,#fffcf0); border:2px solid #d4af37; box-shadow:0 15px 40px rgba(212,175,55,0.2); padding: 40px 30px;';
                 rankColor = '#d4af37';
                 nameColor = '#4a3b10';
                 imgBorder = '#d4af37';
@@ -654,7 +743,7 @@
 
             // Create Row
             const row = document.createElement('div');
-            // Padding logic
+            // Default padding
             let rowPadding = '15px 30px';
             if(m.rank === 1) rowPadding = '40px 30px'; // Much taller for Rank 1
 
@@ -715,8 +804,8 @@
                     
                     // Clean up
                     document.body.removeChild(tempContainer);
-                }).catch(e => {
-                    console.error(e);
+                }).catch(err => {
+                    console.error(err);
                     document.getElementById('gen-status').innerText = "Generation Failed. Try taking a screenshot.";
                     document.body.removeChild(tempContainer);
                 });
@@ -724,23 +813,44 @@
         });
     }
 
-    // Manual Trigger Reuse
-    function regenerateImage() {
-        document.getElementById('generated-img').src = "";
-        document.getElementById('gen-status').style.display = "block";
-        document.getElementById('gen-status').innerText = "Regenerating...";
-        generateResultImage();
-    }
-
-    function shareTwitter() {
-        if(finalTop5.length === 0) return;
+    // Helper for getting text based content for sharing
+    function getShareText() {
+        if(finalTop5.length === 0) return "";
         const topName = finalTop5[0].name;
         const secondName = finalTop5.length > 1 ? finalTop5[1].name : "";
         let text = `My #Nogizaka46 Top 5:\n\n👑 1. ${topName}\n`;
         if(secondName) text += `🥈 2. ${secondName}\n`;
         if(finalTop5[2]) text += `🥉 3. ${finalTop5[2].name}\n`;
-        text += `\nFind your Oshi here:`;
+        text += `\nFind your Oshi here: https://yoursite.com`; // Replace with your URL
+        return text;
+    }
+
+    function shareX() {
+        const text = getShareText();
         window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text), '_blank');
+    }
+
+    function shareThreads() {
+        const text = getShareText();
+        // Threads deep link format
+        window.open("https://www.threads.net/intent/post?text=" + encodeURIComponent(text), '_blank');
+    }
+
+    function shareNative() {
+        const text = getShareText();
+        
+        if (navigator.share) {
+            navigator.share({
+                title: 'Nogizaka46 Sorter Result',
+                text: text,
+                // url: window.location.href 
+            }).catch(console.error);
+        } else {
+            // Fallback: Copy to clipboard
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Result text copied to clipboard!");
+            });
+        }
     }
 
     function restartSorter() {
