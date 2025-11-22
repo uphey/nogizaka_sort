@@ -226,18 +226,22 @@
         .btn-restart { background: linear-gradient(135deg, var(--primary) 0%, #9c27b0 100%); color: white; border: none; padding: 16px 40px; font-size: 1rem; font-weight: 700; border-radius: 50px; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(126, 16, 131, 0.3); display: inline-block; }
         .btn-restart:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(126, 16, 131, 0.4); }
 
-        /* --- PREMIUM CAPTURE CARD (Hidden) --- */
+        /* --- PREMIUM CAPTURE CARD (Mobile Fix: Fixed position but hidden z-index) --- */
         #capture-container {
-            position: absolute; left: -9999px; top: 0;
-            width: 800px; /* 4:5 Ratio Approx */
+            position: fixed; top: 0; left: 0; z-index: -9999; /* Hide behind content */
+            width: 800px; 
             background: linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%);
             padding: 50px; 
             border: 20px solid white; 
             text-align: center;
             font-family: 'Montserrat', sans-serif;
             box-sizing: border-box;
+            visibility: hidden; /* Hide from view but keep renderable */
         }
-        /* Watermark Overlay */
+        
+        /* Make visible during capture via class */
+        #capture-container.capturing { visibility: visible; }
+
         #capture-container::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 60H0L30 0Z' fill='%237e1083' fill-opacity='0.03'/%3E%3C/svg%3E");
@@ -295,7 +299,6 @@
             color: var(--text-dark); flex: 1; text-align: left; padding-left: 25px; 
         }
         
-        /* Capture Score */
         .cap-score {
             font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700;
             color: var(--primary); background: rgba(126, 16, 131, 0.08);
@@ -409,7 +412,7 @@
     </div>
 </div>
 
-<!-- PROFILE MODAL -->
+<!-- MODAL -->
 <div class="modal-backdrop" id="modal" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -659,13 +662,18 @@
         });
     }
 
-    /* --- SAVE IMAGE TO MODAL --- */
+    /* --- SAVE IMAGE PREVIEW --- */
     function saveImage() {
         const capList = document.getElementById('capture-list');
         capList.innerHTML = '';
         
+        // Set Date
         const now = new Date();
         document.getElementById('cap-date').innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        
+        // IMPORTANT: MOBILE FIX - Ensure element is visible for rendering
+        const node = document.getElementById('capture-container');
+        node.style.visibility = 'visible';
         
         finalTop5.forEach(m => {
             let rankClass = '';
@@ -685,20 +693,34 @@
             `;
         });
 
-        const node = document.getElementById('capture-container');
-        
-        // Mobile Fix: Show Modal instead of trying to auto-download
-        html2canvas(node, { 
-            useCORS: true, 
-            scale: 2, 
-            backgroundColor: null 
-        }).then(canvas => {
-            const imgData = canvas.toDataURL();
-            document.getElementById('save-preview').src = imgData;
-            document.getElementById('save-modal').classList.add('active');
-        }).catch(err => {
-            console.error(err);
-            alert("Image generation failed.");
+        // WAIT for images to load
+        const images = Array.from(capList.querySelectorAll('img'));
+        const promises = images.map(img => {
+            if(img.complete) return Promise.resolve();
+            return new Promise(resolve => { 
+                img.onload = resolve; 
+                img.onerror = resolve; // proceed even if error 
+            });
+        });
+
+        Promise.all(promises).then(() => {
+            // Small delay to ensure rendering
+            setTimeout(() => {
+                html2canvas(node, { 
+                    useCORS: true, 
+                    scale: 1.5, // Lower scale for mobile performance
+                    backgroundColor: null 
+                }).then(canvas => {
+                    node.style.visibility = 'hidden'; // Hide again
+                    const imgData = canvas.toDataURL();
+                    document.getElementById('save-preview').src = imgData;
+                    document.getElementById('save-modal').classList.add('active');
+                }).catch(err => {
+                    console.error(err);
+                    node.style.visibility = 'hidden';
+                    alert("Image generation failed.");
+                });
+            }, 300);
         });
     }
 
