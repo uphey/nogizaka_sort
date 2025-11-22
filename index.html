@@ -228,7 +228,7 @@
 
         /* --- PREMIUM CAPTURE CARD (Mobile Fix: Fixed position but hidden z-index) --- */
         #capture-container {
-            position: fixed; top: 0; left: 0; z-index: -9999; /* Hide behind content */
+            position: fixed; top: 0; left: 0; z-index: -9999; 
             width: 800px; 
             background: linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%);
             padding: 50px; 
@@ -236,10 +236,9 @@
             text-align: center;
             font-family: 'Montserrat', sans-serif;
             box-sizing: border-box;
-            visibility: hidden; /* Hide from view but keep renderable */
+            visibility: hidden;
         }
         
-        /* Make visible during capture via class */
         #capture-container.capturing { visibility: visible; }
 
         #capture-container::before {
@@ -327,7 +326,7 @@
         .btn-pinterest { border-color: #e60023; color: #e60023; } .btn-pinterest:hover { background: #e60023; color: white; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(230, 0, 35, 0.3); }
         .btn-youtube { border-color: #ff0000; color: #ff0000; } .btn-youtube:hover { background: #ff0000; color: white; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(255, 0, 0, 0.3); }
 
-        /* --- SAVE MODAL (NEW) --- */
+        /* --- SAVE MODAL --- */
         .save-preview-img { width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 15px; }
         .save-tip { font-size: 0.85rem; color: #666; margin-bottom: 20px; }
     </style>
@@ -390,7 +389,7 @@
         
         <!-- Action Buttons -->
         <div class="actions-container">
-            <button class="btn-action btn-save" onclick="saveImage()">📸 Save Image</button>
+            <button id="btn-save-img" class="btn-action btn-save" onclick="saveImage()">📸 Save Image</button>
             <button class="btn-action btn-share" onclick="shareTwitter()">🐦 Share on X</button>
         </div>
 
@@ -412,7 +411,7 @@
     </div>
 </div>
 
-<!-- MODAL -->
+<!-- PROFILE MODAL -->
 <div class="modal-backdrop" id="modal" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -429,7 +428,7 @@
     </div>
 </div>
 
-<!-- SAVE IMAGE PREVIEW MODAL (NEW) -->
+<!-- SAVE IMAGE PREVIEW MODAL -->
 <div class="modal-backdrop" id="save-modal" onclick="closeSaveModal()">
     <div class="modal-content" onclick="event.stopPropagation()" style="max-width:400px; padding:20px;">
         <div style="text-align:center;">
@@ -662,66 +661,84 @@
         });
     }
 
-    /* --- SAVE IMAGE PREVIEW --- */
-    function saveImage() {
+    /* --- FIXED SAVE IMAGE WITH BASE64 FETCHING --- */
+    async function saveImage() {
+        const btn = document.getElementById('btn-save-img');
+        const originalText = btn.innerText;
+        btn.innerText = "⏳ Generating...";
+        btn.disabled = true;
+
         const capList = document.getElementById('capture-list');
         capList.innerHTML = '';
         
-        // Set Date
         const now = new Date();
         document.getElementById('cap-date').innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         
-        // IMPORTANT: MOBILE FIX - Ensure element is visible for rendering
         const node = document.getElementById('capture-container');
-        node.style.visibility = 'visible';
-        
-        finalTop5.forEach(m => {
+        node.style.visibility = 'visible'; // Make visible for rendering
+
+        // 1. Fetch all images as Base64
+        const promises = finalTop5.map(async (m) => {
+            // High-res proxy URL
+            const proxyUrl = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=200&h=200&fit=cover&output=webp";
+            try {
+                const response = await fetch(proxyUrl);
+                const blob = await response.blob();
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve({ 
+                        ...m, 
+                        base64: reader.result 
+                    });
+                    reader.readAsDataURL(blob);
+                });
+            } catch (e) {
+                console.error("Fetch failed for", m.name, e);
+                return { ...m, base64: m.img }; // Fallback to original URL (might fail CORS)
+            }
+        });
+
+        const loadedMembers = await Promise.all(promises);
+
+        // 2. Build DOM with Base64 images
+        loadedMembers.forEach(m => {
             let rankClass = '';
             if(m.rank === 1) rankClass = 'cap-rank-1';
             else if(m.rank === 2) rankClass = 'cap-rank-2';
             else if(m.rank === 3) rankClass = 'cap-rank-3';
 
-            const proxyImg = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=200&h=200&fit=cover&output=webp";
-
             capList.innerHTML += `
                 <div class="cap-row ${rankClass}">
                     <div class="cap-rank">${m.rank}</div>
-                    <img class="cap-img" src="${proxyImg}" crossorigin="anonymous">
+                    <img class="cap-img" src="${m.base64}">
                     <div class="cap-name">${m.name}</div>
                     <div class="cap-score">${m.score} pts</div>
                 </div>
             `;
         });
 
-        // WAIT for images to load
-        const images = Array.from(capList.querySelectorAll('img'));
-        const promises = images.map(img => {
-            if(img.complete) return Promise.resolve();
-            return new Promise(resolve => { 
-                img.onload = resolve; 
-                img.onerror = resolve; // proceed even if error 
+        // 3. Wait a moment for DOM reflow, then Capture
+        setTimeout(() => {
+            html2canvas(node, { 
+                useCORS: true, 
+                scale: 2, 
+                backgroundColor: null 
+            }).then(canvas => {
+                node.style.visibility = 'hidden';
+                btn.innerText = originalText;
+                btn.disabled = false;
+                
+                const imgData = canvas.toDataURL();
+                document.getElementById('save-preview').src = imgData;
+                document.getElementById('save-modal').classList.add('active');
+            }).catch(err => {
+                console.error(err);
+                node.style.visibility = 'hidden';
+                btn.innerText = originalText;
+                btn.disabled = false;
+                alert("Image generation failed.");
             });
-        });
-
-        Promise.all(promises).then(() => {
-            // Small delay to ensure rendering
-            setTimeout(() => {
-                html2canvas(node, { 
-                    useCORS: true, 
-                    scale: 1.5, // Lower scale for mobile performance
-                    backgroundColor: null 
-                }).then(canvas => {
-                    node.style.visibility = 'hidden'; // Hide again
-                    const imgData = canvas.toDataURL();
-                    document.getElementById('save-preview').src = imgData;
-                    document.getElementById('save-modal').classList.add('active');
-                }).catch(err => {
-                    console.error(err);
-                    node.style.visibility = 'hidden';
-                    alert("Image generation failed.");
-                });
-            }, 300);
-        });
+        }, 500);
     }
 
     function closeSaveModal() {
