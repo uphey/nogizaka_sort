@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
     <title>Nogizaka46 Premium Sorter</title>
     
@@ -226,42 +226,23 @@
         .btn-restart { background: linear-gradient(135deg, var(--primary) 0%, #9c27b0 100%); color: white; border: none; padding: 16px 40px; font-size: 1rem; font-weight: 700; border-radius: 50px; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(126, 16, 131, 0.3); display: inline-block; }
         .btn-restart:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(126, 16, 131, 0.4); }
 
-        /* --- CAPTURE CARD (Fixed for iOS) --- */
-        /* We place it top:0 left:0 but behind a super high z-index overlay during generation */
-        #capture-container {
-            position: fixed; top: 0; left: 0; 
-            width: 800px; /* 4:5 Ratio */
+        /* --- DYNAMIC CAPTURE STYLES --- */
+        /* These styles will be injected into the generated image container */
+        .capture-wrapper {
+            width: 800px; /* 4:5 Ratio Target Width */
             background: linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%);
-            padding: 50px; 
-            border: 20px solid white; 
+            padding: 60px;
+            border: 20px solid white;
             text-align: center;
             font-family: 'Montserrat', sans-serif;
             box-sizing: border-box;
-            
-            /* Hiding strategy for iOS */
-            z-index: -9999; 
-            visibility: hidden; 
-            transform: translate3d(0,0,0); /* Force GPU */
+            position: relative;
+            /* Ensure backgrounds print */
+            -webkit-print-color-adjust: exact;
         }
         
-        /* When active, bring it to viewport but under a white loading screen */
-        #capture-container.active {
-            visibility: visible;
-            z-index: 9998; /* High but under the white overlay */
-        }
-
-        /* Loading Overlay for Generation */
-        #gen-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: white; z-index: 9999;
-            display: none; justify-content: center; align-items: center;
-            flex-direction: column;
-        }
-        #gen-overlay.active { display: flex; }
-
-        /* Watermark Overlay */
-        #capture-container::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        .capture-watermark {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 60H0L30 0Z' fill='%237e1083' fill-opacity='0.03'/%3E%3C/svg%3E");
             opacity: 0.5; pointer-events: none;
         }
@@ -276,7 +257,6 @@
             margin-bottom: 40px; position: relative; z-index: 2; font-weight: 600;
         }
 
-        /* Capture Rows */
         .cap-row {
             display: flex; align-items: center;
             background: rgba(255,255,255,0.95);
@@ -296,10 +276,7 @@
         .cap-row.cap-rank-1 .cap-rank { color: var(--gold); font-size: 3rem; }
         .cap-row.cap-rank-1 .cap-img { border-color: var(--gold); width: 90px; height: 90px; }
         .cap-row.cap-rank-1 .cap-name { font-size: 1.8rem; color: #4a3b10; }
-        .cap-row.cap-rank-1::after {
-            content: '👑'; position: absolute; right: 30px; top: -10px; font-size: 3rem; opacity: 0.15; transform: rotate(15deg);
-        }
-
+        
         .cap-row.cap-rank-2 { border-left: 8px solid var(--silver); }
         .cap-row.cap-rank-3 { border-left: 8px solid var(--bronze); }
 
@@ -354,12 +331,6 @@
 <div class="bg-animate"></div>
 <div class="bg-pattern"></div>
 
-<!-- GENERATION OVERLAY (White Screen) -->
-<div id="gen-overlay">
-    <div class="status-badge"><span class="dot"></span> Rendering Image...</div>
-    <p style="color:#666; font-size:0.9rem;">Please wait</p>
-</div>
-
 <header>
     <div class="logo-container">
         <div class="logo">Nogizaka</div>
@@ -408,27 +379,20 @@
     <!-- RESULTS SCREEN -->
     <div id="result-screen" class="screen">
         <h2 class="result-header">Final Ranking</h2>
+        
         <div class="result-container" id="result-list"></div>
+        
+        <!-- Action Buttons -->
         <div class="actions-container">
             <button id="btn-save-img" class="btn-action btn-save" onclick="saveImage()">📸 Save Image</button>
             <button class="btn-action btn-share" onclick="shareTwitter()">🐦 Share on X</button>
         </div>
+
         <div class="restart-container">
             <button class="btn-restart" onclick="restartSorter()">Sort Again</button>
         </div>
     </div>
 
-</div>
-
-<!-- PREMIUM CAPTURE NODE (Initially hidden, moved on-screen during capture) -->
-<div id="capture-container">
-    <div class="cap-header">NOGIZAKA</div>
-    <div class="cap-sub">Official Top 5 Ranking</div>
-    <div id="capture-list"></div>
-    <div class="cap-footer">
-        <span class="cap-logo-sm">Nogizaka46 Sorter</span>
-        <span id="cap-date" style="color:#666; font-weight:400;"></span>
-    </div>
 </div>
 
 <!-- PROFILE MODAL -->
@@ -681,27 +645,33 @@
         });
     }
 
-    /* --- FIXED IOS SAVE FUNCTION --- */
+    /* --- DYNAMIC CAPTURE FUNCTION (MOBILE SAFE) --- */
     async function saveImage() {
         const btn = document.getElementById('btn-save-img');
+        const originalText = btn.innerText;
+        btn.innerText = "⏳ Generating...";
         btn.disabled = true;
-        document.getElementById('gen-overlay').classList.add('active');
 
-        const capList = document.getElementById('capture-list');
-        capList.innerHTML = '';
+        // 1. CREATE DYNAMIC CONTAINER
+        let container = document.createElement('div');
+        container.className = 'capture-wrapper';
+        container.style.position = 'absolute';
+        container.style.top = '0';
+        container.style.left = '-9999px';
+        container.style.zIndex = '-1';
         
-        const now = new Date();
-        document.getElementById('cap-date').innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        
-        const node = document.getElementById('capture-container');
-        
-        // SHOW NODE ON SCREEN (iOS Fix)
-        node.classList.add('capturing');
+        const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-        // 1. Pre-load Base64 Images
-        const promises = finalTop5.map(async (m) => {
-            // Use output=jpg for maximum compatibility
-            const proxyUrl = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=200&h=200&fit=cover&output=jpg";
+        let html = `
+            <div class="capture-watermark"></div>
+            <div class="cap-header">NOGIZAKA</div>
+            <div class="cap-sub">Official Top 5 Ranking</div>
+        `;
+
+        // 2. LOAD IMAGES (PRE-FETCH BASE64)
+        // We need to convert images to Base64 so HTML2Canvas doesn't taint them.
+        const memberPromises = finalTop5.map(async (m) => {
+            const proxyUrl = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=200&h=200&fit=cover&output=webp";
             try {
                 const response = await fetch(proxyUrl);
                 const blob = await response.blob();
@@ -711,21 +681,21 @@
                     reader.readAsDataURL(blob);
                 });
             } catch (e) {
-                // Fallback if fetch fails
-                return { ...m, base64: m.img }; 
+                console.error(e);
+                return { ...m, base64: m.img }; // Fallback
             }
         });
 
-        const loadedMembers = await Promise.all(promises);
+        const membersWithData = await Promise.all(memberPromises);
 
-        // 2. Build DOM
-        loadedMembers.forEach(m => {
+        // 3. BUILD ROWS
+        membersWithData.forEach(m => {
             let rankClass = '';
             if(m.rank === 1) rankClass = 'cap-rank-1';
             else if(m.rank === 2) rankClass = 'cap-rank-2';
             else if(m.rank === 3) rankClass = 'cap-rank-3';
 
-            capList.innerHTML += `
+            html += `
                 <div class="cap-row ${rankClass}">
                     <div class="cap-rank">${m.rank}</div>
                     <img class="cap-img" src="${m.base64}">
@@ -735,32 +705,41 @@
             `;
         });
 
-        // 3. Capture
-        setTimeout(() => {
-            html2canvas(node, { 
-                scale: 1.5, // Lower scale for iOS memory safety
-                useCORS: true, 
-                backgroundColor: null,
-                logging: false
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/jpeg', 0.9);
-                
-                // Hide overlay and node
-                document.getElementById('gen-overlay').classList.remove('active');
-                node.classList.remove('capturing');
-                btn.disabled = false;
+        html += `
+            <div class="cap-footer">
+                <span class="cap-logo-sm">Nogizaka46 Sorter</span>
+                <span>${dateStr}</span>
+            </div>
+        `;
 
-                // Show Result Modal
+        container.innerHTML = html;
+        document.body.appendChild(container);
+
+        // 4. WAIT FOR DOM RENDER & CAPTURE
+        // Even with base64, we give the browser a moment to paint the DOM
+        setTimeout(() => {
+            html2canvas(container, { 
+                useCORS: true, 
+                scale: 2, 
+                backgroundColor: null 
+            }).then(canvas => {
+                // Cleanup
+                document.body.removeChild(container);
+                btn.innerText = originalText;
+                btn.disabled = false;
+                
+                // Show Modal
+                const imgData = canvas.toDataURL();
                 document.getElementById('save-preview').src = imgData;
                 document.getElementById('save-modal').classList.add('active');
             }).catch(err => {
                 console.error(err);
-                document.getElementById('gen-overlay').classList.remove('active');
-                node.classList.remove('capturing');
+                document.body.removeChild(container);
+                btn.innerText = originalText;
                 btn.disabled = false;
-                alert("Generation failed on this device.");
+                alert("Failed to generate image.");
             });
-        }, 800); // Wait for DOM paint
+        }, 500);
     }
 
     function closeSaveModal() {
