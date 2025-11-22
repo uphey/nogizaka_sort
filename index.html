@@ -216,50 +216,27 @@
         .res-gen { font-size: 0.75rem; color: #888; margin-top: 4px; font-family: sans-serif; font-weight: 500; }
         .res-score { font-size: 0.85rem; font-weight: 700; color: var(--primary); background: rgba(126, 16, 131, 0.05); padding: 5px 12px; border-radius: 15px; margin-right: 10px; }
 
+        /* --- GENERATED IMAGE AREA --- */
+        .generated-wrapper { width: 100%; max-width: 550px; margin: 0 auto 30px auto; display: none; animation: slideDown 0.5s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .generated-img { width: 100%; border-radius: 16px; border: 4px solid white; box-shadow: 0 10px 40px rgba(0,0,0,0.15); }
+        .loading-gen { font-size: 0.9rem; font-weight: 600; color: var(--primary); margin-bottom: 20px; display: none; text-align: center; }
+        .save-hint { text-align: center; font-size: 0.85rem; color: #666; margin-top: 10px; background: rgba(255,255,255,0.6); display: inline-block; padding: 5px 15px; border-radius: 20px; }
+
         /* --- ACTIONS & RESTART --- */
         .actions-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 40px; }
         .btn-action { padding: 12px 24px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: 0.3s; border: none; color: white; display: flex; align-items: center; gap: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .btn-save { background: #333; } .btn-save:hover { background: #000; transform: translateY(-2px); }
         .btn-share { background: #1DA1F2; } .btn-share:hover { background: #0c85d0; transform: translateY(-2px); }
 
         .restart-container { padding-bottom: 100px; text-align: center; }
         .btn-restart { background: linear-gradient(135deg, var(--primary) 0%, #9c27b0 100%); color: white; border: none; padding: 16px 40px; font-size: 1rem; font-weight: 700; border-radius: 50px; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(126, 16, 131, 0.3); display: inline-block; }
         .btn-restart:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(126, 16, 131, 0.4); }
 
-        /* --- GENERATED IMAGE DISPLAY AREA --- */
-        #generated-result {
-            margin-bottom: 40px;
-            display: none; /* Hidden until generated */
-            animation: slideDown 0.5s ease;
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto 40px auto;
-        }
-        #generated-img {
-            width: 100%;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            border: 4px solid white;
-        }
-        .save-hint {
-            text-align: center; color: var(--primary); font-size: 0.85rem; font-weight: 600;
-            margin-top: 10px; background: rgba(255,255,255,0.5); padding: 5px 15px; border-radius: 20px;
-            display: inline-block;
-        }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- HIDDEN CAPTURE WRAPPER (VISIBLE TO DOM, HIDDEN TO USER) --- */
-        #capture-wrapper { 
-            position: absolute; 
-            top: 0; left: 0; 
-            height: 0; 
-            overflow: hidden; 
-            /* Keeping it in flow but invisible avoids rendering issues on some mobile browsers */
-            z-index: -1; 
-        }
-
+        /* --- PREMIUM CAPTURE CARD (Hidden Wrapper) --- */
+        #capture-wrapper { height: 0; overflow: hidden; position: absolute; top: 0; left: 0; z-index: -100; }
         #capture-container {
-            width: 800px; /* 4:5 Ratio Approx */
+            width: 800px; /* 4:5 Ratio */
             background: linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%);
             padding: 50px; 
             border: 20px solid white; 
@@ -374,20 +351,18 @@
     <div id="result-screen" class="screen">
         <h2 class="result-header">Final Ranking</h2>
         
-        <div class="result-container" id="result-list"></div>
-        
-        <!-- GENERATED IMAGE APPEARS HERE AUTOMATICALLY -->
-        <div id="generated-result">
-            <div style="text-align:center; margin-bottom:8px; opacity:0.7; font-size:0.8rem;">Generating certificate...</div>
-            <img id="generated-img" src="" alt="Generated Ranking">
+        <!-- GENERATED IMAGE (Auto Inserted Here) -->
+        <div id="gen-loading" class="loading-gen">✨ Generating Certificate...</div>
+        <div class="generated-wrapper" id="generated-wrapper">
+            <img id="generated-img" class="generated-img" src="" alt="Ranking Certificate">
             <div style="text-align:center;">
-                <span class="save-hint">👆 Long press image to save</span>
+                <span class="save-hint">👆 Long press to save</span>
             </div>
         </div>
 
-        <!-- Action Buttons (NOW FOR DOWNLOAD/SHARE) -->
+        <div class="result-container" id="result-list"></div>
+        
         <div class="actions-container">
-            <button class="btn-action btn-save" onclick="downloadGeneratedImage()">📥 Download Image</button>
             <button class="btn-action btn-share" onclick="shareTwitter()">🐦 Share on X</button>
         </div>
 
@@ -398,7 +373,7 @@
 
 </div>
 
-<!-- HIDDEN WRAPPER FOR CAPTURE (ALWAYS IN DOM FOR RENDERING) -->
+<!-- HIDDEN WRAPPER FOR CAPTURE -->
 <div id="capture-wrapper">
     <div id="capture-container">
         <div class="cap-header">NOGIZAKA</div>
@@ -481,7 +456,6 @@
             document.getElementById('start-btn').disabled = false;
             document.getElementById('demo-btn').disabled = false;
             
-            // Global proxy usage
             members.forEach(m => {
                 m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
             });
@@ -636,7 +610,6 @@
             else if (rank === 3) rowClass += ' rank-3';
 
             div.className = rowClass;
-            
             let delay = 0;
             if (rank === 1) delay = 100;
             else if (rank === 2) delay = 800;
@@ -658,29 +631,26 @@
             c.appendChild(div);
         });
 
-        // TRIGGER AUTO IMAGE GENERATION
-        setTimeout(generateResultImage, 1500); // Wait slightly for DOM/Images
+        // AUTO GENERATE IMAGE
+        prepareCaptureCard();
+        generateImageAuto();
     }
 
-    /* --- AUTOMATIC IMAGE GENERATOR (FIXED FOR MOBILE) --- */
-    async function generateResultImage() {
+    function prepareCaptureCard() {
         const capList = document.getElementById('capture-list');
         capList.innerHTML = '';
         
         const now = new Date();
         document.getElementById('cap-date').innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         
-        // 1. Populate the hidden capture container
         finalTop5.forEach(m => {
             let rankClass = '';
             if(m.rank === 1) rankClass = 'cap-rank-1';
             else if(m.rank === 2) rankClass = 'cap-rank-2';
             else if(m.rank === 3) rankClass = 'cap-rank-3';
 
-            // Ensure 1:1 square crop via proxy
             const proxyImg = m.img.replace("w=400", "w=300&h=300&fit=cover");
 
-            // Important: CrossOrigin attribute inside HTML string
             capList.innerHTML += `
                 <div class="cap-row ${rankClass}">
                     <div class="cap-rank">${m.rank}</div>
@@ -690,55 +660,42 @@
                 </div>
             `;
         });
+    }
+
+    function generateImageAuto() {
+        document.getElementById('gen-loading').style.display = 'block';
+        document.getElementById('generated-wrapper').style.display = 'none';
 
         const node = document.getElementById('capture-container');
         
-        // 2. Wait for images inside capture node to load
-        const images = node.querySelectorAll('img');
-        const promises = Array.from(images).map(img => {
+        // Ensure images inside capture container are loaded
+        const images = Array.from(node.querySelectorAll('img'));
+        const promises = images.map(img => {
             if (img.complete) return Promise.resolve();
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 img.onload = resolve;
-                img.onerror = resolve; // Proceed even if failed
+                img.onerror = resolve; // Resolve even on error to proceed
             });
         });
 
-        await Promise.all(promises);
-
-        // 3. Generate Canvas
-        try {
-            const canvas = await html2canvas(node, { 
-                useCORS: true, 
-                scale: 2, 
-                backgroundColor: null,
-                allowTaint: false
-            });
-            
-            // 4. Place in result page
-            const dataUrl = canvas.toDataURL("image/png");
-            const imgEl = document.getElementById('generated-img');
-            imgEl.src = dataUrl;
-            document.getElementById('generated-result').style.display = "block";
-            
-            // Remove loading text
-            document.querySelector('#generated-result div:first-child').style.display = 'none';
-
-        } catch (err) {
-            console.error("Generation Failed:", err);
-            document.querySelector('#generated-result div:first-child').innerText = "Image generation failed (Security Restriction)";
-        }
-    }
-
-    function downloadGeneratedImage() {
-        const img = document.getElementById('generated-img');
-        if(!img.src || img.src.length < 100) return; // Empty
-        
-        const link = document.createElement('a');
-        link.download = `nogi_top5_${Date.now()}.png`;
-        link.href = img.src;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        Promise.all(promises).then(() => {
+            // Slight delay to ensure rendering stability
+            setTimeout(() => {
+                html2canvas(node, { 
+                    useCORS: true, 
+                    scale: 2, 
+                    backgroundColor: null 
+                }).then(canvas => {
+                    const dataUrl = canvas.toDataURL("image/png");
+                    document.getElementById('generated-img').src = dataUrl;
+                    document.getElementById('gen-loading').style.display = 'none';
+                    document.getElementById('generated-wrapper').style.display = 'block';
+                }).catch(err => {
+                    console.error(err);
+                    document.getElementById('gen-loading').innerText = "⚠️ Image Generation Failed";
+                });
+            }, 500);
+        });
     }
 
     function shareTwitter() {
@@ -756,12 +713,9 @@
         queue = []; history = []; currentMerge = null; battlesCount = 0;
         document.getElementById('result-screen').classList.remove('active');
         document.getElementById('result-list').innerHTML = '';
+        document.getElementById('generated-wrapper').style.display = 'none';
         document.getElementById('progress-fill').style.width = '0%';
         document.getElementById('progress-txt').innerText = '0%';
-        
-        // Hide image result
-        document.getElementById('generated-result').style.display = 'none';
-        
         document.getElementById('start-screen').classList.add('active');
         initWall();
     }
