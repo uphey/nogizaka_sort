@@ -75,6 +75,7 @@
         .container {
             flex: 1; width: 100%; max-width: 1000px; margin: 0 auto; padding: 20px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
+            position: relative; z-index: 1; /* Ensure content is above capture card */
         }
 
         .screen {
@@ -226,33 +227,24 @@
         .btn-restart { background: linear-gradient(135deg, var(--primary) 0%, #9c27b0 100%); color: white; border: none; padding: 16px 40px; font-size: 1rem; font-weight: 700; border-radius: 50px; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(126, 16, 131, 0.3); display: inline-block; }
         .btn-restart:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(126, 16, 131, 0.4); }
 
-        /* --- MOBILE-SAFE CAPTURE CONTAINER --- */
-        /* This container is inserted into the DOM but hidden from user view */
-        #capture-wrapper-hidden {
-            position: absolute;
-            top: 0; left: 0;
-            width: 1px; height: 1px;
-            overflow: hidden; /* Hide content from user */
-            pointer-events: none;
-            z-index: -1000;
-        }
-
-        /* The actual card style inside the hidden wrapper */
-        .capture-card {
-            width: 800px; /* 4:5 Ratio Target */
+        /* --- PREMIUM CAPTURE CARD (FIXED FOR MOBILE) --- */
+        #capture-container {
+            /* Instead of far off-screen, we put it Fixed behind everything. */
+            position: fixed; top: 0; left: 0;
+            width: 800px; /* 4:5 Ratio */
+            z-index: -5000; /* Behind the background */
+            /* We must NOT use display:none or visibility:hidden or html2canvas fails */
+            
             background: linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%);
-            padding: 60px;
-            border: 20px solid white;
+            padding: 50px; 
+            border: 20px solid white; 
             text-align: center;
             font-family: 'Montserrat', sans-serif;
             box-sizing: border-box;
-            position: relative;
-            /* Force background printing */
-            -webkit-print-color-adjust: exact;
         }
-        
-        .capture-watermark {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        /* Watermark Overlay */
+        #capture-container::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 60H0L30 0Z' fill='%237e1083' fill-opacity='0.03'/%3E%3C/svg%3E");
             opacity: 0.5; pointer-events: none;
         }
@@ -267,6 +259,7 @@
             margin-bottom: 40px; position: relative; z-index: 2; font-weight: 600;
         }
 
+        /* Capture Rows */
         .cap-row {
             display: flex; align-items: center;
             background: rgba(255,255,255,0.95);
@@ -277,6 +270,7 @@
             position: relative; z-index: 2;
         }
 
+        /* Rank 1 Gold Card */
         .cap-row.cap-rank-1 {
             background: linear-gradient(to right, #fff, #fffcf0);
             border: 2px solid var(--gold);
@@ -334,9 +328,10 @@
         .btn-pinterest { border-color: #e60023; color: #e60023; } .btn-pinterest:hover { background: #e60023; color: white; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(230, 0, 35, 0.3); }
         .btn-youtube { border-color: #ff0000; color: #ff0000; } .btn-youtube:hover { background: #ff0000; color: white; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(255, 0, 0, 0.3); }
 
-        /* --- SAVE MODAL --- */
-        .save-preview-img { width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 15px; }
-        .save-tip { font-size: 0.85rem; color: #666; margin-bottom: 20px; }
+        /* --- IMAGE RESULT PREVIEW MODAL --- */
+        .image-preview-img { width: 100%; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .preview-instruction { text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 10px; }
+
     </style>
 </head>
 <body>
@@ -397,7 +392,7 @@
         
         <!-- Action Buttons -->
         <div class="actions-container">
-            <button id="btn-save-img" class="btn-action btn-save" onclick="saveImage()">📸 Save Image</button>
+            <button class="btn-action btn-save" onclick="saveImage()">📸 Save Image</button>
             <button class="btn-action btn-share" onclick="shareTwitter()">🐦 Share on X</button>
         </div>
 
@@ -408,7 +403,18 @@
 
 </div>
 
-<!-- PROFILE MODAL -->
+<!-- PREMIUM CAPTURE NODE (Hidden behind content via Fixed positioning) -->
+<div id="capture-container">
+    <div class="cap-header">NOGIZAKA</div>
+    <div class="cap-sub">Official Top 5 Ranking</div>
+    <div id="capture-list"></div>
+    <div class="cap-footer">
+        <span class="cap-logo-sm">Nogizaka46 Sorter</span>
+        <span id="cap-date" style="color:#666; font-weight:400;"></span>
+    </div>
+</div>
+
+<!-- MEMBER INFO MODAL -->
 <div class="modal-backdrop" id="modal" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -425,14 +431,16 @@
     </div>
 </div>
 
-<!-- SAVE IMAGE PREVIEW MODAL -->
+<!-- SAVE IMAGE PREVIEW MODAL (MOBILE FIX) -->
 <div class="modal-backdrop" id="save-modal" onclick="closeSaveModal()">
-    <div class="modal-content" onclick="event.stopPropagation()" style="max-width:400px; padding:20px;">
-        <div style="text-align:center;">
-            <h3 style="font-family:'Bodoni Moda'; color:var(--primary); margin-bottom:15px;">Your Ranking</h3>
-            <img id="save-preview" class="save-preview-img" src="">
-            <p class="save-tip">Long press the image to save to your Photos.</p>
-            <button class="btn-main" onclick="closeSaveModal()">Close</button>
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 400px;">
+        <div class="modal-header">
+            <button class="close-btn" onclick="closeSaveModal()">&times;</button>
+            <h3 style="font-family:'Bodoni Moda'; color:var(--primary); margin-bottom:0;">Your Image</h3>
+        </div>
+        <div class="modal-body" style="padding-top:10px;">
+            <p class="preview-instruction">Long press the image to save it to your phone.</p>
+            <img id="final-save-img" class="image-preview-img" src="" alt="Ranking">
         </div>
     </div>
 </div>
@@ -489,7 +497,14 @@
             status.innerHTML = `<span class="dot"></span> ${members.length} Members Loaded`;
             document.getElementById('start-btn').disabled = false;
             document.getElementById('demo-btn').disabled = false;
+            
+            // Global proxy usage
+            members.forEach(m => {
+                m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
+            });
+
             initWall();
+
         } catch (e) {
             status.innerHTML = `⚠ Fetch Error. Using backup data.`;
             loadBackup();
@@ -526,6 +541,9 @@
             {name: "Endo Sakura", gen: "4th Gen", date:"2001.10.03", img: IMG_BASE+"endo_sakura.jpg"},
             {name: "Yoda Yuuki", gen: "3rd Gen", date:"2000.05.05", img: IMG_BASE+"yoda_yuuki.jpg"}
         ];
+        members.forEach(m => {
+            m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
+        });
     }
 
     function startSort() {
@@ -658,97 +676,63 @@
         });
     }
 
-    /* --- MOBILE-SAFE DYNAMIC RENDERER --- */
-    async function saveImage() {
-        const btn = document.getElementById('btn-save-img');
-        const originalText = btn.innerText;
-        btn.innerText = "⏳ Generating...";
-        btn.disabled = true;
-
-        // Create hidden wrapper
-        const wrapper = document.createElement('div');
-        wrapper.id = 'capture-wrapper-hidden';
+    /* --- MOBILE COMPATIBLE SAVE --- */
+    function saveImage() {
+        const capList = document.getElementById('capture-list');
+        capList.innerHTML = '';
         
-        const card = document.createElement('div');
-        card.className = 'capture-card';
+        const now = new Date();
+        document.getElementById('cap-date').innerText = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         
-        const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
-        // Build HTML
-        let html = `
-            <div class="capture-watermark"></div>
-            <div class="cap-header">NOGIZAKA</div>
-            <div class="cap-sub">Official Top 5 Ranking</div>
-        `;
-
-        // Pre-fetch images
-        const memberPromises = finalTop5.map(async (m) => {
-            const proxyUrl = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=200&h=200&fit=cover&output=webp";
-            try {
-                const response = await fetch(proxyUrl);
-                const blob = await response.blob();
-                return new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve({ ...m, base64: reader.result });
-                    reader.readAsDataURL(blob);
-                });
-            } catch (e) {
-                return { ...m, base64: m.img };
-            }
-        });
-
-        const membersWithData = await Promise.all(memberPromises);
-
-        membersWithData.forEach(m => {
+        finalTop5.forEach(m => {
             let rankClass = '';
             if(m.rank === 1) rankClass = 'cap-rank-1';
             else if(m.rank === 2) rankClass = 'cap-rank-2';
             else if(m.rank === 3) rankClass = 'cap-rank-3';
 
-            html += `
+            // Ensure square high-res image using &fit=cover
+            const proxyImg = m.img.replace("w=400", "w=300&h=300&fit=cover");
+
+            capList.innerHTML += `
                 <div class="cap-row ${rankClass}">
                     <div class="cap-rank">${m.rank}</div>
-                    <img class="cap-img" src="${m.base64}">
+                    <img class="cap-img" src="${proxyImg}" crossorigin="anonymous">
                     <div class="cap-name">${m.name}</div>
                     <div class="cap-score">${m.score} pts</div>
                 </div>
             `;
         });
 
-        html += `
-            <div class="cap-footer">
-                <span class="cap-logo-sm">Nogizaka46 Sorter</span>
-                <span>${dateStr}</span>
-            </div>
-        `;
+        const node = document.getElementById('capture-container');
+        
+        // Use html2canvas
+        html2canvas(node, { 
+            useCORS: true, 
+            scale: 2, 
+            backgroundColor: null 
+        }).then(canvas => {
+            const dataUrl = canvas.toDataURL("image/png");
+            
+            // 1. Attempt Auto-Download (Desktop/Android)
+            const link = document.createElement('a');
+            link.download = `nogi_top5_${Date.now()}.png`;
+            link.href = dataUrl;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
 
-        card.innerHTML = html;
-        wrapper.appendChild(card);
-        document.body.appendChild(wrapper);
+            // 2. Show Modal fallback for iOS
+            openSaveModal(dataUrl);
 
-        // Capture
-        setTimeout(() => {
-            html2canvas(card, { 
-                useCORS: true, 
-                scale: 2, 
-                backgroundColor: null,
-                logging: false
-            }).then(canvas => {
-                document.body.removeChild(wrapper);
-                btn.innerText = originalText;
-                btn.disabled = false;
-                
-                const imgData = canvas.toDataURL();
-                document.getElementById('save-preview').src = imgData;
-                document.getElementById('save-modal').classList.add('active');
-            }).catch(err => {
-                console.error(err);
-                if(document.body.contains(wrapper)) document.body.removeChild(wrapper);
-                btn.innerText = originalText;
-                btn.disabled = false;
-                alert("Failed to generate image.");
-            });
-        }, 500);
+        }).catch(err => {
+            console.error(err);
+            alert("Error generating image. Please try again.");
+        });
+    }
+
+    function openSaveModal(dataUrl) {
+        document.getElementById('final-save-img').src = dataUrl;
+        document.getElementById('save-modal').classList.add('active');
     }
 
     function closeSaveModal() {
@@ -790,9 +774,7 @@
         document.getElementById('modal').classList.add('active');
     }
     function closeModal() { document.getElementById('modal').classList.remove('active'); }
-    function handleError(img) { 
-        img.src = "https://placehold.co/400x533/e0dce0/7e1083?text=No+Image";
-    }
+    function handleError(img) { img.style.opacity = 0.5; }
 
     init();
 </script>
