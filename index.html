@@ -249,8 +249,8 @@
         /* Tilted Marquee Container */
         .marquee-tilt {
             width: 100vw;
-            margin-left: -50vw;
-            left: 50%;
+            margin-left: calc(-50vw + 50%);
+            left: 0;
             position: relative;
             height: 160px;
             background: rgba(255, 255, 255, 0.6);
@@ -262,10 +262,12 @@
             display: flex;
             align-items: center;
             overflow: hidden;
-            /* Hide overflow strictly */
             -webkit-overflow-scrolling: touch;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
             z-index: 10;
+            /* Fix for mobile rendering */
+            transform-style: preserve-3d;
+            will-change: transform;
         }
 
         /* FIX: Marquee Animation Logic */
@@ -275,9 +277,15 @@
             padding: 0 20px;
             /* Force width to be intrinsic so flex doesn't shrink it */
             width: max-content;
+            min-width: 200%;
+            /* Ensure it's wide enough */
             animation: scrollWall 50s linear infinite;
             /* Optimize for mobile */
             will-change: transform;
+            transform: translate3d(0, 0, 0);
+            /* Force GPU */
+            backface-visibility: hidden;
+            perspective: 1000px;
         }
 
         /* FIX: Only pause on hover if device has a hover state (mouse) */
@@ -398,11 +406,11 @@
 
         @keyframes scrollWall {
             0% {
-                transform: translateX(0);
+                transform: translate3d(0, 0, 0);
             }
 
             100% {
-                transform: translateX(-50%);
+                transform: translate3d(-50%, 0, 0);
             }
         }
 
@@ -1704,6 +1712,11 @@
                 img.onerror = function () { this.style.display = 'none' };
                 track.appendChild(img);
             });
+
+            // Force animation restart
+            track.style.animation = 'none';
+            track.offsetHeight; /* trigger reflow */
+            track.style.animation = 'scrollWall 50s linear infinite';
         }
 
         function toTitleCase(str) {
