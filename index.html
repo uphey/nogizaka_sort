@@ -36,6 +36,10 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        html {
+            overflow-x: hidden;
+        }
+
         body {
             font-family: 'Montserrat', 'Noto Sans JP', sans-serif;
             color: var(--text-dark);
@@ -155,6 +159,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            overflow-x: hidden;
         }
 
         .screen {
@@ -257,6 +262,7 @@
             display: flex;
             align-items: center;
             overflow: hidden;
+            -webkit-overflow-scrolling: touch;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
             z-index: 10;
         }
@@ -266,9 +272,6 @@
             gap: 20px;
             padding: 0 20px;
             animation: scrollWall 50s linear infinite;
-            will-change: transform;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
         }
 
         .marquee-content:hover {
@@ -400,8 +403,16 @@
 
             .marquee-tilt {
                 height: 120px;
-                transform: rotate(-3deg) scale(1.1);
+                transform: rotate(-2deg);
                 margin-bottom: 30px;
+                width: 100vw;
+                margin-left: calc(-50vw + 50%);
+                left: 0;
+            }
+
+            .marquee-content {
+                animation-duration: 40s;
+                will-change: transform;
             }
 
             .wall-img {
