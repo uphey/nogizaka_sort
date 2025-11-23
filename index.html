@@ -106,10 +106,99 @@
             text-align: center;
             backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-            position: sticky;
+            position: fixed;
+            width: 100%;
+            left: 0;
             top: 0;
             z-index: 50;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        /* --- INITIAL LOADER --- */
+        /* --- INITIAL LOADER --- */
+        #initial-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: linear-gradient(135deg, #fff 0%, #f8f0fa 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s ease, visibility 0.6s;
+        }
+
+        .loader-content {
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .loader-content .logo {
+            margin-bottom: 5px;
+        }
+
+        .loader-tri {
+            color: var(--primary);
+            font-size: 0.8em;
+            vertical-align: super;
+            margin-left: 2px;
+        }
+
+        .logo-triangle-prefix {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--primary), #b042b4);
+            color: white;
+            font-family: 'Montserrat';
+            padding: 0px 15px 0px 10px;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+            transform: skew(-10deg) scale(0.9);
+            margin-right: -2px;
+            font-style: italic;
+        }
+
+        .loader-sub {
+            font-size: 0.9rem;
+            color: #888;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+        }
+
+        .loader-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(126, 16, 131, 0.1);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            margin: 0 auto 15px;
+        }
+
+        .loader-text {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 500;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #initial-loader.loaded {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
         }
 
         #start-screen.active~header,
@@ -120,18 +209,14 @@
         .logo-container {
             display: inline-block;
             position: relative;
-            padding-right: 30px;
         }
 
         .logo {
             font-family: 'Bodoni Moda', serif;
             font-weight: 700;
             font-size: 2rem;
-            background: linear-gradient(45deg, var(--primary), #b042b4);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
             letter-spacing: 2px;
+            color: var(--primary);
             text-transform: uppercase;
         }
 
@@ -154,12 +239,16 @@
             width: 100%;
             max-width: 1000px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 80px 20px 20px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             overflow-x: hidden;
+        }
+
+        body:has(#start-screen.active) .container {
+            padding-top: 20px;
         }
 
         .screen {
@@ -205,7 +294,7 @@
 
         /* Top Tagline */
         .brand-tag {
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 4px;
             color: var(--gold);
@@ -236,9 +325,9 @@
 
         .premium-sub {
             font-family: 'Montserrat', sans-serif;
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: #666;
-            font-weight: 400;
+            font-weight: 200;
             margin-bottom: 40px;
             max-width: 400px;
             margin-left: auto;
@@ -279,7 +368,7 @@
             width: max-content;
             min-width: 200%;
             /* Ensure it's wide enough */
-            animation: scrollWall 50s linear infinite;
+            animation: scrollWall 25s linear infinite;
             /* Optimize for mobile */
             will-change: transform;
             transform: translate3d(0, 0, 0);
@@ -321,12 +410,12 @@
         .action-deck {
             position: relative;
             z-index: 20;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(15px);
+            /* background: rgba(255, 255, 255, 0.7); */
+            /* backdrop-filter: blur(15px); */
             padding: 30px 40px;
             border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 20px 40px rgba(126, 16, 131, 0.1);
+            /* border: 1px solid rgba(255, 255, 255, 0.8); */
+            /* box-shadow: 0 20px 40px rgba(126, 16, 131, 0.1); */
             display: inline-flex;
             flex-direction: column;
             align-items: center;
@@ -359,9 +448,9 @@
         /* New Button Styles */
         .btn-start-lg {
             width: 100%;
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), #9c27b0);
             color: white;
-            font-family: 'Bodoni Moda', serif;
+            font-family: 'Montserrat', sans-serif;
             font-size: 1.2rem;
             font-weight: 700;
             padding: 18px;
@@ -372,6 +461,9 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-start-lg:hover {
@@ -391,6 +483,7 @@
             background: none;
             border: none;
             color: #999;
+            font-family: 'Montserrat', sans-serif;
             font-size: 0.85rem;
             cursor: pointer;
             text-decoration: underline;
@@ -577,6 +670,7 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
+            font-family: 'Montserrat', sans-serif;
         }
 
         .btn-profile:hover {
@@ -603,6 +697,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            color: var(--text-dark);
         }
 
         .btn-sec:hover {
@@ -663,7 +758,7 @@
         .result-header {
             font-family: 'Bodoni Moda';
             color: var(--primary);
-            margin-bottom: 30px;
+            margin: 20px 0;
             font-size: 2.5rem;
             text-align: center;
             text-shadow: 0 2px 10px rgba(126, 16, 131, 0.1);
@@ -1307,7 +1402,7 @@
         @media (max-width: 768px) {
             .container {
                 width: 100%;
-                padding: 15px;
+                padding: 80px 15px 0 15px;
             }
 
             .battle-area {
@@ -1327,7 +1422,7 @@
             .card-gen {
                 font-size: 0.65rem;
                 padding: 3px 10px;
-                margin-bottom: 8px;
+                margin-bottom: 12px;
             }
 
             .btn-profile {
@@ -1340,14 +1435,11 @@
                 margin-top: 25px;
             }
 
-            .btn-sec {
-                padding: 15px 20px;
-                font-size: 1rem;
-                flex: 1;
-            }
-
             .logo {
-                font-size: 1.5rem;
+                font-family: 'Bodoni Moda', serif;
+                font-size: 1.8rem;
+                font-weight: 700;
+                letter-spacing: -0.5px;
             }
 
             .actions-container {
@@ -1359,6 +1451,11 @@
             .btn-action {
                 width: 100%;
                 justify-content: center;
+            }
+
+            .btn-x,
+            .btn-threads {
+                display: none !important;
             }
 
             .result-row {
@@ -1409,13 +1506,23 @@
 <body>
 
     <div class="bg-animate"></div>
+    <div class="bg-pattern"></div>
+
+    <!-- INITIAL LOADER -->
+    <div id="initial-loader">
+        <div class="loader-content">
+            <div class="logo"><span class="logo-triangle-prefix">N46</span>Sorter</div>
+            <div class="loader-sub">Discover your Oshi</div>
+            <div class="loader-spinner"></div>
+            <div class="loader-text">Loading Data...</div>
+        </div>
+    </div>
     <div class="bg-orb orb-1"></div>
     <div class="bg-orb orb-2"></div>
 
     <header>
         <div class="logo-container">
-            <div class="logo">Nogizaka</div>
-            <div class="logo-triangle">46</div>
+            <div class="logo"><span class="logo-triangle-prefix">N46</span>Sorter</div>
         </div>
     </header>
 
@@ -1429,8 +1536,8 @@
                 <h1 class="premium-title">NOGIZAKA<br><span>46</span></h1>
 
                 <div class="premium-sub">
-                    Discover your Oshi through a series of choices.
-                    Simple, beautiful, and accurate.
+                    Find your true favorite member.<br>
+                    Make your choices and reveal your ranking.
                 </div>
 
                 <!-- Tilted Marquee (New Design) -->
@@ -1447,6 +1554,9 @@
                     </div>
 
                     <button id="start-btn" class="btn-start-lg" onclick="startSort()" disabled>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
                         Start Ranking
                     </button>
 
@@ -1576,12 +1686,12 @@
                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                         </svg>
-                        Copy Full Results
+                        Copy Full Ranking
                     </button>
                 </div>
 
                 <!-- SECTION HEADER -->
-                <div class="section-header">All Ranking</div>
+                <div class="section-header">Full Ranking</div>
 
                 <div class="result-container" id="result-list"></div>
 
@@ -1644,7 +1754,7 @@
         let isAnimating = false;
         let finalTop5 = [];
 
-        async function init() {
+        async function init(retries = 2) {
             const status = document.getElementById('status');
             try {
                 const res = await fetch(PROXY + TARGET);
@@ -1690,12 +1800,27 @@
 
                 initWall();
 
+                // Hide Loader
+                setTimeout(() => {
+                    document.getElementById('initial-loader').classList.add('loaded');
+                }, 500);
+
             } catch (e) {
-                status.innerHTML = `⚠ Fetch Error. Using backup.`;
-                loadBackup();
-                document.getElementById('start-btn').disabled = false;
-                document.getElementById('demo-btn').disabled = false;
-                initWall();
+                if (retries > 0) {
+                    status.innerHTML = `<span class="pulse-dot"></span> Retrying... (${4 - retries}/3)`;
+                    setTimeout(() => init(retries - 1), 1500);
+                } else {
+                    status.innerHTML = `<span class="pulse-dot"></span> Ready (Offline Mode)`;
+                    loadBackup();
+                    document.getElementById('start-btn').disabled = false;
+                    document.getElementById('demo-btn').disabled = false;
+                    initWall();
+
+                    // Hide Loader even on error
+                    setTimeout(() => {
+                        document.getElementById('initial-loader').classList.add('loaded');
+                    }, 500);
+                }
             }
         }
 
@@ -1716,7 +1841,7 @@
             // Force animation restart
             track.style.animation = 'none';
             track.offsetHeight; /* trigger reflow */
-            track.style.animation = 'scrollWall 50s linear infinite';
+            track.style.animation = 'scrollWall 25s linear infinite';
         }
 
         function toTitleCase(str) {
@@ -1725,11 +1850,52 @@
 
         function loadBackup() {
             members = [
+                // 3rd Gen
+                { name: "Ito Riria", gen: "3rd Gen", date: "2002.10.08", img: IMG_BASE + "ito_riria.jpg" },
+                { name: "Iwamoto Renka", gen: "3rd Gen", date: "2004.02.02", img: IMG_BASE + "iwamoto_renka.jpg" },
                 { name: "Umezawa Minami", gen: "3rd Gen", date: "1999.01.06", img: IMG_BASE + "umezawa_minami.jpg" },
-                { name: "Kaki Haruka", gen: "4th Gen", date: "2001.08.08", img: IMG_BASE + "kaki_haruka.jpg" },
-                { name: "Inoue Nagi", gen: "5th Gen", date: "2005.02.17", img: IMG_BASE + "inoue_nagi.jpg" },
+                { name: "Kubo Shiori", gen: "3rd Gen", date: "2001.07.14", img: IMG_BASE + "kubo_shiori.jpg" },
+                { name: "Yoshida Ayano Christie", gen: "3rd Gen", date: "1995.09.06", img: IMG_BASE + "yoshida_ayano_christie.jpg" },
+
+                // 4th Gen
                 { name: "Endo Sakura", gen: "4th Gen", date: "2001.10.03", img: IMG_BASE + "endo_sakura.jpg" },
-                { name: "Yoda Yuuki", gen: "3rd Gen", date: "2000.05.05", img: IMG_BASE + "yoda_yuuki.jpg" }
+                { name: "Kaki Haruka", gen: "4th Gen", date: "2001.08.08", img: IMG_BASE + "kaki_haruka.jpg" },
+                { name: "Kanagawa Saya", gen: "4th Gen", date: "2001.10.31", img: IMG_BASE + "kanagawa_saya.jpg" },
+                { name: "Kuromi Haruka", gen: "4th Gen", date: "2004.01.19", img: IMG_BASE + "kuromi_haruka.jpg" },
+                { name: "Sato Rika", gen: "4th Gen", date: "2001.08.09", img: IMG_BASE + "sato_rika.jpg" },
+                { name: "Shibata Yuna", gen: "4th Gen", date: "2003.03.03", img: IMG_BASE + "shibata_yuna.jpg" },
+                { name: "Tamura Mayu", gen: "4th Gen", date: "1999.01.12", img: IMG_BASE + "tamura_mayu.jpg" },
+                { name: "Tsutsui Ayame", gen: "4th Gen", date: "2004.06.08", img: IMG_BASE + "tsutsui_ayame.jpg" },
+                { name: "Hayashi Runa", gen: "4th Gen", date: "2003.10.02", img: IMG_BASE + "hayashi_runa.jpg" },
+                { name: "Matsuo Miyu", gen: "4th Gen", date: "2004.01.03", img: IMG_BASE + "matsuo_miyu.jpg" },
+                { name: "Yakubo Mio", gen: "4th Gen", date: "2002.08.14", img: IMG_BASE + "yakubo_mio.jpg" },
+                { name: "Yumiki Nao", gen: "4th Gen", date: "1999.02.03", img: IMG_BASE + "yumiki_nao.jpg" },
+
+                // 5th Gen
+                { name: "Ioki Mao", gen: "5th Gen", date: "2005.07.29", img: IMG_BASE + "ioki_mao.jpg" },
+                { name: "Ikeda Teresa", gen: "5th Gen", date: "2002.05.12", img: IMG_BASE + "ikeda_teresa.jpg" },
+                { name: "Ichinose Miku", gen: "5th Gen", date: "2003.05.24", img: IMG_BASE + "ichinose_miku.jpg" },
+                { name: "Inoue Nagi", gen: "5th Gen", date: "2005.02.17", img: IMG_BASE + "inoue_nagi.jpg" },
+                { name: "Okamoto Hina", gen: "5th Gen", date: "2003.12.17", img: IMG_BASE + "okamoto_hina.jpg" },
+                { name: "Ogawa Aya", gen: "5th Gen", date: "2007.06.27", img: IMG_BASE + "ogawa_aya.jpg" },
+                { name: "Okuda Iroha", gen: "5th Gen", date: "2005.08.20", img: IMG_BASE + "okuda_iroha.jpg" },
+                { name: "Kawasaki Sakura", gen: "5th Gen", date: "2003.04.17", img: IMG_BASE + "kawasaki_sakura.jpg" },
+                { name: "Sugawara Satsuki", gen: "5th Gen", date: "2005.10.31", img: IMG_BASE + "sugawara_satsuki.jpg" },
+                { name: "Tomisato Nao", gen: "5th Gen", date: "2006.09.18", img: IMG_BASE + "tomisato_nao.jpg" },
+                { name: "Nakanishi Aruno", gen: "5th Gen", date: "2003.03.17", img: IMG_BASE + "nakanishi_aruno.jpg" },
+
+                // 6th Gen
+                { name: "Atago Kokone", gen: "6th Gen", date: "2005.09.17", img: IMG_BASE + "atago_kokone.jpg" },
+                { name: "Okoshi Hinano", gen: "6th Gen", date: "2004.12.01", img: IMG_BASE + "okoshi_hinano.jpg" },
+                { name: "Kaibe Akari", gen: "6th Gen", date: "2007.02.14", img: IMG_BASE + "kaibe_akari.jpg" },
+                { name: "Kawabata Hina", gen: "6th Gen", date: "2011.01.14", img: IMG_BASE + "kawabata_hina.jpg" },
+                { name: "Suzuki Yuuna", gen: "6th Gen", date: "2006.05.18", img: IMG_BASE + "suzuki_yuuna.jpg" },
+                { name: "Setoguchi Mitsuki", gen: "6th Gen", date: "2005.07.16", img: IMG_BASE + "setoguchi_mitsuki.jpg" },
+                { name: "Nagashima Rio", gen: "6th Gen", date: "2007.05.25", img: IMG_BASE + "nagashima_rio.jpg" },
+                { name: "Masuda Mirine", gen: "6th Gen", date: "2009.11.01", img: IMG_BASE + "masuda_mirine.jpg" },
+                { name: "Morihira Urumi", gen: "6th Gen", date: "2008.10.05", img: IMG_BASE + "morihira_urumi.jpg" },
+                { name: "Yada Moeka", gen: "6th Gen", date: "2008.01.27", img: IMG_BASE + "yada_moeka.jpg" },
+                { name: "Ozu Reina", gen: "6th Gen", date: "2007.04.17", img: IMG_BASE + "ozu_reina.jpg" }
             ];
             members.forEach(m => {
                 m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
