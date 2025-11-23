@@ -374,7 +374,7 @@
         }
 
         .battle-card {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(10px);
             border: 1px solid white;
             border-radius: 20px;
@@ -503,6 +503,16 @@
             background: white;
             color: var(--primary);
             transform: translateY(-2px);
+        }
+
+        .btn-sec:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+            transform: none !important;
+            box-shadow: none !important;
+            background: rgba(255, 255, 255, 0.6) !important;
+            color: #999 !important;
         }
 
         @media (max-height: 800px) {
@@ -1227,8 +1237,9 @@
             }
 
             .btn-sec {
-                padding: 10px 20px;
-                font-size: 0.9rem;
+                padding: 15px 20px;
+                font-size: 1rem;
+                flex: 1;
             }
 
             .logo {
@@ -1327,7 +1338,13 @@
                         </svg>
                         Start Ranking
                     </button>
-                    <button id="demo-btn" class="btn-demo" onclick="runDemo()" disabled>⚡ Instant Demo</button>
+                    <button id="demo-btn" class="btn-demo" onclick="runDemo()" disabled>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                        Instant Demo
+                    </button>
                 </div>
             </div>
         </div>
@@ -1350,7 +1367,16 @@
                     <div class="card-content">
                         <div class="card-name" id="name-left">Name</div>
                         <div class="card-gen" id="gen-left">Gen</div><button class="btn-profile"
-                            onclick="openModal(event, 'left')"><span>✦</span> Profile & Media</button>
+                            onclick="openModal(event, 'left')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                style="margin-right:4px;">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            Profile & Media
+                        </button>
                     </div>
                 </div>
                 <div class="battle-card" onclick="vote('right')">
@@ -1359,13 +1385,38 @@
                     <div class="card-content">
                         <div class="card-name" id="name-right">Name</div>
                         <div class="card-gen" id="gen-right">Gen</div><button class="btn-profile"
-                            onclick="openModal(event, 'right')"><span>✦</span> Profile & Media</button>
+                            onclick="openModal(event, 'right')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                style="margin-right:4px;">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            Profile & Media
+                        </button>
                     </div>
                 </div>
             </div>
             <div class="control-row">
-                <button class="btn-sec" onclick="vote('tie')">🤝 Tie</button>
-                <button class="btn-sec" onclick="undo()">↩ Undo</button>
+                <button class="btn-sec" onclick="vote('tie')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    Tie
+                </button>
+                <button id="undo-btn" class="btn-sec" onclick="undo()" disabled>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 7v6h6"></path>
+                        <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
+                    </svg>
+                    Undo
+                </button>
             </div>
         </div>
 
@@ -1581,6 +1632,7 @@
             }
             maxBattles = members.length * Math.log2(members.length);
             battlesCount = 0; history = []; currentMerge = null;
+            document.getElementById('undo-btn').disabled = true;
             nextBattle();
         }
 
@@ -1645,6 +1697,7 @@
             if (choice === 'left') currentMerge.result.push(currentMerge.left.shift());
             else if (choice === 'right') currentMerge.result.push(currentMerge.right.shift());
             else { currentMerge.result.push(currentMerge.left.shift()); currentMerge.result.push(currentMerge.right.shift()); }
+            document.getElementById('undo-btn').disabled = false;
             nextBattle();
         }
 
@@ -1652,6 +1705,7 @@
             if (isAnimating) return;
             if (history.length === 0) return;
             const s = history.pop(); queue = s.queue; currentMerge = s.currentMerge; battlesCount = s.battlesCount;
+            if (history.length === 0) document.getElementById('undo-btn').disabled = true;
             if (currentMerge && currentMerge.left.length > 0 && currentMerge.right.length > 0) {
                 battlesCount--; updateUI(currentMerge.left[0], currentMerge.right[0]);
             } else nextBattle();
