@@ -262,20 +262,29 @@
             display: flex;
             align-items: center;
             overflow: hidden;
+            /* Hide overflow strictly */
             -webkit-overflow-scrolling: touch;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
             z-index: 10;
         }
 
+        /* FIX: Marquee Animation Logic */
         .marquee-content {
             display: flex;
             gap: 20px;
             padding: 0 20px;
+            /* Force width to be intrinsic so flex doesn't shrink it */
+            width: max-content;
             animation: scrollWall 50s linear infinite;
+            /* Optimize for mobile */
+            will-change: transform;
         }
 
-        .marquee-content:hover {
-            animation-play-state: paused;
+        /* FIX: Only pause on hover if device has a hover state (mouse) */
+        @media (hover: hover) {
+            .marquee-content:hover {
+                animation-play-state: paused;
+            }
         }
 
         /* Styled Images in Marquee */
@@ -284,13 +293,14 @@
             height: 130px;
             object-fit: cover;
             border-radius: 4px;
-            /* Slight rounding like photos */
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             background: white;
             padding: 5px;
-            /* Photo border */
             filter: saturate(0.8);
             transition: transform 0.3s, filter 0.3s;
+            /* Prevent image dragging affecting scroll */
+            user-select: none;
+            -webkit-user-drag: none;
         }
 
         .wall-img:hover {
@@ -412,7 +422,8 @@
 
             .marquee-content {
                 animation-duration: 40s;
-                will-change: transform;
+                /* Ensure gap is maintained */
+                gap: 15px;
             }
 
             .wall-img {
