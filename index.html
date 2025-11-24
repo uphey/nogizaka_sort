@@ -380,7 +380,9 @@
             padding: 0 20px;
             /* Force width to be intrinsic so flex doesn't shrink it */
             width: max-content;
-            min-width: 200%;
+            /* Force width to be intrinsic so flex doesn't shrink it */
+            width: max-content;
+            /* min-width: 200%; removed to allow precise JS calculation */
             /* Ensure it's wide enough */
             animation: scrollWall 25s linear infinite;
             /* Optimize for mobile */
@@ -2015,10 +2017,30 @@
             const track = document.getElementById('wall-track');
             if (members.length < 1) return;
 
-            // Use ALL members, shuffled
-            const pool = [...members].sort(() => 0.5 - Math.random());
+            // 1. Calculate how many items needed to cover screen width + buffer
+            // Item width = 100px + 20px gap = 120px
+            const itemWidth = 120;
+            const screenWidth = window.innerWidth;
+            // We need enough items to cover the screen width at least once.
+            // To be safe and allow for smooth scrolling, let's aim for 1.5x screen width for the "base set".
+            // Actually, for the loop to work with translate(-50%), the "base set" MUST be >= screen width.
+            // Let's aim for 2x screen width for the base set just to be super safe against resizing.
+            const itemsNeeded = Math.ceil((screenWidth * 2) / itemWidth);
 
-            // Duplicate for seamless loop
+            // 2. Prepare the pool
+            let pool = [...members].sort(() => 0.5 - Math.random());
+
+            // 3. Duplicate pool until we have enough items for the BASE set
+            while (pool.length < itemsNeeded) {
+                pool = [...pool, ...pool];
+            }
+
+            // If pool became huge (e.g. small member list, huge screen), trim it to just what's needed + a bit
+            // But actually, having more is fine.
+
+            // 4. Create the Final Wall Members: Two identical sets of the Base Set
+            // This ensures that when we translate -50% (width of one Base Set),
+            // the second Base Set is in the exact position the first one started.
             const wallMembers = [...pool, ...pool];
 
             track.innerHTML = '';
@@ -2030,9 +2052,9 @@
                 track.appendChild(img);
             });
 
-            // Dynamic duration: 1s per member in the pool
-            // This ensures consistent speed regardless of member count
-            const duration = Math.max(20, pool.length * 0.5);
+            // Dynamic duration: Speed control
+            // Adjusted to be slower than 0.2 but faster than original
+            const duration = Math.max(10, wallMembers.length * 1);
 
             // Force animation restart
             track.style.animation = 'none';
