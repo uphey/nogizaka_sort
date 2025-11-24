@@ -1742,8 +1742,10 @@
     <script>
         // CONFIG
         const IMG_BASE = "https://n46db.com/pictures/profilepics/";
-        const PROXY = "https://api.allorigins.win/get?url=";
+        const PROXY = "https://corsproxy.io/?";
         const TARGET = encodeURIComponent("https://n46db.com/");
+        const CACHE_KEY = 'n46_members_v1';
+        const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
         let members = [];
         let queue = [];
@@ -1754,15 +1756,44 @@
         let isAnimating = false;
         let finalTop5 = [];
 
-        async function init(retries = 2) {
+        async function init(retries = 3) {
             const status = document.getElementById('status');
+
+            // 1. Check Cache
+            try {
+                const cached = localStorage.getItem(CACHE_KEY);
+                if (cached) {
+                    const { timestamp, data } = JSON.parse(cached);
+                    if (Date.now() - timestamp < CACHE_DURATION) {
+                        console.log("Using cached data");
+                        members = data;
+                        members.forEach(m => {
+                            m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
+                        });
+                        status.innerHTML = `<span class="pulse-dot"></span> ${members.length} Members Ready`;
+                        document.getElementById('start-btn').disabled = false;
+                        document.getElementById('demo-btn').disabled = false;
+                        initWall();
+                        setTimeout(() => {
+                            document.getElementById('initial-loader').classList.add('loaded');
+                        }, 500);
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.warn("Cache parse error", e);
+                localStorage.removeItem(CACHE_KEY);
+            }
+
+            // 2. Fetch if no cache
             try {
                 const res = await fetch(PROXY + TARGET);
-                const json = await res.json();
-                if (!json.contents) throw new Error("Empty response");
+                const textContent = await res.text(); // corsproxy returns raw text directly
+
+                if (!textContent) throw new Error("Empty response");
 
                 const parser = new DOMParser();
-                const doc = parser.parseFromString(json.contents, "text/html");
+                const doc = parser.parseFromString(textContent, "text/html");
                 const rows = Array.from(doc.querySelectorAll('tr'));
 
                 const parsed = [];
@@ -1787,31 +1818,40 @@
                         }
                     }
                 });
-                members = parsed;
-                // Update status text within the new structure
-                status.innerHTML = `<span class="pulse-dot"></span> ${members.length} Members Ready`;
-                document.getElementById('start-btn').disabled = false;
-                document.getElementById('demo-btn').disabled = false;
 
-                // Global proxy usage
-                members.forEach(m => {
-                    m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
-                });
+                if (parsed.length > 0) {
+                    // Save RAW data to Cache first
+                    localStorage.setItem(CACHE_KEY, JSON.stringify({
+                        timestamp: Date.now(),
+                        data: parsed
+                    }));
 
-                initWall();
+                    members = parsed;
 
-                // Hide Loader
-                setTimeout(() => {
-                    document.getElementById('initial-loader').classList.add('loaded');
-                }, 500);
+                    // Global proxy usage
+                    members.forEach(m => {
+                        m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
+                    });
+
+                    status.innerHTML = `<span class="pulse-dot"></span> ${members.length} Members Ready`;
+                    document.getElementById('start-btn').disabled = false;
+                    document.getElementById('demo-btn').disabled = false;
+                    initWall();
+
+                    // Hide Loader
+                    setTimeout(() => {
+                        document.getElementById('initial-loader').classList.add('loaded');
+                    }, 500);
+                } else {
+                    throw new Error("No members parsed");
+                }
 
             } catch (e) {
                 if (retries > 0) {
-                    status.innerHTML = `<span class="pulse-dot"></span> Retrying... (${4 - retries}/3)`;
                     setTimeout(() => init(retries - 1), 1500);
                 } else {
-                    status.innerHTML = `<span class="pulse-dot"></span> Ready (Offline Mode)`;
                     loadBackup();
+                    status.innerHTML = `<span class="pulse-dot"></span> ${members.length} Members Ready (Offline)`;
                     document.getElementById('start-btn').disabled = false;
                     document.getElementById('demo-btn').disabled = false;
                     initWall();
@@ -1827,8 +1867,13 @@
         function initWall() {
             const track = document.getElementById('wall-track');
             if (members.length < 1) return;
-            const pool = [...members].sort(() => 0.5 - Math.random()).slice(0, 20);
+
+            // Use ALL members, shuffled
+            const pool = [...members].sort(() => 0.5 - Math.random());
+
+            // Duplicate for seamless loop
             const wallMembers = [...pool, ...pool];
+
             track.innerHTML = '';
             wallMembers.forEach(m => {
                 const img = document.createElement('img');
@@ -1838,10 +1883,14 @@
                 track.appendChild(img);
             });
 
+            // Dynamic duration: 1s per member in the pool
+            // This ensures consistent speed regardless of member count
+            const duration = Math.max(20, pool.length * 0.5);
+
             // Force animation restart
             track.style.animation = 'none';
             track.offsetHeight; /* trigger reflow */
-            track.style.animation = 'scrollWall 25s linear infinite';
+            track.style.animation = `scrollWall ${duration}s linear infinite`;
         }
 
         function toTitleCase(str) {
