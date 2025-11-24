@@ -36,6 +36,10 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        button {
+            font-family: 'Montserrat', sans-serif;
+        }
+
         html {
             overflow-x: hidden;
         }
@@ -323,6 +327,16 @@
             -webkit-text-stroke: 1.5px var(--primary);
         }
 
+        .res-score {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-left: 10px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
         .premium-sub {
             font-family: 'Montserrat', sans-serif;
             font-size: 0.9rem;
@@ -347,7 +361,7 @@
             border-top: 1px solid white;
             border-bottom: 1px solid white;
             transform: rotate(-3deg);
-            margin-bottom: 50px;
+            margin-bottom: 30px;
             display: flex;
             align-items: center;
             overflow: hidden;
@@ -400,10 +414,16 @@
             -webkit-user-drag: none;
         }
 
-        .wall-img:hover {
-            transform: scale(1.1);
+        .wall-img:hover,
+        .wall-img:active {
             filter: saturate(1.1);
             z-index: 2;
+        }
+
+        @media (hover: hover) {
+            .wall-img:hover {
+                transform: scale(1.1);
+            }
         }
 
         /* Action Area */
@@ -448,7 +468,8 @@
         /* New Button Styles */
         .btn-start-lg {
             width: 100%;
-            background: linear-gradient(135deg, var(--primary), #9c27b0);
+            background: linear-gradient(135deg, var(--primary), #9c27b0, #580a5c);
+            background-size: 200% auto;
             color: white;
             font-family: 'Montserrat', sans-serif;
             font-size: 1.2rem;
@@ -458,6 +479,45 @@
             border: none;
             cursor: pointer;
             box-shadow: 0 10px 25px rgba(126, 16, 131, 0.25);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-position 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-start-lg:hover,
+        .btn-start-lg:active {
+            box-shadow: 0 15px 35px rgba(126, 16, 131, 0.35);
+            background-position: right center;
+        }
+
+        @media (hover: hover) {
+            .btn-start-lg:hover {
+                transform: translateY(-3px);
+            }
+        }
+
+        .btn-start-lg:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-resume {
+            width: 100%;
+            background: linear-gradient(135deg, #ffffff 0%, #fcf4fd 100%);
+            color: var(--primary);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 15px;
+            border-radius: 50px;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(126, 16, 131, 0.1);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -466,17 +526,16 @@
             justify-content: center;
         }
 
-        .btn-start-lg:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(126, 16, 131, 0.35);
-            background: #6a0d6e;
+        .btn-resume:hover,
+        .btn-resume:active {
+            background: linear-gradient(135deg, #ffffff 0%, #faeefc 100%);
+            box-shadow: 0 8px 20px rgba(126, 16, 131, 0.15);
         }
 
-        .btn-start-lg:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+        @media (hover: hover) {
+            .btn-resume:hover {
+                transform: translateY(-2px);
+            }
         }
 
         .btn-demo-link {
@@ -515,7 +574,6 @@
             .marquee-tilt {
                 height: 120px;
                 transform: rotate(-2deg);
-                margin-bottom: 30px;
                 width: 100vw;
                 margin-left: calc(-50vw + 50%);
                 left: 0;
@@ -587,11 +645,17 @@
             flex-direction: column;
         }
 
-        .battle-card:hover {
-            transform: translateY(-10px) scale(1.02);
+        .battle-card:hover,
+        .battle-card:active {
             box-shadow: 0 20px 40px rgba(126, 16, 131, 0.15);
             border-color: var(--accent);
             z-index: 10;
+        }
+
+        @media (hover: hover) {
+            .battle-card:hover {
+                transform: translateY(-10px) scale(1.02);
+            }
         }
 
         .battle-card .card-img-frame,
@@ -631,6 +695,15 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
+        }
+
+        .res-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-width: 0;
+            /* Allow truncation if needed */
         }
 
         .card-name {
@@ -673,7 +746,8 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-        .btn-profile:hover {
+        .btn-profile:hover,
+        .btn-profile:active {
             background: var(--primary);
             color: white;
             border-color: var(--primary);
@@ -691,6 +765,7 @@
             border: 1px solid white;
             padding: 12px 30px;
             border-radius: 30px;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             transition: 0.2s;
@@ -700,10 +775,16 @@
             color: var(--text-dark);
         }
 
-        .btn-sec:hover {
+        .btn-sec:hover,
+        .btn-sec:active {
             background: white;
             color: var(--primary);
-            transform: translateY(-2px);
+        }
+
+        @media (hover: hover) {
+            .btn-sec:hover {
+                transform: translateY(-2px);
+            }
         }
 
         .btn-sec:disabled {
@@ -775,6 +856,7 @@
         .section-header {
             font-family: 'Bodoni Moda';
             font-size: 1.8rem;
+            font-weight: 600;
             color: #666;
             text-align: center;
             margin: 40px 0 20px;
@@ -805,9 +887,15 @@
             transition: transform 0.2s;
         }
 
-        .result-row:hover {
-            transform: scale(1.01);
+        .result-row:hover,
+        .result-row:active {
             box-shadow: 0 8px 25px rgba(126, 16, 131, 0.08);
+        }
+
+        @media (hover: hover) {
+            .result-row:hover {
+                transform: scale(1.01);
+            }
         }
 
         .result-row.show {
@@ -1055,7 +1143,8 @@
             box-shadow: 0 5px 15px rgba(126, 16, 131, 0.3);
         }
 
-        .btn-system:hover {
+        .btn-system:hover,
+        .btn-system:active {
             box-shadow: 0 8px 25px rgba(126, 16, 131, 0.4);
         }
 
@@ -1090,9 +1179,15 @@
             }
         }
 
-        .btn-restart:hover {
-            transform: translateY(-3px);
+        .btn-restart:hover,
+        .btn-restart:active {
             box-shadow: 0 15px 35px rgba(126, 16, 131, 0.4);
+        }
+
+        @media (hover: hover) {
+            .btn-restart:hover {
+                transform: translateY(-3px);
+            }
         }
 
         /* --- CAPTURE CARD (FIXED BEHIND CONTENT) --- */
@@ -1368,11 +1463,17 @@
             color: #555;
         }
 
-        .btn-google:hover {
+        .btn-google:hover,
+        .btn-google:active {
             background: #f8f9fa;
             border-color: #aaa;
-            transform: translateY(-2px);
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (hover: hover) {
+            .btn-google:hover {
+                transform: translateY(-2px);
+            }
         }
 
         .btn-pinterest {
@@ -1416,7 +1517,7 @@
 
             .card-name {
                 font-size: 1rem;
-                margin-bottom: 4px;
+                margin-bottom: 6px;
             }
 
             .card-gen {
@@ -1481,6 +1582,8 @@
             .res-score {
                 font-size: 0.75rem;
                 padding: 4px 8px;
+                white-space: nowrap;
+                flex-shrink: 0;
             }
 
             .rank-1 {
@@ -1521,7 +1624,7 @@
     <div class="bg-orb orb-2"></div>
 
     <header>
-        <div class="logo-container">
+        <div class="logo-container" onclick="goHome()" style="cursor: pointer;">
             <div class="logo"><span class="logo-triangle-prefix">N46</span>Sorter</div>
         </div>
     </header>
@@ -1558,6 +1661,14 @@
                             <path d="M8 5v14l11-7z" />
                         </svg>
                         Start Ranking
+                    </button>
+
+                    <button id="resume-btn" class="btn-resume" onclick="resumeSort()" style="display: none;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                            <path d="M5 3l14 9-14 9V3z"></path>
+                        </svg>
+                        Resume Ranking
                     </button>
 
                     <button id="demo-btn" class="btn-demo-link" onclick="runDemo()" disabled>
@@ -1746,6 +1857,7 @@
         const TARGET = encodeURIComponent("https://n46db.com/");
         const CACHE_KEY = 'n46_members_v1';
         const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+        const PROGRESS_KEY = 'n46_sort_progress';
 
         let members = [];
         let queue = [];
@@ -1773,6 +1885,18 @@
                         status.innerHTML = `<span class="pulse-dot"></span> ${members.length} Members Ready`;
                         document.getElementById('start-btn').disabled = false;
                         document.getElementById('demo-btn').disabled = false;
+
+                        // Check for saved progress
+                        if (localStorage.getItem(PROGRESS_KEY)) {
+                            document.getElementById('resume-btn').style.display = 'flex';
+                            document.getElementById('start-btn').innerHTML = `
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
+                                Start New Ranking
+                            `;
+                        }
+
                         initWall();
                         setTimeout(() => {
                             document.getElementById('initial-loader').classList.add('loaded');
@@ -1838,6 +1962,17 @@
                     document.getElementById('demo-btn').disabled = false;
                     initWall();
 
+                    // Check for saved progress
+                    if (localStorage.getItem(PROGRESS_KEY)) {
+                        document.getElementById('resume-btn').style.display = 'flex';
+                        document.getElementById('start-btn').innerHTML = `
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
+                            Start New Ranking
+                        `;
+                    }
+
                     // Hide Loader
                     setTimeout(() => {
                         document.getElementById('initial-loader').classList.add('loaded');
@@ -1854,6 +1989,18 @@
                     status.innerHTML = `<span class="pulse-dot"></span> ${members.length} Members Ready (Offline)`;
                     document.getElementById('start-btn').disabled = false;
                     document.getElementById('demo-btn').disabled = false;
+
+                    // Check for saved progress
+                    if (localStorage.getItem(PROGRESS_KEY)) {
+                        document.getElementById('resume-btn').style.display = 'flex';
+                        document.getElementById('start-btn').innerHTML = `
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
+                            Start New Ranking
+                        `;
+                    }
+
                     initWall();
 
                     // Hide Loader even on error
@@ -1952,6 +2099,11 @@
         }
 
         function startSort() {
+            if (localStorage.getItem(PROGRESS_KEY)) {
+                if (!confirm("Starting a new ranking will clear your current progress. Are you sure?")) {
+                    return;
+                }
+            }
             document.getElementById('start-screen').classList.remove('active');
             document.getElementById('battle-screen').classList.add('active');
             queue = members.map((_, i) => [i]);
@@ -1962,11 +2114,19 @@
             maxBattles = members.length * Math.log2(members.length);
             battlesCount = 0; history = []; currentMerge = null;
             document.getElementById('undo-btn').disabled = true;
+            clearProgress(); // Clear progress when starting a new sort
             nextBattle();
         }
 
         function runDemo() {
             if (members.length === 0) return;
+
+            if (localStorage.getItem(PROGRESS_KEY)) {
+                if (!confirm("Viewing the demo will clear your current progress. Are you sure?")) {
+                    return;
+                }
+            }
+
             document.getElementById('start-screen').classList.remove('active');
             const demoOrder = members.map((_, i) => i).sort(() => 0.5 - Math.random());
             showResults(demoOrder);
@@ -1990,7 +2150,6 @@
         }
 
         function updateUI(id1, id2) {
-            battlesCount++;
             const pct = Math.min(100, Math.floor((battlesCount / maxBattles) * 100));
             document.getElementById('progress-fill').style.width = pct + '%';
             document.getElementById('progress-txt').innerText = pct + '%';
@@ -2023,26 +2182,88 @@
         function vote(choice) {
             if (isAnimating) return;
             history.push(JSON.parse(JSON.stringify({ queue, currentMerge, battlesCount })));
+            battlesCount++; // Increment ONLY on new vote
             if (choice === 'left') currentMerge.result.push(currentMerge.left.shift());
             else if (choice === 'right') currentMerge.result.push(currentMerge.right.shift());
             else { currentMerge.result.push(currentMerge.left.shift()); currentMerge.result.push(currentMerge.right.shift()); }
             document.getElementById('undo-btn').disabled = false;
+            saveProgress();
             nextBattle();
         }
 
         function undo() {
             if (isAnimating) return;
             if (history.length === 0) return;
-            const s = history.pop(); queue = s.queue; currentMerge = s.currentMerge; battlesCount = s.battlesCount;
+            const state = history.pop();
+            queue = state.queue;
+            currentMerge = state.currentMerge;
+            battlesCount = state.battlesCount;
+            saveProgress();
+            nextBattle();
             if (history.length === 0) document.getElementById('undo-btn').disabled = true;
-            if (currentMerge && currentMerge.left.length > 0 && currentMerge.right.length > 0) {
-                battlesCount--; updateUI(currentMerge.left[0], currentMerge.right[0]);
-            } else nextBattle();
         }
 
+        function saveProgress() {
+            const state = {
+                queue,
+                currentMerge,
+                history,
+                battlesCount,
+                maxBattles,
+                members // Save members to ensure ID consistency if data changes
+            };
+            localStorage.setItem(PROGRESS_KEY, JSON.stringify(state));
+        }
+
+        function clearProgress() {
+            localStorage.removeItem(PROGRESS_KEY);
+            document.getElementById('resume-btn').style.display = 'none';
+            document.getElementById('start-btn').innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
+                    <path d="M8 5v14l11-7z" />
+                </svg>
+                Start Ranking
+            `;
+        }
+
+        function resumeSort() {
+            const saved = localStorage.getItem(PROGRESS_KEY);
+            if (!saved) return;
+
+            try {
+                const state = JSON.parse(saved);
+                queue = state.queue;
+                currentMerge = state.currentMerge;
+                history = state.history;
+                battlesCount = state.battlesCount;
+                maxBattles = state.maxBattles;
+                // We don't overwrite 'members' from cache/fetch with saved 'members' 
+                // unless we want to be strictly offline-safe. 
+                // For now, let's assume the fetched members are compatible.
+                // Or better: use the saved members to guarantee consistency.
+                if (state.members) members = state.members;
+
+                document.getElementById('start-screen').classList.remove('active');
+                document.getElementById('battle-screen').classList.add('active');
+                document.getElementById('undo-btn').disabled = history.length === 0;
+
+                // Update progress bar
+                const pct = Math.min(100, Math.floor((battlesCount / maxBattles) * 100));
+                document.getElementById('progress-fill').style.width = pct + '%';
+                document.getElementById('progress-txt').innerText = pct + '%';
+
+                nextBattle();
+            } catch (e) {
+                console.error("Resume failed", e);
+                clearProgress();
+                alert("Could not resume previous session.");
+            }
+        }
         async function showResults(list) {
             document.getElementById('battle-screen').classList.remove('active');
             document.getElementById('result-screen').classList.add('active');
+
+            clearProgress(); // Clear progress on completion
 
             // Show Loading, Hide Content
             document.getElementById('result-loading').style.display = 'flex';
@@ -2082,7 +2303,13 @@
                     <div class="res-gen" style="font-size:0.7rem; color:var(--primary); background:rgba(126,16,131,0.08); padding:2px 8px; border-radius:10px; display:inline-block; margin-top:4px;">${m.gen}</div>
                 </div>
                 <div class="res-score">${score} pts</div>
-                <button class="btn-profile" style="width:auto; padding:6px 12px; border-radius:50%; margin-left:10px;" data-name="${m.name}" data-gen="${m.gen}" data-date="${m.date}" data-img="${m.img}" onclick="openModal(event)">✦</button>
+                <button class="btn-profile" style="width:32px; height:32px; padding:0; border-radius:50%; display:flex; align-items:center; justify-content:center;" data-name="${m.name}" data-gen="${m.gen}" data-date="${m.date}" data-img="${m.img}" onclick="openModal(event)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                </button>
             `;
                 c.appendChild(div);
             });
@@ -2385,6 +2612,8 @@
             document.getElementById('gen-status').style.display = "block";
             document.getElementById('gen-status').innerText = "Creating certificate...";
 
+            clearProgress(); // Clear progress on restart
+
             document.getElementById('start-screen').classList.add('active');
             initWall();
         }
@@ -2406,6 +2635,32 @@
         function handleError(img) { img.style.opacity = 0.5; }
 
         init();
+        function goHome() {
+            document.getElementById('battle-screen').classList.remove('active');
+            document.getElementById('result-screen').classList.remove('active');
+            document.getElementById('start-screen').classList.add('active');
+
+            // Check for saved progress to update UI
+            if (localStorage.getItem(PROGRESS_KEY)) {
+                document.getElementById('resume-btn').style.display = 'flex';
+                document.getElementById('start-btn').innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                    Start New Ranking
+                `;
+            } else {
+                document.getElementById('resume-btn').style.display = 'none';
+                document.getElementById('start-btn').innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                    Start Ranking
+                `;
+            }
+
+            initWall();
+        }
     </script>
 </body>
 
