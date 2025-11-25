@@ -3200,7 +3200,19 @@
                     // Push promise
                     imagePromises.push(new Promise(resolve => {
                         img.onload = resolve;
-                        img.onerror = resolve; // Resolve even on error to not block
+                        img.onerror = () => {
+                            // Try fallback
+                            const fallbackUrl = getFallbackUrl(m.name);
+                            if (fallbackUrl) {
+                                // Use wsrv.nl proxy for fallback as well to ensure CORS
+                                img.src = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=200&h=200&fit=cover";
+                                // If fallback fails, we just resolve (show broken/empty)
+                                img.onerror = resolve;
+                                img.onload = resolve;
+                            } else {
+                                resolve();
+                            }
+                        };
                     }));
 
                     // Inner HTML
@@ -3855,6 +3867,20 @@
             "Seimiya Rei": "seimiya_rei"
         };
 
+        function getFallbackUrl(name) {
+            if (ALUMNAE_NAME_MAP[name]) {
+                return IMG_FALLBACK_BASE + ALUMNAE_NAME_MAP[name] + '/image.jpg';
+            } else {
+                // Default logic: "Lastname Firstname" -> "lastname_firstname"
+                const cleanName = name.trim().toLowerCase();
+                const parts = cleanName.split(/\s+/);
+                if (parts.length >= 2) {
+                    return IMG_FALLBACK_BASE + parts[0] + '_' + parts[1] + '/image.jpg';
+                }
+            }
+            return null;
+        }
+
         function handleError(img) {
             if (img.dataset.fallbackTried) {
                 img.style.opacity = 0.5;
@@ -3863,19 +3889,7 @@
 
             const name = img.dataset.name;
             if (name) {
-                let fallbackUrl;
-
-                // 1. Check explicit map first
-                if (ALUMNAE_NAME_MAP[name]) {
-                    fallbackUrl = IMG_FALLBACK_BASE + ALUMNAE_NAME_MAP[name] + '/image.jpg';
-                } else {
-                    // 2. Default logic: "Lastname Firstname" -> "lastname_firstname"
-                    const cleanName = name.trim().toLowerCase();
-                    const parts = cleanName.split(/\s+/);
-                    if (parts.length >= 2) {
-                        fallbackUrl = IMG_FALLBACK_BASE + parts[0] + '_' + parts[1] + '/image.jpg';
-                    }
-                }
+                const fallbackUrl = getFallbackUrl(name);
 
                 if (fallbackUrl) {
                     // Proxy through wsrv.nl for caching and optimization
