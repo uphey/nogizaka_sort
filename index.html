@@ -1566,7 +1566,7 @@
             -webkit-backdrop-filter: blur(12px);
             border-radius: 24px;
             width: 95%;
-            max-width: 700px;
+            max-width: 1000px;
             max-height: 85vh;
             overflow: hidden;
             display: flex;
@@ -1631,43 +1631,33 @@
         }
 
         .btn-selection-ctrl {
-            padding: 10px 16px;
-            border-radius: 20px;
+            padding: 12px 16px;
+            border-radius: 12px;
             font-weight: 600;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid transparent;
+            border: 1px solid #e0e0e0;
             display: flex;
             align-items: center;
             justify-content: center;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            background: white;
+            color: #666;
         }
 
-        .btn-selection-ctrl.primary {
-            background: rgba(126, 16, 131, 0.08);
-            color: var(--primary);
-            border-color: rgba(126, 16, 131, 0.1);
+        .btn-selection-ctrl:hover {
+            background: #f8f8f8;
+            border-color: #ccc;
+            transform: translateY(-1px);
         }
 
-        .btn-selection-ctrl.primary:hover {
+        .btn-selection-ctrl.active {
             background: var(--primary);
             color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(126, 16, 131, 0.25);
             border-color: var(--primary);
-        }
-
-        .btn-selection-ctrl.secondary {
-            background: transparent;
-            border: 1px solid #e0e0e0;
-        }
-
-        .btn-selection-ctrl.secondary:hover {
-            background: #f5f5f5;
-            color: #333;
-            border-color: #ccc;
+            box-shadow: 0 4px 12px rgba(126, 16, 131, 0.25);
         }
 
         .selection-body {
@@ -1932,69 +1922,147 @@
             z-index: 10;
         }
 
-        .selection-tabs {
+        .selection-toolbar {
             display: flex;
-            padding: 10px 25px;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            flex-direction: column;
+            gap: 10px;
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
             position: sticky;
-            top: 73px;
-            /* Adjust based on header height */
+            top: 0;
             z-index: 9;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
         }
 
-        .segmented-control {
+        .toolbar-group {
+            background: #f8f8f8;
+            border-radius: 16px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
             display: flex;
-            width: 100%;
-            background: #f0f0f0;
-            padding: 4px;
-            border-radius: 12px;
-            position: relative;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 8px;
-            border: none;
-            background: transparent;
-            color: #666;
-            font-weight: 600;
-            font-size: 0.9rem;
+            justify-content: space-between;
+            align-items: center;
             cursor: pointer;
-            position: relative;
-            z-index: 2;
-            transition: color 0.3s;
-            border-radius: 10px;
-            text-align: center;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
         }
 
-        .tab-btn.active {
-            color: var(--primary);
+        .toolbar-group:hover {
+            background: #f0f0f0;
+        }
+
+        .toolbar-group.active {
             background: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(126, 16, 131, 0.15);
         }
 
-        .count-badge {
-            font-size: 0.75em;
-            opacity: 0.7;
-            margin-left: 4px;
-            font-weight: 500;
+        .group-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .tab-btn.active .count-badge {
-            opacity: 1;
+        .group-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #666;
+            transition: color 0.2s;
+        }
+
+        .toolbar-group.active .group-title {
             color: var(--primary);
             font-weight: 700;
         }
 
-        .gen-count {
-            font-size: 0.9rem;
-            color: #888;
-            font-weight: 400;
-            margin-left: 8px;
-            font-family: 'Montserrat', sans-serif;
+        .group-count {
+            font-size: 0.8rem;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .toolbar-group.active .group-count {
+            color: var(--primary);
+            opacity: 0.8;
+        }
+
+        .switch-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 20px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .switch-container:hover {
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        .switch-container:active {
+            transform: scale(0.96);
+        }
+
+        .switch-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Custom Checkbox */
+        .custom-checkbox {
+            position: relative;
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .custom-checkbox input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 20px;
+            width: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1.5px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-checkbox input:checked~.checkmark {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(126, 16, 131, 0.2);
+        }
+
+        .checkmark:after {
+            content: '✓';
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+            display: none;
+        }
+
+        .custom-checkbox input:checked~.checkmark:after {
+            display: block;
         }
 
         .tab-content {
@@ -2106,6 +2174,31 @@
 
             .rank-1 .res-name {
                 font-size: 1.2rem;
+            }
+
+            @media (max-width: 600px) {
+                .selection-toolbar {
+                    padding: 12px 15px;
+                    gap: 8px;
+                }
+
+                .toolbar-group {
+                    padding: 10px 12px;
+                }
+
+                .group-title {
+                    font-size: 0.85rem;
+                }
+
+                .switch-label {
+                    font-size: 0.65rem;
+                    letter-spacing: 0.3px;
+                }
+
+                .switch-container {
+                    padding: 6px 10px;
+                    gap: 6px;
+                }
             }
         }
     </style>
@@ -2363,19 +2456,39 @@
                 <button class="close-btn" onclick="closeSelectionScreen()">&times;</button>
             </div>
 
-            <div class="selection-controls">
-                <button class="btn-selection-ctrl primary" onclick="selectCurrentOnly()">Current Only</button>
-                <button class="btn-selection-ctrl primary" onclick="selectGraduatedOnly()">Graduated Only</button>
-                <button class="btn-selection-ctrl secondary" onclick="selectAllMembers()">Select All</button>
-                <button class="btn-selection-ctrl secondary" onclick="deselectAllMembers()">Deselect All</button>
-            </div>
+            <div class="selection-toolbar">
+                <!-- Group 1: Current Members -->
+                <div class="toolbar-group active" id="group-current" onclick="switchTab('current')">
+                    <div class="group-info">
+                        <span class="group-title">Current Members</span>
+                        <span class="group-count" id="count-current">(0)</span>
+                    </div>
+                    <div class="switch-container" id="switch-container-current"
+                        onclick="event.stopPropagation(); toggleContainer('current')">
+                        <div class="custom-checkbox">
+                            <input type="checkbox" id="chk-current"
+                                onclick="event.stopPropagation(); toggleAllCurrent()">
+                            <span class="checkmark"></span>
+                        </div>
+                        <span class="switch-label">Select All</span>
+                    </div>
+                </div>
 
-            <div class="selection-tabs">
-                <div class="segmented-control">
-                    <button class="tab-btn active" id="tab-current" onclick="switchTab('current')">Current
-                        Members</button>
-                    <button class="tab-btn" id="tab-graduated" onclick="switchTab('graduated')">Graduated
-                        Members</button>
+                <!-- Group 2: Graduated Members -->
+                <div class="toolbar-group" id="group-graduated" onclick="switchTab('graduated')">
+                    <div class="group-info">
+                        <span class="group-title">Graduated Members</span>
+                        <span class="group-count" id="count-graduated">(0)</span>
+                    </div>
+                    <div class="switch-container" id="switch-container-graduated"
+                        onclick="event.stopPropagation(); toggleContainer('graduated')">
+                        <div class="custom-checkbox">
+                            <input type="checkbox" id="chk-graduated"
+                                onclick="event.stopPropagation(); toggleAllGraduated()">
+                            <span class="checkmark"></span>
+                        </div>
+                        <span class="switch-label">Select All</span>
+                    </div>
                 </div>
             </div>
 
@@ -3271,6 +3384,7 @@
         function openSelectionScreen() {
             renderSelectionScreen();
             document.getElementById('selection-modal').style.display = 'flex';
+            switchTab('current'); // Ensure correct initial state
         }
 
         function closeSelectionScreen() {
@@ -3292,9 +3406,11 @@
             const graduatedSelected = graduatedMembers.filter(m => m.selected !== false).length;
             const totalSelected = currentSelected + graduatedSelected;
 
-            // Update Tab Counts
-            document.getElementById('tab-current').innerHTML = `Current Members <span class="count-badge">(${currentSelected})</span>`;
-            document.getElementById('tab-graduated').innerHTML = `Graduated Members <span class="count-badge">(${graduatedSelected})</span>`;
+            // Update Group Counts (New Toolbar)
+            const countCurrent = document.getElementById('count-current');
+            const countGraduated = document.getElementById('count-graduated');
+            if (countCurrent) countCurrent.innerText = `(${currentSelected}/${currentMembers.length})`;
+            if (countGraduated) countGraduated.innerText = `(${graduatedSelected}/${graduatedMembers.length})`;
 
             // Update Apply Button
             const applyBtn = document.querySelector('.btn-apply-selection');
@@ -3385,11 +3501,11 @@
             const graduatedSelected = graduatedMembers.filter(m => m.selected !== false).length;
             const totalSelected = currentSelected + graduatedSelected;
 
-            // Update Tab Counts
-            const tabCurrent = document.getElementById('tab-current');
-            const tabGraduated = document.getElementById('tab-graduated');
-            if (tabCurrent) tabCurrent.innerHTML = `Current Members <span class="count-badge">(${currentSelected})</span>`;
-            if (tabGraduated) tabGraduated.innerHTML = `Graduated Members <span class="count-badge">(${graduatedSelected})</span>`;
+            // Update Group Counts (New Toolbar)
+            const countCurrent = document.getElementById('count-current');
+            const countGraduated = document.getElementById('count-graduated');
+            if (countCurrent) countCurrent.innerText = `(${currentSelected}/${currentMembers.length})`;
+            if (countGraduated) countGraduated.innerText = `(${graduatedSelected}/${graduatedMembers.length})`;
 
             // Update Apply Button
             const applyBtn = document.querySelector('.btn-apply-selection');
@@ -3445,14 +3561,36 @@
 
             updateScopedHeaders('tab-content-current', currentMembers);
             updateScopedHeaders('tab-content-graduated', graduatedMembers);
+
+            // Update Master Toggles
+            const chkCurrent = document.getElementById('chk-current');
+            const chkGraduated = document.getElementById('chk-graduated');
+
+            if (chkCurrent) {
+                const allCurrentSelected = currentMembers.every(m => m.selected !== false);
+                chkCurrent.checked = allCurrentSelected;
+            }
+
+            if (chkGraduated) {
+                const allGraduatedSelected = graduatedMembers.every(m => m.selected !== false);
+                chkGraduated.checked = allGraduatedSelected;
+            }
         }
 
         function switchTab(tab) {
             activeTab = tab;
 
-            // Update tab buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`tab-${tab}`).classList.add('active');
+            // Update Active Group Visuals
+            const groupCurrent = document.getElementById('group-current');
+            const groupGraduated = document.getElementById('group-graduated');
+
+            if (tab === 'current') {
+                if (groupCurrent) groupCurrent.classList.add('active');
+                if (groupGraduated) groupGraduated.classList.remove('active');
+            } else {
+                if (groupCurrent) groupCurrent.classList.remove('active');
+                if (groupGraduated) groupGraduated.classList.add('active');
+            }
 
             // Show/Hide content
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -3478,34 +3616,53 @@
             updateSelectionButton();
         }
 
-        function selectAllMembers() {
-            members.forEach(m => m.selected = true);
-            renderSelectionScreen();
-            updateSelectionButton();
+        function toggleContainer(type) {
+            const chk = document.getElementById(`chk-${type}`);
+            if (chk) {
+                chk.checked = !chk.checked;
+                if (type === 'current') toggleAllCurrent();
+                else toggleAllGraduated();
+            }
         }
 
-        function deselectAllMembers() {
-            members.forEach(m => m.selected = false);
-            renderSelectionScreen();
-            updateSelectionButton();
-        }
+        function toggleAllCurrent() {
+            const chk = document.getElementById('chk-current');
+            const newState = chk ? chk.checked : true;
 
-        function selectCurrentOnly() {
-            members.forEach(m => {
-                m.selected = !m.graduated;
+            const currentMembers = members.filter(m => !m.graduated);
+
+            currentMembers.forEach(m => {
+                m.selected = newState;
+                // Update DOM if visible
+                const index = members.indexOf(m);
+                const card = document.getElementById(`member-card-${index}`);
+                if (card) {
+                    if (newState) card.classList.add('selected');
+                    else card.classList.remove('selected');
+                }
             });
-            renderSelectionScreen();
-            updateSelectionButton();
-            switchTab('current');
+
+            updateCounts();
         }
 
-        function selectGraduatedOnly() {
-            members.forEach(m => {
-                m.selected = m.graduated;
+        function toggleAllGraduated() {
+            const chk = document.getElementById('chk-graduated');
+            const newState = chk ? chk.checked : true;
+
+            const graduatedMembers = members.filter(m => m.graduated);
+
+            graduatedMembers.forEach(m => {
+                m.selected = newState;
+                // Update DOM if visible
+                const index = members.indexOf(m);
+                const card = document.getElementById(`member-card-${index}`);
+                if (card) {
+                    if (newState) card.classList.add('selected');
+                    else card.classList.remove('selected');
+                }
             });
-            renderSelectionScreen();
-            updateSelectionButton();
-            switchTab('graduated');
+
+            updateCounts();
         }
 
         function toggleGenVisibility(gen) {
