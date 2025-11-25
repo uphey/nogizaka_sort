@@ -3232,7 +3232,7 @@
 
                 // Wait for images -> Capture -> Display -> Cleanup
                 Promise.all(imagePromises).then(() => {
-                    // Slight delay to ensure rendering
+                    // Slight delay to ensure rendering - Increased to 1000ms for reliability
                     setTimeout(() => {
                         html2canvas(tempContainer, {
                             scale: 1.5, // Mobile safe scale
@@ -3252,7 +3252,7 @@
                             document.body.removeChild(tempContainer);
                             reject(err); // FAIL
                         });
-                    }, 500);
+                    }, 1000);
                 });
             });
         }
