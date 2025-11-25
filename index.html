@@ -1502,6 +1502,510 @@
             box-shadow: 0 8px 15px rgba(255, 0, 0, 0.3);
         }
 
+        :root {
+            --primary: #7e1083;
+            --primary-dark: #5e0c62;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+
+        /* --- SELECTION SCREEN --- */
+        /* Animations */
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes cardEntry {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes checkboxBounce {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.3);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .selection-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 24px;
+            width: 95%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--glass-shadow);
+            border: 1px solid var(--glass-border);
+            animation: modalFadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .member-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            /* Start invisible for staggered animation */
+            animation: cardEntry 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        .member-card.selected .member-checkbox {
+            background: var(--primary);
+            border-color: var(--primary);
+            animation: checkboxBounce 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .member-card.selected .member-checkbox::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            display: block;
+            text-align: center;
+            line-height: 20px;
+        }
+
+        .selection-header {
+            padding: 25px;
+            background: linear-gradient(135deg, #fdfbfd 0%, #f4eef5 100%);
+            border-bottom: 1px solid #e0d4e7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .selection-controls {
+            padding: 15px 25px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .btn-selection-ctrl {
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-selection-ctrl.primary {
+            background: rgba(126, 16, 131, 0.08);
+            color: var(--primary);
+            border-color: rgba(126, 16, 131, 0.1);
+        }
+
+        .btn-selection-ctrl.primary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(126, 16, 131, 0.25);
+            border-color: var(--primary);
+        }
+
+        .btn-selection-ctrl.secondary {
+            background: transparent;
+            border: 1px solid #e0e0e0;
+        }
+
+        .btn-selection-ctrl.secondary:hover {
+            background: #f5f5f5;
+            color: #333;
+            border-color: #ccc;
+        }
+
+        .selection-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px 30px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.8) 100%);
+            -webkit-overflow-scrolling: touch;
+            /* Smooth scrolling on iOS */
+            overscroll-behavior: contain;
+            /* Prevent scroll chaining */
+            min-height: 0;
+            /* Fix flexbox overflow issue */
+        }
+
+        .generation-group {
+            margin-bottom: 40px;
+        }
+
+        .generation-group.collapsed {
+            margin-bottom: 0px;
+        }
+
+        .generation-header {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(126, 16, 131, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            /* Make header clickable */
+        }
+
+        .gen-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chevron {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+            fill: var(--primary);
+        }
+
+        .generation-group.collapsed .chevron {
+            transform: rotate(-90deg);
+        }
+
+        /* Smooth Collapse Animation */
+        .member-grid-wrapper {
+            display: grid;
+            grid-template-rows: 1fr;
+            transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .generation-group.collapsed .member-grid-wrapper {
+            grid-template-rows: 0fr;
+        }
+
+        .member-grid-inner {
+            overflow: hidden;
+            min-height: 0;
+            transition: opacity 0.3s ease, transform 0.4s ease;
+            transform-origin: top;
+        }
+
+        .generation-group.collapsed .member-grid-inner {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        .generation-header::after {
+            display: none;
+            /* Remove the previous line separator */
+        }
+
+        .gen-toggle-btn {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(126, 16, 131, 0.2);
+            background: white;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .gen-toggle-btn:hover {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(126, 16, 131, 0.2);
+        }
+
+        .member-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 20px 15px;
+        }
+
+        .member-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .member-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(126, 16, 131, 0.12);
+            background: white;
+        }
+
+        .member-card.selected {
+            box-shadow: 0 8px 20px rgba(126, 16, 131, 0.15);
+            border: 1px solid rgba(126, 16, 131, 0.3);
+            background: white;
+        }
+
+        .member-checkbox {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1.5px solid #ddd;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            /* Hidden by default for cleaner look */
+            transform: scale(0.8);
+        }
+
+        .member-card:hover .member-checkbox,
+        .member-card.selected .member-checkbox {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .member-card.selected .member-checkbox {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: scale(1.1);
+            box-shadow: 0 4px 10px rgba(126, 16, 131, 0.3);
+        }
+
+        .member-card.selected .member-checkbox::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .member-thumb {
+            width: 100%;
+            aspect-ratio: 3/4;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .member-card:hover .member-thumb {
+            transform: scale(1.05);
+        }
+
+        .member-info {
+            padding: 12px 8px;
+            text-align: center;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 100%);
+        }
+
+        .member-name {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #2d1b36;
+            margin-bottom: 4px;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+        }
+
+        .member-gen {
+            font-size: 0.65rem;
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        .selection-footer {
+            padding: 20px 25px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-apply-selection {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            border: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(126, 16, 131, 0.25);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .btn-apply-selection:hover,
+        .btn-apply-selection:active {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(126, 16, 131, 0.35);
+        }
+
+        .status-pill {
+            cursor: pointer;
+            border: none;
+            text-align: center;
+        }
+
+        .status-pill:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(126, 16, 131, 0.15);
+        }
+
+        .selection-header {
+            padding: 20px 25px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .selection-tabs {
+            display: flex;
+            padding: 10px 25px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 73px;
+            /* Adjust based on header height */
+            z-index: 9;
+        }
+
+        .segmented-control {
+            display: flex;
+            width: 100%;
+            background: #f0f0f0;
+            padding: 4px;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+            transition: color 0.3s;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .count-badge {
+            font-size: 0.75em;
+            opacity: 0.7;
+            margin-left: 4px;
+            font-weight: 500;
+        }
+
+        .tab-btn.active .count-badge {
+            opacity: 1;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .gen-count {
+            font-size: 0.9rem;
+            color: #888;
+            font-weight: 400;
+            margin-left: 8px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
         @media (max-width: 768px) {
             .container {
                 width: 100%;
@@ -1654,9 +2158,9 @@
 
                 <!-- Action Controls -->
                 <div class="action-deck">
-                    <div id="status" class="status-pill">
+                    <button id="status" class="status-pill" onclick="openSelectionScreen()" disabled>
                         <span class="pulse-dot"></span> Loading Data...
-                    </div>
+                    </button>
 
                     <button id="start-btn" class="btn-start-lg" onclick="startSort()" disabled>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
@@ -1852,11 +2356,49 @@
         </div>
     </div>
 
+    <!-- SELECTION SCREEN MODAL -->
+    <div class="modal-backdrop" id="selection-modal" style="display: none;" onclick="closeSelectionScreen()">
+        <div class="selection-content" onclick="event.stopPropagation()">
+            <div class="selection-header">
+                <h2 style="font-family: 'Bodoni Moda'; color: var(--primary); margin: 0;">Select Members</h2>
+                <button class="close-btn" onclick="closeSelectionScreen()">&times;</button>
+            </div>
+
+            <div class="selection-controls">
+                <button class="btn-selection-ctrl primary" onclick="selectCurrentOnly()">Current Only</button>
+                <button class="btn-selection-ctrl primary" onclick="selectGraduatedOnly()">Graduated Only</button>
+                <button class="btn-selection-ctrl secondary" onclick="selectAllMembers()">Select All</button>
+                <button class="btn-selection-ctrl secondary" onclick="deselectAllMembers()">Deselect All</button>
+            </div>
+
+            <div class="selection-tabs">
+                <div class="segmented-control">
+                    <button class="tab-btn active" id="tab-current" onclick="switchTab('current')">Current
+                        Members</button>
+                    <button class="tab-btn" id="tab-graduated" onclick="switchTab('graduated')">Graduated
+                        Members</button>
+                </div>
+            </div>
+
+            <div class="selection-body" id="selection-list">
+                <!-- JS will populate this -->
+            </div>
+
+            <div class="selection-footer">
+                <button class="btn-apply-selection" onclick="applySelection()">
+                    Apply Selection
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // CONFIG
         const IMG_BASE = "https://n46db.com/pictures/profilepics/";
+        const IMG_FALLBACK_BASE = "https://www.nogizaka.info/member/alumna/";
         const PROXY = "https://corsproxy.io/?";
         const TARGET = encodeURIComponent("https://n46db.com/");
+        const TARGET_GRADUATED = encodeURIComponent("https://n46db.com/index.php?graduated=yes&sortby=dob&noearly=on");
         const CACHE_KEY = 'n46_members_v1';
         const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
         const PROGRESS_KEY = 'n46_sort_progress';
@@ -1870,6 +2412,39 @@
         let isAnimating = false;
         let finalTop5 = [];
 
+        // Helper function to parse members from HTML
+        function parseMembersFromHTML(textContent) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(textContent, "text/html");
+            const rows = Array.from(doc.querySelectorAll('tr'));
+
+            const parsed = [];
+            rows.forEach(row => {
+                const text = row.innerText;
+                if ((text.includes("期") || text.includes("Gen")) && /\d{4}\.\d{2}\.\d{2}/.test(text)) {
+                    const nameMatch = text.match(/[A-Z]+\s[A-Za-z\s]+/);
+                    const dateMatch = text.match(/(\d{4}\.\d{2}\.\d{2})/);
+                    if (nameMatch) {
+                        let rawName = nameMatch[0].trim();
+                        const filename = rawName.toLowerCase().replace(/\s+/g, '_') + ".jpg";
+                        const displayName = toTitleCase(rawName);
+                        let gen = "Unknown";
+                        if (text.includes("3期") || text.includes("3rd")) gen = "3rd Gen";
+                        if (text.includes("4期") || text.includes("4th")) gen = "4th Gen";
+                        if (text.includes("5期") || text.includes("5th")) gen = "5th Gen";
+                        if (text.includes("6期") || text.includes("6th")) gen = "6th Gen";
+                        if (text.includes("2期") || text.includes("2nd")) gen = "2nd Gen";
+                        if (text.includes("1期") || text.includes("1st")) gen = "1st Gen";
+                        let birthdate = dateMatch ? dateMatch[0] : "Unknown";
+                        if (!parsed.find(m => m.name === displayName)) {
+                            parsed.push({ name: displayName, gen: gen, date: birthdate, img: IMG_BASE + filename });
+                        }
+                    }
+                }
+            });
+            return parsed;
+        }
+
         async function init(retries = 3) {
             const status = document.getElementById('status');
 
@@ -1881,10 +2456,14 @@
                     if (Date.now() - timestamp < CACHE_DURATION) {
                         console.log("Using cached data");
                         members = data;
+                        // Initialize selection state
                         members.forEach(m => {
                             m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
+                            // Default selection: Current members only (graduated = false)
+                            if (m.selected === undefined) m.selected = !m.graduated;
                         });
-                        status.innerHTML = `<span class="pulse-dot"></span> ${members.length} Members Ready`;
+                        updateSelectionButton();
+                        document.getElementById('status').disabled = false;
                         document.getElementById('start-btn').disabled = false;
                         document.getElementById('demo-btn').disabled = false;
 
@@ -1911,55 +2490,62 @@
                 localStorage.removeItem(CACHE_KEY);
             }
 
-            // 2. Fetch if no cache
+
+            // 2. Fetch if no cache - fetch both current and graduated members
             try {
-                const res = await fetch(PROXY + TARGET);
-                const textContent = await res.text(); // corsproxy returns raw text directly
+                // Fetch both URLs in parallel
+                const [currentRes, graduatedRes] = await Promise.all([
+                    fetch(PROXY + TARGET),
+                    fetch(PROXY + TARGET_GRADUATED)
+                ]);
 
-                if (!textContent) throw new Error("Empty response");
+                const [currentText, graduatedText] = await Promise.all([
+                    currentRes.text(),
+                    graduatedRes.text()
+                ]);
 
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(textContent, "text/html");
-                const rows = Array.from(doc.querySelectorAll('tr'));
+                if (!currentText) throw new Error("Empty response from current members");
 
-                const parsed = [];
-                rows.forEach(row => {
-                    const text = row.innerText;
-                    if ((text.includes("期") || text.includes("Gen")) && /\d{4}\.\d{2}\.\d{2}/.test(text)) {
-                        const nameMatch = text.match(/[A-Z]+\s[A-Za-z\s]+/);
-                        const dateMatch = text.match(/(\d{4}\.\d{2}\.\d{2})/);
-                        if (nameMatch) {
-                            let rawName = nameMatch[0].trim();
-                            const filename = rawName.toLowerCase().replace(/\s+/g, '_') + ".jpg";
-                            const displayName = toTitleCase(rawName);
-                            let gen = "Unknown";
-                            if (text.includes("3期") || text.includes("3rd")) gen = "3rd Gen";
-                            if (text.includes("4期") || text.includes("4th")) gen = "4th Gen";
-                            if (text.includes("5期") || text.includes("5th")) gen = "5th Gen";
-                            if (text.includes("6期") || text.includes("6th")) gen = "6th Gen";
-                            let birthdate = dateMatch ? dateMatch[0] : "Unknown";
-                            if (!parsed.find(m => m.name === displayName)) {
-                                parsed.push({ name: displayName, gen: gen, date: birthdate, img: IMG_BASE + filename });
-                            }
-                        }
+                // Parse both responses
+                const currentMembers = parseMembersFromHTML(currentText);
+                const graduatedMembers = parseMembersFromHTML(graduatedText);
+
+                // Create a Set of current member names for quick lookup
+                const currentNames = new Set(currentMembers.map(m => m.name));
+
+                // Mark graduated status and merge
+                const allMembers = [];
+
+                // Add current members (graduated: false)
+                currentMembers.forEach(m => {
+                    allMembers.push({ ...m, graduated: false });
+                });
+
+                // Add graduated members that are NOT in current members (graduated: true)
+                graduatedMembers.forEach(m => {
+                    if (!currentNames.has(m.name)) {
+                        allMembers.push({ ...m, graduated: true });
                     }
                 });
 
-                if (parsed.length > 0) {
-                    // Save RAW data to Cache first
+                if (allMembers.length > 0) {
+                    // Save combined data to cache
                     localStorage.setItem(CACHE_KEY, JSON.stringify({
                         timestamp: Date.now(),
-                        data: parsed
+                        data: allMembers
                     }));
 
-                    members = parsed;
+                    members = allMembers;
 
-                    // Global proxy usage
+                    // Global proxy usage and initialize selection
                     members.forEach(m => {
                         m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
+                        // Default selection: Current members only (graduated = false)
+                        if (m.selected === undefined) m.selected = !m.graduated;
                     });
 
-                    status.innerHTML = `<span class="pulse-dot"></span> ${members.length} Members Ready`;
+                    updateSelectionButton();
+                    document.getElementById('status').disabled = false;
                     document.getElementById('start-btn').disabled = false;
                     document.getElementById('demo-btn').disabled = false;
                     initWall();
@@ -2015,7 +2601,14 @@
 
         function initWall() {
             const track = document.getElementById('wall-track');
-            if (members.length < 1) return;
+
+            // Filter to only show selected members
+            const selectedMembers = members.filter(m => m.selected !== false);
+            if (selectedMembers.length < 1) {
+                // No members selected, clear the marquee
+                track.innerHTML = '';
+                return;
+            }
 
             // 1. Calculate how many items needed to cover screen width + buffer
             // Item width = 100px + 20px gap = 120px
@@ -2027,8 +2620,8 @@
             // Let's aim for 2x screen width for the base set just to be super safe against resizing.
             const itemsNeeded = Math.ceil((screenWidth * 2) / itemWidth);
 
-            // 2. Prepare the pool
-            let pool = [...members].sort(() => 0.5 - Math.random());
+            // 2. Prepare the pool (only from selected members)
+            let pool = [...selectedMembers].sort(() => 0.5 - Math.random());
 
             // 3. Duplicate pool until we have enough items for the BASE set
             while (pool.length < itemsNeeded) {
@@ -2126,14 +2719,24 @@
                     return;
                 }
             }
+
+            // Get only selected members
+            const selectedMembers = getSelectedMembers();
+            if (selectedMembers.length < 2) {
+                alert("Please select at least 2 members to rank!");
+                return;
+            }
+
             document.getElementById('start-screen').classList.remove('active');
             document.getElementById('battle-screen').classList.add('active');
-            queue = members.map((_, i) => [i]);
+
+            // Build queue using indices from the full members array
+            queue = selectedMembers.map(m => members.indexOf(m)).map(i => [i]);
             for (let i = queue.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [queue[i], queue[j]] = [queue[j], queue[i]];
             }
-            maxBattles = members.length * Math.log2(members.length);
+            maxBattles = selectedMembers.length * Math.log2(selectedMembers.length);
             battlesCount = 0; history = []; currentMerge = null;
             document.getElementById('undo-btn').disabled = true;
             clearProgress(); // Clear progress when starting a new sort
@@ -2149,8 +2752,16 @@
                 }
             }
 
+            // Get only selected members
+            const selectedMembers = getSelectedMembers();
+            if (selectedMembers.length < 2) {
+                alert("Please select at least 2 members to view in the demo!");
+                return;
+            }
+
             document.getElementById('start-screen').classList.remove('active');
-            const demoOrder = members.map((_, i) => i).sort(() => 0.5 - Math.random());
+            // Create demo order using indices from full members array
+            const demoOrder = selectedMembers.map(m => members.indexOf(m)).sort(() => 0.5 - Math.random());
             showResults(demoOrder);
         }
 
@@ -2194,6 +2805,8 @@
         function renderCard(side, member) {
             const img = document.getElementById(`img-${side}`);
             img.style.opacity = "";
+            img.dataset.name = member.name; // Add name for error handling
+            img.removeAttribute('data-fallback-tried'); // Reset fallback state
             img.src = member.img;
             document.getElementById(`name-${side}`).innerText = member.name;
             document.getElementById(`gen-${side}`).innerText = member.gen;
@@ -2319,7 +2932,7 @@
 
                 div.innerHTML = `
                 <div class="rank-num">${rank}</div>
-                <img class="res-thumb" src="${m.img}">
+                <img class="res-thumb" src="${m.img}" data-name="${m.name}" onerror="handleError(this)">
                 <div class="res-info">
                     <div class="res-name">${m.name}</div>
                     <div class="res-gen" style="font-size:0.7rem; color:var(--primary); background:rgba(126,16,131,0.08); padding:2px 8px; border-radius:10px; display:inline-block; margin-top:4px;">${m.gen}</div>
@@ -2654,7 +3267,452 @@
             document.getElementById('modal').classList.add('active');
         }
         function closeModal() { document.getElementById('modal').classList.remove('active'); }
-        function handleError(img) { img.style.opacity = 0.5; }
+
+        // Selection Screen Functions
+        function openSelectionScreen() {
+            renderSelectionScreen();
+            document.getElementById('selection-modal').style.display = 'flex';
+        }
+
+        function closeSelectionScreen() {
+            document.getElementById('selection-modal').style.display = 'none';
+        }
+
+        let activeTab = 'current';
+        const collapsedGens = new Set(); // Track collapsed generations
+
+        function renderSelectionScreen() {
+            const list = document.getElementById('selection-list');
+
+            // Use graduated property instead of hardcoded gens
+            const currentMembers = members.filter(m => m.graduated === false);
+            const graduatedMembers = members.filter(m => m.graduated === true);
+
+            // Calculate counts
+            const currentSelected = currentMembers.filter(m => m.selected !== false).length;
+            const graduatedSelected = graduatedMembers.filter(m => m.selected !== false).length;
+            const totalSelected = currentSelected + graduatedSelected;
+
+            // Update Tab Counts
+            document.getElementById('tab-current').innerHTML = `Current Members <span class="count-badge">(${currentSelected})</span>`;
+            document.getElementById('tab-graduated').innerHTML = `Graduated Members <span class="count-badge">(${graduatedSelected})</span>`;
+
+            // Update Apply Button
+            const applyBtn = document.querySelector('.btn-apply-selection');
+            if (applyBtn) {
+                applyBtn.innerHTML = `Apply Selection (${totalSelected})`;
+            }
+
+            // Organize by generation
+            const genOrder = ['1st Gen', '2nd Gen', '3rd Gen', '4th Gen', '5th Gen', '6th Gen'];
+
+            function groupByGen(memberList) {
+                const grouped = {};
+                memberList.forEach(m => {
+                    if (!grouped[m.gen]) grouped[m.gen] = [];
+                    grouped[m.gen].push(m);
+                });
+                return grouped;
+            }
+
+            const groupedCurrent = groupByGen(currentMembers);
+            const groupedGraduated = groupByGen(graduatedMembers);
+
+            function renderMemberGroup(groupedMembers) {
+                let html = '';
+                genOrder.forEach(gen => {
+                    if (groupedMembers[gen]) {
+                        // Check if all members in this gen are selected
+                        const genTotal = groupedMembers[gen].length;
+                        const genSelected = groupedMembers[gen].filter(m => m.selected !== false).length;
+                        const allSelected = genSelected === genTotal;
+                        const btnText = allSelected ? 'Deselect' : 'Select All';
+                        const isCollapsed = collapsedGens.has(gen);
+
+                        html += `<div class="generation-group ${isCollapsed ? 'collapsed' : ''}">
+                            <div class="generation-header" onclick="toggleGenVisibility('${gen}')">
+                                <div class="gen-header-left">
+                                    <svg class="chevron" viewBox="0 0 24 24">
+                                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                                    </svg>
+                                    <span>${gen}</span>
+                                    <span class="gen-count">${genSelected}/${genTotal}</span>
+                                </div>
+                                <button class="gen-toggle-btn" onclick="event.stopPropagation(); toggleGeneration('${gen}')">${btnText}</button>
+                            </div>
+                            <div class="member-grid-wrapper">
+                                <div class="member-grid-inner">
+                                    <div class="member-grid">`;
+                        groupedMembers[gen].forEach((m, i) => {
+                            const memberIndex = members.findIndex(mem => mem.name === m.name);
+                            const isSelected = m.selected !== false;
+                            const delay = i * 0.03; // 30ms delay per card
+                            html += `
+                                <div id="member-card-${memberIndex}" class="member-card ${isSelected ? 'selected' : ''}" onclick="toggleMember(${memberIndex})" style="animation-delay: ${delay}s">
+                                    <div class="member-checkbox"></div>
+                                    <img class="member-thumb" src="${m.img}" data-name="${m.name}" onerror="handleError(this)">
+                                    <div class="member-info">
+                                        <div class="member-name">${m.name}</div>
+                                        <div class="member-gen">${m.gen}</div>
+                                    </div>
+                                </div>`;
+                        });
+                        html += '</div></div></div></div>';
+                    }
+                });
+                return html;
+            }
+
+            let html = '';
+            list.innerHTML = `
+                <div id="tab-content-current" class="tab-content ${activeTab === 'current' ? 'active' : ''}">
+                    ${renderMemberGroup(groupedCurrent)}
+                </div>
+                <div id="tab-content-graduated" class="tab-content ${activeTab === 'graduated' ? 'active' : ''}">
+                    ${renderMemberGroup(groupedGraduated)}
+                </div>
+            `;
+
+            updateCounts(); // Initial count update
+        }
+
+        function updateCounts() {
+            // Use graduated property instead of hardcoded gens
+            const currentMembers = members.filter(m => m.graduated === false);
+            const graduatedMembers = members.filter(m => m.graduated === true);
+
+            // Calculate counts
+            const currentSelected = currentMembers.filter(m => m.selected !== false).length;
+            const graduatedSelected = graduatedMembers.filter(m => m.selected !== false).length;
+            const totalSelected = currentSelected + graduatedSelected;
+
+            // Update Tab Counts
+            const tabCurrent = document.getElementById('tab-current');
+            const tabGraduated = document.getElementById('tab-graduated');
+            if (tabCurrent) tabCurrent.innerHTML = `Current Members <span class="count-badge">(${currentSelected})</span>`;
+            if (tabGraduated) tabGraduated.innerHTML = `Graduated Members <span class="count-badge">(${graduatedSelected})</span>`;
+
+            // Update Apply Button
+            const applyBtn = document.querySelector('.btn-apply-selection');
+            if (applyBtn) {
+                applyBtn.innerHTML = `Apply Selection (${totalSelected})`;
+            }
+
+            // Update Generation Header Counts & Buttons
+            const genOrder = ['1st Gen', '2nd Gen', '3rd Gen', '4th Gen', '5th Gen', '6th Gen'];
+
+            function updateScopedHeaders(containerId, memberList) {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    console.log(`Container ${containerId} not found`);
+                    return;
+                }
+
+                genOrder.forEach(gen => {
+                    const genMembers = memberList.filter(m => m.gen === gen);
+                    if (genMembers.length === 0) return;
+
+                    const genTotal = genMembers.length;
+                    const genSelected = genMembers.filter(m => m.selected !== false).length;
+                    const allSelected = genSelected === genTotal;
+
+                    // Find the specific header within this container
+                    const headers = container.querySelectorAll('.generation-header');
+                    headers.forEach(header => {
+                        const nameContainer = header.querySelector('.gen-header-left');
+                        if (nameContainer) {
+                            const spans = nameContainer.querySelectorAll('span');
+                            let nameSpan = null;
+                            let countSpan = null;
+
+                            spans.forEach(span => {
+                                if (span.classList.contains('gen-count')) {
+                                    countSpan = span;
+                                } else {
+                                    nameSpan = span;
+                                }
+                            });
+
+                            if (nameSpan && nameSpan.textContent.trim() === gen) {
+                                if (countSpan) countSpan.textContent = `${genSelected}/${genTotal}`;
+
+                                const btn = header.querySelector('.gen-toggle-btn');
+                                if (btn) btn.textContent = allSelected ? 'Deselect' : 'Select All';
+                            }
+                        }
+                    });
+                });
+            }
+
+            updateScopedHeaders('tab-content-current', currentMembers);
+            updateScopedHeaders('tab-content-graduated', graduatedMembers);
+        }
+
+        function switchTab(tab) {
+            activeTab = tab;
+
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+
+            // Show/Hide content
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            const content = document.getElementById(`tab-content-${tab}`);
+            if (content) content.classList.add('active');
+        }
+
+        function toggleMember(index) {
+            const member = members[index];
+            member.selected = member.selected === false ? true : false;
+
+            // Update DOM directly
+            const card = document.getElementById(`member-card-${index}`);
+            if (card) {
+                if (member.selected) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            }
+
+            updateCounts();
+            updateSelectionButton();
+        }
+
+        function selectAllMembers() {
+            members.forEach(m => m.selected = true);
+            renderSelectionScreen();
+            updateSelectionButton();
+        }
+
+        function deselectAllMembers() {
+            members.forEach(m => m.selected = false);
+            renderSelectionScreen();
+            updateSelectionButton();
+        }
+
+        function selectCurrentOnly() {
+            members.forEach(m => {
+                m.selected = !m.graduated;
+            });
+            renderSelectionScreen();
+            updateSelectionButton();
+            switchTab('current');
+        }
+
+        function selectGraduatedOnly() {
+            members.forEach(m => {
+                m.selected = m.graduated;
+            });
+            renderSelectionScreen();
+            updateSelectionButton();
+            switchTab('graduated');
+        }
+
+        function toggleGenVisibility(gen) {
+            // Toggle state in Set
+            if (collapsedGens.has(gen)) {
+                collapsedGens.delete(gen);
+            } else {
+                collapsedGens.add(gen);
+            }
+
+            // Find the specific generation group element(s) in the DOM
+            // We need to look in both tabs because the same gen might exist in both (though usually not visible)
+            // Actually, we should just find all generation groups that match this gen.
+            // But we don't have IDs on the groups yet.
+            // Let's rely on the header click event target or add IDs.
+            // Adding IDs to generation groups in renderMemberGroup is cleaner.
+
+            // Wait, I can't easily add IDs without re-rendering.
+            // Let's use the fact that the header is inside the group.
+            // But this function is called with 'gen' string.
+
+            // Let's re-render for now? NO, that breaks animation.
+            // We MUST find the element.
+
+            // Strategy: Iterate all generation groups and check their header text.
+            const groups = document.querySelectorAll('.generation-group');
+            groups.forEach(group => {
+                const header = group.querySelector('.generation-header');
+                const nameSpan = header.querySelector('.gen-header-left span:nth-child(2)'); // Name is 2nd child (after SVG)
+                // Or better, use the onclick attribute? No.
+
+                // Let's look for the name span more robustly
+                const nameContainer = header.querySelector('.gen-header-left');
+                if (nameContainer) {
+                    const spans = nameContainer.querySelectorAll('span');
+                    let nameText = '';
+                    spans.forEach(span => {
+                        if (!span.classList.contains('gen-count')) {
+                            nameText = span.textContent.trim();
+                        }
+                    });
+
+                    if (nameText === gen) {
+                        // Found the group for this gen
+                        if (collapsedGens.has(gen)) {
+                            group.classList.add('collapsed');
+                        } else {
+                            group.classList.remove('collapsed');
+                        }
+                    }
+                }
+            });
+        }
+
+        function toggleGeneration(gen) {
+            console.log(`Toggling generation: ${gen}, Active Tab: ${activeTab}`);
+            // Find all members in this generation AND matching the active tab
+            const genMembers = members.filter(m => {
+                if (m.gen !== gen) return false;
+                if (activeTab === 'current') return !m.graduated;
+                if (activeTab === 'graduated') return m.graduated;
+                return true;
+            });
+
+            // Check if all are currently selected
+            const allSelected = genMembers.every(m => m.selected !== false);
+
+            // Toggle state: if all selected -> deselect all; otherwise -> select all
+            const newState = !allSelected;
+            console.log(`New state for ${gen}: ${newState}`);
+
+            genMembers.forEach(m => {
+                m.selected = newState;
+                // Find global index to update DOM
+                const index = members.indexOf(m);
+                const card = document.getElementById(`member-card-${index}`);
+                if (card) {
+                    if (newState) {
+                        card.classList.add('selected');
+                    } else {
+                        card.classList.remove('selected');
+                    }
+                }
+            });
+
+            updateCounts();
+        }
+
+        function applySelection() {
+            updateSelectionButton();
+            closeSelectionScreen();
+            initWall(); // Refresh marquee with potentially changed member set
+        }
+
+        function updateSelectionButton() {
+            const selectedCount = members.filter(m => m.selected !== false).length;
+            const status = document.getElementById('status');
+            status.innerHTML = `<span class="pulse-dot"></span> ${selectedCount} Member${selectedCount !== 1 ? 's' : ''} Selected`;
+        }
+
+        function getSelectedMembers() {
+            return members.filter(m => m.selected !== false);
+        }
+
+        const ALUMNAE_NAME_MAP = {
+            "Akimoto Manatsu": "akimoto_manatsu",
+            "Ando Mikumo": "andoh_mikumo",
+            "Ikuta Erika": "ikuta_erika",
+            "Ikoma Rina": "ikoma_rina",
+            "Ichiki Rena": "ichiki_rena",
+            "Ito Nene": "itoh_nene",
+            "Ito Marika": "itoh_marika",
+            "Inoue Sayuri": "inoue_sayuri",
+            "Iwase Yumiko": "iwase_yumiko",
+            "Eto Misa": "etoh_misa",
+            "Kashiwa Yukina": "kashiwa_yukina",
+            "Kawago Hina": "kawago_hina",
+            "Kawamura Mahiro": "kawamura_mahiro",
+            "Saito Asuka": "saitoh_asuka",
+            "Saito Chiharu": "saitoh_chiharu",
+            "Saito Yuuri": "saitoh_yuuri",
+            "Sakurai Reika": "sakurai_reika",
+            "Shiraishi Mai": "shiraishi_mai",
+            "Takayama Kazumi": "takayama_kazumi",
+            "Nakada Kana": "nakada_kana",
+            "Nakamoto Himeka": "nakamoto_himeka",
+            "Nagashima Seira": "nagashima_seira",
+            "Nishino Nanase": "nishino_nanase",
+            "Nojo Ami": "nohjo_ami",
+            "Noujo Ami": "nohjo_ami",
+            "Hashimoto Nanami": "hashimoto_nanami",
+            "Hatanaka Seira": "hatanaka_seira",
+            "Higuchi Hina": "higuchi_hina",
+            "Fukagawa Mai": "fukagawa_mai",
+            "Hoshino Minami": "hoshino_minami",
+            "Matsumura Sayuri": "matsumura_sayuri",
+            "Miyazawa Seira": "miyazawa_seira",
+            "Yamato Rina": "yamato_rina",
+            "Wakatsuki Yumi": "wakatsuki_yumi",
+            "Wada Maaya": "wada_maaya",
+            "Ito Karin": "itoh_karin",
+            "Ito Junna": "itoh_junna",
+            "Kitano Hinako": "kitano_hinako",
+            "Sagara Iori": "sagara_iori",
+            "Sasaki Kotoko": "sasaki_kotoko",
+            "Shinuchi Mai": "shinuchi_mai",
+            "Suzuki Ayane": "suzuki_ayane",
+            "Terada Ranze": "terada_ranze",
+            "Nishikawa Nanami": "nishikawa_nanami",
+            "Hori Miona": "hori_miona",
+            "Yada Risako": "yada_risako",
+            "Yamazaki Rena": "yamazaki_rena",
+            "Yonetoku Kyoka": "yonetoku_kyohka",
+            "Watanabe Miria": "watanabe_miria",
+            "Ozono Momoko": "ohzono_momoko",
+            "Sakaguchi Tamami": "sakaguchi_tamami",
+            "Sato Kaede": "satoh_kaede",
+            "Nakamura Reno": "nakamura_reno",
+            "Mukai Hazuki": "mukai_hazuki",
+            "Yamashita Mizuki": "yamashita_mizuki",
+            "Yoda Yuuki": "yoda_yuuki",
+            "Kakehashi Sayaka": "kakehashi_sayaka",
+            "Kitagawa Yuri": "kitagawa_yuri",
+            "Seimiya Rei": "seimiya_rei"
+        };
+
+        function handleError(img) {
+            if (img.dataset.fallbackTried) {
+                img.style.opacity = 0.5;
+                return;
+            }
+
+            const name = img.dataset.name;
+            if (name) {
+                let fallbackUrl;
+
+                // 1. Check explicit map first
+                if (ALUMNAE_NAME_MAP[name]) {
+                    fallbackUrl = IMG_FALLBACK_BASE + ALUMNAE_NAME_MAP[name] + '/image.jpg';
+                } else {
+                    // 2. Default logic: "Lastname Firstname" -> "lastname_firstname"
+                    const cleanName = name.trim().toLowerCase();
+                    const parts = cleanName.split(/\s+/);
+                    if (parts.length >= 2) {
+                        fallbackUrl = IMG_FALLBACK_BASE + parts[0] + '_' + parts[1] + '/image.jpg';
+                    }
+                }
+
+                if (fallbackUrl) {
+                    // Proxy through wsrv.nl for caching and optimization
+                    const proxiedUrl = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=400&output=webp";
+
+                    img.src = proxiedUrl;
+                    img.dataset.fallbackTried = "true";
+                    img.style.opacity = "1";
+
+                    // Update global member data
+                    const member = members.find(m => m.name === name);
+                    if (member) member.img = proxiedUrl;
+
+                    return;
+                }
+            }
+
+            img.style.opacity = 0.5;
+        }
 
         init();
         function goHome() {
