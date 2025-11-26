@@ -2352,6 +2352,24 @@
             transform: scale(0.95);
             transition: transform 0.1s ease;
         }
+
+        /* Make text unselectable in all buttons */
+        button,
+        .btn-start-lg,
+        .btn-apply-selection,
+        .gen-toggle-btn,
+        .close-btn,
+        .media-btn,
+        .btn-selection-ctrl,
+        .btn-profile,
+        .status-pill,
+        .member-info-btn,
+        .selection-toolbar {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
     </style>
 </head>
 
