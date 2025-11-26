@@ -1387,41 +1387,47 @@
             background: rgba(45, 27, 54, 0.6);
             backdrop-filter: blur(8px);
             z-index: 1000;
-            display: none;
+            display: flex;
             justify-content: center;
             align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s;
         }
 
         .modal-backdrop.active {
-            display: flex;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
         }
 
         .modal-content {
-            background: #fff;
+            background: #fffffff0;
             width: 90%;
             max-width: 380px;
             border-radius: 24px;
             overflow: hidden;
-            animation: zoomIn 0.3s;
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        @keyframes zoomIn {
-            from {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+        .modal-backdrop.active .modal-content {
+            transform: scale(1);
         }
 
         .modal-header {
-            background: linear-gradient(135deg, #fdfbfd 0%, #f4eef5 100%);
-            padding: 30px 20px;
-            text-align: center;
             position: relative;
+            padding: 50px 20px 20px;
+            text-align: center;
+            background: #fffffff0;
+        }
+
+        /* Removed modal-header-bg */
+
+        .modal-header-content {
+            position: relative;
+            z-index: 1;
         }
 
         .close-btn {
@@ -1430,29 +1436,36 @@
             right: 20px;
             background: none;
             border: none;
-            font-size: 1.5rem;
+            font-size: 2rem;
             color: #888;
             cursor: pointer;
+            z-index: 10;
         }
 
         .modal-avatar {
-            width: 110px;
-            height: 110px;
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
             object-fit: cover;
-            margin: 0 auto 15px;
-            border: 4px solid white;
-            box-shadow: 0 10px 20px rgba(126, 16, 131, 0.15);
+            margin: 0 auto 20px;
+            border: none;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 2;
         }
 
         .modal-tag {
-            font-size: 0.85rem;
-            color: var(--primary);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            color: #666;
             font-weight: 600;
-            background: rgba(126, 16, 131, 0.1);
-            padding: 6px 16px;
-            border-radius: 20px;
+            background: #f5f5f7;
+            padding: 8px 20px;
+            border-radius: 50px;
             display: inline-block;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .modal-body {
@@ -1465,60 +1478,43 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            padding: 12px;
-            border-radius: 12px;
+            gap: 12px;
+            padding: 14px;
+            border-radius: 16px;
             text-decoration: none;
             font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
             background: white;
-            border: 1px solid #ddd;
-            color: #333;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            color: #444;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
         }
 
-        .btn-google {
-            border-color: #ddd;
-            color: #555;
+        .media-btn:hover,
+        .media-btn:active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-google,
+        .btn-pinterest,
+        .btn-youtube {
+            color: var(--primary);
+            border-color: rgba(126, 16, 131, 0.15);
+            background: rgba(126, 16, 131, 0.05);
         }
 
         .btn-google:hover,
-        .btn-google:active {
-            background: #f8f9fa;
-            border-color: #aaa;
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        @media (hover: hover) {
-            .btn-google:hover {
-                transform: translateY(-2px);
-            }
-        }
-
-        .btn-pinterest {
-            border-color: #e60023;
-            color: #e60023;
-        }
-
-        .btn-pinterest:hover {
-            background: #e60023;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(230, 0, 35, 0.3);
-        }
-
-        .btn-youtube {
-            border-color: #ff0000;
-            color: #ff0000;
-        }
-
+        .btn-pinterest:hover,
         .btn-youtube:hover {
-            background: #ff0000;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(255, 0, 0, 0.3);
+            background: rgba(126, 16, 131, 0.1);
+            border-color: var(--primary);
         }
+
+
+
+
 
         :root {
             --primary: #7e1083;
@@ -1689,6 +1685,16 @@
             transition: all 0.2s ease;
         }
 
+        /* Increase touch target */
+        .member-info-btn::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+        }
+
         .member-info-btn:hover {
             transform: scale(1.1);
             background: white;
@@ -1829,7 +1835,7 @@
         .member-grid-wrapper {
             display: grid;
             grid-template-rows: 1fr;
-            transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.4s;
             overflow: hidden;
             padding: 15px;
             margin: -15px;
@@ -1837,6 +1843,7 @@
 
         .generation-group.collapsed .member-grid-wrapper {
             grid-template-rows: 0fr;
+            visibility: hidden;
         }
 
         .member-grid-inner {
@@ -2076,6 +2083,8 @@
             cursor: pointer;
             border: 1px solid transparent;
             transition: all 0.2s ease;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
         @media (hover: hover) {
@@ -2604,15 +2613,43 @@
     <div class="modal-backdrop" id="modal" onclick="closeModal()" style="z-index: 1100;">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
+
                 <button class="close-btn" onclick="closeModal()">&times;</button>
-                <img id="m-img" class="modal-avatar" src="">
-                <h3 id="m-name" style="font-family:'Bodoni Moda'; color:var(--primary); margin-bottom:10px;">Name</h3>
-                <div id="m-meta" class="modal-tag">Gen • Birthdate</div>
+                <div class="modal-header-content">
+                    <img id="m-img" class="modal-avatar" src="">
+                    <h2 id="m-name"
+                        style="font-family:'Bodoni Moda'; color:var(--primary); margin-bottom:10px; position:relative;">
+                        Name</h2>
+                    <div id="m-meta" class="modal-tag">Gen • Birthdate</div>
+                </div>
             </div>
             <div class="modal-body">
-                <a id="link-google" href="#" target="_blank" class="media-btn btn-google">🔍 Google Images</a>
-                <a id="link-pinterest" href="#" target="_blank" class="media-btn btn-pinterest">📌 Pinterest</a>
-                <a id="link-youtube" href="#" target="_blank" class="media-btn btn-youtube">▶ YouTube</a>
+                <a id="link-google" href="#" target="_blank" class="media-btn btn-google">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    Google Images
+                </a>
+                <a id="link-pinterest" href="#" target="_blank" class="media-btn btn-pinterest">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="17" x2="12" y2="22"></line>
+                        <path
+                            d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z">
+                        </path>
+                    </svg>
+                    Pinterest
+                </a>
+                <a id="link-youtube" href="#" target="_blank" class="media-btn btn-youtube">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                    </svg>
+                    YouTube
+                </a>
             </div>
         </div>
     </div>
@@ -2627,7 +2664,7 @@
 
             <div class="selection-toolbar">
                 <!-- Group 1: Current Members -->
-                <div class="toolbar-group active" id="group-current" onclick="switchTab('current')">
+                <div class="toolbar-group active" id="group-current" onclick="switchTab('current')" role="button">
                     <div class="group-info">
                         <span class="group-title">Current Members</span>
                         <span class="group-count" id="count-current">(0)</span>
@@ -2644,7 +2681,7 @@
                 </div>
 
                 <!-- Group 2: Graduated Members -->
-                <div class="toolbar-group" id="group-graduated" onclick="switchTab('graduated')">
+                <div class="toolbar-group" id="group-graduated" onclick="switchTab('graduated')" role="button">
                     <div class="group-info">
                         <span class="group-title">Graduated Members</span>
                         <span class="group-count" id="count-graduated">(0)</span>
@@ -2675,6 +2712,9 @@
 
     <script>
         // CONFIG
+        // Enable active state support on mobile
+        document.addEventListener('touchstart', function () { }, { passive: true });
+
         const IMG_BASE = "https://n46db.com/pictures/profilepics/";
         const IMG_FALLBACK_BASE = "https://www.nogizaka.info/member/alumna/";
         const PROXY = "https://corsproxy.io/?";
