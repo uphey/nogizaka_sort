@@ -1588,25 +1588,27 @@
             box-shadow: var(--glass-shadow);
             border: 1px solid var(--glass-border);
             /* Transition for open/close */
-            transform: translateY(20px);
+            transform: scale(0.95);
             opacity: 0;
             transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
         }
 
         #selection-modal {
             opacity: 0;
-            transition: opacity 0.3s ease;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s;
             pointer-events: none;
             /* Prevent clicks when fading out */
         }
 
         #selection-modal.active {
             opacity: 1;
+            visibility: visible;
             pointer-events: auto;
         }
 
         #selection-modal.active .selection-content {
-            transform: translateY(0);
+            transform: scale(1);
             opacity: 1;
         }
 
@@ -1632,7 +1634,8 @@
                 transform: translateY(100%);
                 opacity: 1;
                 /* Keep fully opaque for slide */
-                transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+                transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+                will-change: transform;
             }
 
             #selection-modal.active .selection-content {
@@ -2069,6 +2072,8 @@
             top: 0;
             z-index: 9;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            transform: translateZ(0);
+            will-change: transform;
         }
 
         .toolbar-group {
@@ -2085,6 +2090,7 @@
             transition: all 0.2s ease;
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
+            transform: translateZ(0);
         }
 
         @media (hover: hover) {
@@ -2256,7 +2262,7 @@
 
             .logo {
                 font-family: 'Bodoni Moda', serif;
-                font-size: 1.8rem;
+                font-size: 1.5rem;
                 font-weight: 700;
                 letter-spacing: -0.5px;
             }
@@ -2655,7 +2661,7 @@
     </div>
 
     <!-- SELECTION SCREEN MODAL -->
-    <div class="modal-backdrop" id="selection-modal" style="display: none;" onclick="closeSelectionScreen()">
+    <div class="modal-backdrop" id="selection-modal" onclick="closeSelectionScreen()">
         <div class="selection-content" onclick="event.stopPropagation()">
             <div class="selection-header">
                 <h2 style="font-family: 'Bodoni Moda'; color: var(--primary); margin: 0;">Select Members</h2>
@@ -3635,7 +3641,7 @@
 
             renderSelectionScreen();
             const modal = document.getElementById('selection-modal');
-            modal.style.display = 'flex';
+
             // Force reflow
             void modal.offsetWidth;
             modal.classList.add('active');
@@ -3645,9 +3651,6 @@
         function closeSelectionScreen() {
             const modal = document.getElementById('selection-modal');
             modal.classList.remove('active');
-            setTimeout(() => {
-                modal.style.display = 'none';
-            }, 300); // Match transition duration
         }
 
         function renderSelectionScreen() {
