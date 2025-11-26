@@ -1615,6 +1615,15 @@
         .tab-content {
             display: none;
             animation: fadeIn 0.3s ease;
+            overflow-y: auto;
+            height: 100%;
+            padding: 25px 30px;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         /* Mobile Bottom Sheet Transition */
@@ -1656,7 +1665,6 @@
             opacity: 0;
             padding: 10px;
             contain: content;
-            will-change: transform, opacity;
             /* Start invisible for staggered animation */
             animation: cardEntry 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
@@ -1773,15 +1781,12 @@
 
         .selection-body {
             flex: 1;
-            overflow-y: auto;
-            padding: 25px 30px;
+            overflow: hidden;
+            padding: 0;
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.8) 100%);
-            -webkit-overflow-scrolling: touch;
-            /* Smooth scrolling on iOS */
-            overscroll-behavior: contain;
-            /* Prevent scroll chaining */
             min-height: 0;
-            /* Fix flexbox overflow issue */
+            display: flex;
+            flex-direction: column;
         }
 
         .generation-group {
@@ -3721,7 +3726,8 @@
                         groupedMembers[gen].forEach((m, i) => {
                             const memberIndex = members.findIndex(mem => mem.name === m.name);
                             const isSelected = tempSelection.has(memberIndex);
-                            const delay = i * 0.03; // 30ms delay per card
+                            // Cap delay to first 15 items to prevent long blocking time
+                            const delay = Math.min(i, 15) * 0.03;
                             html += `
                                 <div id="member-card-${memberIndex}" class="member-card ${isSelected ? 'selected' : ''}" onclick="toggleMember(${memberIndex})" style="animation-delay: ${delay}s">
                                     <div class="member-img-frame">
@@ -3866,7 +3872,10 @@
             // Show/Hide content
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             const content = document.getElementById(`tab-content-${tab}`);
-            if (content) content.classList.add('active');
+            if (content) {
+                content.classList.add('active');
+                content.scrollTop = 0;
+            }
         }
 
         function toggleMember(index) {
