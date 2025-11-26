@@ -361,7 +361,7 @@
             border-top: 1px solid white;
             border-bottom: 1px solid white;
             transform: rotate(-3deg);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             overflow: hidden;
@@ -447,16 +447,29 @@
         }
 
         .status-pill {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--primary);
-            background: rgba(126, 16, 131, 0.06);
-            padding: 6px 16px;
-            border-radius: 20px;
-            margin-bottom: 10px;
+            background: white;
+            padding: 8px 14px;
+            border-radius: 30px;
+            margin-bottom: 15px;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(126, 16, 131, 0.1);
+            border: 1px solid rgba(126, 16, 131, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .edit-text {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #999;
+            font-weight: 700;
+            border-left: 1px solid #eee;
+            padding-left: 10px;
         }
 
         .pulse-dot {
@@ -515,9 +528,9 @@
             font-family: 'Montserrat', sans-serif;
             font-size: 1.1rem;
             font-weight: 700;
-            padding: 15px;
+            padding: 18px;
             border-radius: 50px;
-            border: 2px solid var(--primary);
+            border: 0.5px solid var(--primary);
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(126, 16, 131, 0.1);
             transition: all 0.3s ease;
@@ -578,6 +591,7 @@
                 transform: rotate(-2deg);
                 width: 100vw;
                 margin-left: calc(-50vw + 50%);
+                margin-bottom: 30px;
                 left: 0;
             }
 
@@ -1040,10 +1054,14 @@
 
         .res-gen {
             font-size: 0.75rem;
-            color: #888;
-            margin-top: 4px;
-            font-family: sans-serif;
-            font-weight: 500;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-weight: 600;
+            background: rgba(126, 16, 131, 0.08);
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 6px;
         }
 
         .res-score {
@@ -1573,7 +1591,27 @@
             flex-direction: column;
             box-shadow: var(--glass-shadow);
             border: 1px solid var(--glass-border);
-            animation: modalFadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            /* Transition for open/close */
+            transform: translateY(20px);
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
+        }
+
+        #selection-modal {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            /* Prevent clicks when fading out */
+        }
+
+        #selection-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #selection-modal.active .selection-content {
+            transform: translateY(0);
+            opacity: 1;
         }
 
         .tab-content {
@@ -1581,18 +1619,80 @@
             animation: fadeIn 0.3s ease;
         }
 
+        /* Mobile Bottom Sheet Transition */
+        @media (max-width: 768px) {
+            #selection-modal {
+                align-items: flex-end;
+                padding: 0;
+            }
+
+            .selection-content {
+                width: 100%;
+                max-width: 100%;
+                height: 90vh;
+                max-height: 90vh;
+                border-radius: 24px 24px 0 0;
+                margin: 0;
+                transform: translateY(100%);
+                opacity: 1;
+                /* Keep fully opaque for slide */
+                transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            }
+
+            #selection-modal.active .selection-content {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
         .member-card {
             position: relative;
-            background: rgba(255, 255, 255, 0.8);
+            background: white;
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.05);
             opacity: 0;
+            padding: 10px;
             /* Start invisible for staggered animation */
             animation: cardEntry 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        .member-img-frame {
+            width: 100%;
+            aspect-ratio: 3/4;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 8px;
+            background: #f0f0f0;
+        }
+
+        .member-info-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 12px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .member-info-btn:hover {
+            transform: scale(1.1);
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
         .member-card.selected .member-checkbox {
@@ -1730,6 +1830,9 @@
             display: grid;
             grid-template-rows: 1fr;
             transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            padding: 15px;
+            margin: -15px;
         }
 
         .generation-group.collapsed .member-grid-wrapper {
@@ -1775,7 +1878,7 @@
 
         .member-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
             gap: 20px 15px;
         }
 
@@ -1792,30 +1895,30 @@
 
         .member-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(126, 16, 131, 0.12);
+            box-shadow: 0 5px 12px rgba(126, 16, 131, 0.12);
             background: white;
         }
 
         .member-card.selected {
-            box-shadow: 0 8px 20px rgba(126, 16, 131, 0.15);
+            box-shadow: 0 5px 12px rgba(126, 16, 131, 0.10);
             border: 1px solid rgba(126, 16, 131, 0.3);
             background: white;
         }
 
         .member-checkbox {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 22px;
-            height: 22px;
+            top: 10px;
+            right: 10px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.95);
-            border: 1.5px solid #ddd;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #ddd;
             z-index: 2;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
             opacity: 0;
             /* Hidden by default for cleaner look */
@@ -1844,7 +1947,7 @@
 
         .member-thumb {
             width: 100%;
-            aspect-ratio: 3/4;
+            height: 100%;
             object-fit: cover;
             display: block;
             transition: transform 0.5s ease;
@@ -1870,12 +1973,15 @@
         }
 
         .member-gen {
-            font-size: 0.65rem;
-            color: #888;
-            font-weight: 600;
+            font-size: 0.7rem;
+            color: var(--primary);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.8;
+            font-weight: 600;
+            background: rgba(126, 16, 131, 0.08);
+            padding: 3px 10px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-top: 4px;
         }
 
         .selection-footer {
@@ -1972,8 +2078,10 @@
             transition: all 0.2s ease;
         }
 
-        .toolbar-group:hover {
-            background: #f0f0f0;
+        @media (hover: hover) {
+            .toolbar-group:hover {
+                background: #f0f0f0;
+            }
         }
 
         .toolbar-group.active {
@@ -2022,8 +2130,10 @@
             cursor: pointer;
         }
 
-        .switch-container:hover {
-            background: rgba(0, 0, 0, 0.06);
+        @media (hover: hover) {
+            .switch-container:hover {
+                background: rgba(0, 0, 0, 0.06);
+            }
         }
 
         .switch-container:active {
@@ -2226,6 +2336,21 @@
                     gap: 6px;
                 }
             }
+        }
+
+        /* Global Button Press Effect */
+        button:active,
+        .btn-start-lg:active,
+        .btn-apply-selection:active,
+        .gen-toggle-btn:active,
+        .close-btn:active,
+        .media-btn:active,
+        .btn-selection-ctrl:active,
+        .btn-profile:active,
+        .status-pill:active,
+        .member-info-btn:active {
+            transform: scale(0.95);
+            transition: transform 0.1s ease;
         }
     </style>
 </head>
@@ -2458,7 +2583,7 @@
     </div>
 
     <!-- MODAL -->
-    <div class="modal-backdrop" id="modal" onclick="closeModal()">
+    <div class="modal-backdrop" id="modal" onclick="closeModal()" style="z-index: 1100;">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <button class="close-btn" onclick="closeModal()">&times;</button>
@@ -2741,11 +2866,14 @@
             const track = document.getElementById('wall-track');
 
             // Filter to only show selected members
-            const selectedMembers = members.filter(m => m.selected !== false);
+            let selectedMembers = members.filter(m => m.selected !== false);
+
+            // If no members selected, use specific fallback images
             if (selectedMembers.length < 1) {
-                // No members selected, clear the marquee
-                track.innerHTML = '';
-                return;
+                selectedMembers = [
+                    { img: "https://wsrv.nl/?url=" + encodeURIComponent("https://www.sponichi.co.jp/entertainment/news/2022/02/04/jpeg/20220204s00041000257000p_view.webp") + "&w=400&output=webp", name: "" },
+                    { img: "https://wsrv.nl/?url=" + encodeURIComponent("https://www.sponichi.co.jp/entertainment/news/2022/02/26/jpeg/20220226s00041000237000p_view.webp") + "&w=400&output=webp", name: "" }
+                ];
             }
 
             // 1. Calculate how many items needed to cover screen width + buffer
@@ -3403,6 +3531,20 @@
             initWall();
         }
 
+        function openMemberProfile(e, index) {
+            e.stopPropagation();
+            const member = members[index];
+            document.getElementById('m-img').src = member.img;
+            document.getElementById('m-name').innerText = member.name;
+            document.getElementById('m-meta').innerText = `${member.gen} • ${member.date}`;
+
+            const q = encodeURIComponent("Nogizaka46 " + member.name);
+            document.getElementById('link-google').href = `https://www.google.com/search?q=${q}&tbm=isch`;
+            document.getElementById('link-pinterest').href = `https://www.pinterest.com/search/pins/?q=${q}`;
+            document.getElementById('link-youtube').href = `https://www.youtube.com/results?search_query=${q}`;
+            document.getElementById('modal').classList.add('active');
+        }
+
         function openModal(e, side) {
             e.stopPropagation();
             const btn = e.currentTarget;
@@ -3419,18 +3561,36 @@
         function closeModal() { document.getElementById('modal').classList.remove('active'); }
 
         // Selection Screen Functions
+        let activeTab = 'current';
+        const collapsedGens = new Set(); // Track collapsed generations
+        let tempSelection = new Set(); // Draft selection state
+
+        // Selection Screen Functions
         function openSelectionScreen() {
+            // Initialize tempSelection from current members state
+            tempSelection.clear();
+            members.forEach((m, i) => {
+                if (m.selected !== false) {
+                    tempSelection.add(i);
+                }
+            });
+
             renderSelectionScreen();
-            document.getElementById('selection-modal').style.display = 'flex';
+            const modal = document.getElementById('selection-modal');
+            modal.style.display = 'flex';
+            // Force reflow
+            void modal.offsetWidth;
+            modal.classList.add('active');
             switchTab('current'); // Ensure correct initial state
         }
 
         function closeSelectionScreen() {
-            document.getElementById('selection-modal').style.display = 'none';
+            const modal = document.getElementById('selection-modal');
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300); // Match transition duration
         }
-
-        let activeTab = 'current';
-        const collapsedGens = new Set(); // Track collapsed generations
 
         function renderSelectionScreen() {
             const list = document.getElementById('selection-list');
@@ -3471,19 +3631,20 @@
             const groupedCurrent = groupByGen(currentMembers);
             const groupedGraduated = groupByGen(graduatedMembers);
 
-            function renderMemberGroup(groupedMembers) {
+            function renderMemberGroup(groupedMembers, context) {
                 let html = '';
                 genOrder.forEach(gen => {
                     if (groupedMembers[gen]) {
                         // Check if all members in this gen are selected
                         const genTotal = groupedMembers[gen].length;
-                        const genSelected = groupedMembers[gen].filter(m => m.selected !== false).length;
+                        const genSelected = groupedMembers[gen].filter(m => tempSelection.has(members.indexOf(m))).length;
                         const allSelected = genSelected === genTotal;
                         const btnText = allSelected ? 'Deselect' : 'Select All';
-                        const isCollapsed = collapsedGens.has(gen);
+                        const collapseKey = `${context}-${gen}`;
+                        const isCollapsed = collapsedGens.has(collapseKey);
 
-                        html += `<div class="generation-group ${isCollapsed ? 'collapsed' : ''}">
-                            <div class="generation-header" onclick="toggleGenVisibility('${gen}')">
+                        html += `<div class="generation-group ${isCollapsed ? 'collapsed' : ''}" data-context="${context}" data-gen="${gen}">
+                            <div class="generation-header" onclick="toggleGenVisibility('${gen}', '${context}')">
                                 <div class="gen-header-left">
                                     <svg class="chevron" viewBox="0 0 24 24">
                                         <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
@@ -3498,12 +3659,21 @@
                                     <div class="member-grid">`;
                         groupedMembers[gen].forEach((m, i) => {
                             const memberIndex = members.findIndex(mem => mem.name === m.name);
-                            const isSelected = m.selected !== false;
+                            const isSelected = tempSelection.has(memberIndex);
                             const delay = i * 0.03; // 30ms delay per card
                             html += `
                                 <div id="member-card-${memberIndex}" class="member-card ${isSelected ? 'selected' : ''}" onclick="toggleMember(${memberIndex})" style="animation-delay: ${delay}s">
-                                    <div class="member-checkbox"></div>
-                                    <img class="member-thumb" src="${m.img}" data-name="${m.name}" onerror="handleError(this)">
+                                    <div class="member-img-frame">
+                                        <div class="member-checkbox"></div>
+                                        <div class="member-info-btn" onclick="openMemberProfile(event, ${memberIndex})">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                            </svg>
+                                        </div>
+                                        <img class="member-thumb" src="${m.img}" data-name="${m.name}" onerror="handleError(this)">
+                                    </div>
                                     <div class="member-info">
                                         <div class="member-name">${m.name}</div>
                                         <div class="member-gen">${m.gen}</div>
@@ -3519,10 +3689,10 @@
             let html = '';
             list.innerHTML = `
                 <div id="tab-content-current" class="tab-content ${activeTab === 'current' ? 'active' : ''}">
-                    ${renderMemberGroup(groupedCurrent)}
+                    ${renderMemberGroup(groupedCurrent, 'current')}
                 </div>
                 <div id="tab-content-graduated" class="tab-content ${activeTab === 'graduated' ? 'active' : ''}">
-                    ${renderMemberGroup(groupedGraduated)}
+                    ${renderMemberGroup(groupedGraduated, 'graduated')}
                 </div>
             `;
 
@@ -3535,8 +3705,8 @@
             const graduatedMembers = members.filter(m => m.graduated === true);
 
             // Calculate counts
-            const currentSelected = currentMembers.filter(m => m.selected !== false).length;
-            const graduatedSelected = graduatedMembers.filter(m => m.selected !== false).length;
+            const currentSelected = currentMembers.filter(m => tempSelection.has(members.indexOf(m))).length;
+            const graduatedSelected = graduatedMembers.filter(m => tempSelection.has(members.indexOf(m))).length;
             const totalSelected = currentSelected + graduatedSelected;
 
             // Update Group Counts (New Toolbar)
@@ -3549,6 +3719,8 @@
             const applyBtn = document.querySelector('.btn-apply-selection');
             if (applyBtn) {
                 applyBtn.innerHTML = `Apply Selection (${totalSelected})`;
+                // Update onclick to use applySelection
+                applyBtn.onclick = applySelection;
             }
 
             // Update Generation Header Counts & Buttons
@@ -3566,7 +3738,7 @@
                     if (genMembers.length === 0) return;
 
                     const genTotal = genMembers.length;
-                    const genSelected = genMembers.filter(m => m.selected !== false).length;
+                    const genSelected = genMembers.filter(m => tempSelection.has(members.indexOf(m))).length;
                     const allSelected = genSelected === genTotal;
 
                     // Find the specific header within this container
@@ -3605,12 +3777,12 @@
             const chkGraduated = document.getElementById('chk-graduated');
 
             if (chkCurrent) {
-                const allCurrentSelected = currentMembers.every(m => m.selected !== false);
+                const allCurrentSelected = currentMembers.every(m => tempSelection.has(members.indexOf(m)));
                 chkCurrent.checked = allCurrentSelected;
             }
 
             if (chkGraduated) {
-                const allGraduatedSelected = graduatedMembers.every(m => m.selected !== false);
+                const allGraduatedSelected = graduatedMembers.every(m => tempSelection.has(members.indexOf(m)));
                 chkGraduated.checked = allGraduatedSelected;
             }
         }
@@ -3638,12 +3810,19 @@
 
         function toggleMember(index) {
             const member = members[index];
-            member.selected = member.selected === false ? true : false;
+            // member.selected = member.selected === false ? true : false;
+            if (tempSelection.has(index)) {
+                tempSelection.delete(index);
+            } else {
+                tempSelection.add(index);
+            }
+
+            const isSelected = tempSelection.has(index);
 
             // Update DOM directly
             const card = document.getElementById(`member-card-${index}`);
             if (card) {
-                if (member.selected) {
+                if (isSelected) {
                     card.classList.add('selected');
                 } else {
                     card.classList.remove('selected');
@@ -3651,7 +3830,7 @@
             }
 
             updateCounts();
-            updateSelectionButton();
+            // updateSelectionButton(); // This seems undefined or legacy, updateCounts handles button text
         }
 
         function toggleContainer(type) {
@@ -3670,9 +3849,14 @@
             const currentMembers = members.filter(m => !m.graduated);
 
             currentMembers.forEach(m => {
-                m.selected = newState;
-                // Update DOM if visible
                 const index = members.indexOf(m);
+                if (newState) {
+                    tempSelection.add(index);
+                } else {
+                    tempSelection.delete(index);
+                }
+
+                // Update DOM if visible
                 const card = document.getElementById(`member-card-${index}`);
                 if (card) {
                     if (newState) card.classList.add('selected');
@@ -3690,9 +3874,14 @@
             const graduatedMembers = members.filter(m => m.graduated);
 
             graduatedMembers.forEach(m => {
-                m.selected = newState;
-                // Update DOM if visible
                 const index = members.indexOf(m);
+                if (newState) {
+                    tempSelection.add(index);
+                } else {
+                    tempSelection.delete(index);
+                }
+
+                // Update DOM if visible
                 const card = document.getElementById(`member-card-${index}`);
                 if (card) {
                     if (newState) card.classList.add('selected');
@@ -3703,53 +3892,49 @@
             updateCounts();
         }
 
-        function toggleGenVisibility(gen) {
+        function toggleGeneration(gen) {
+            // Check if all members in this gen are currently selected in tempSelection
+            const genMembers = members.filter(m => m.gen === gen);
+            const allSelected = genMembers.every(m => tempSelection.has(members.indexOf(m)));
+            const newState = !allSelected;
+
+            genMembers.forEach(m => {
+                const index = members.indexOf(m);
+                if (newState) {
+                    tempSelection.add(index);
+                } else {
+                    tempSelection.delete(index);
+                }
+
+                // Update DOM
+                const card = document.getElementById(`member-card-${index}`);
+                if (card) {
+                    if (newState) card.classList.add('selected');
+                    else card.classList.remove('selected');
+                }
+            });
+
+            updateCounts();
+        }
+
+        function toggleGenVisibility(gen, context) {
+            const key = `${context}-${gen}`;
             // Toggle state in Set
-            if (collapsedGens.has(gen)) {
-                collapsedGens.delete(gen);
+            if (collapsedGens.has(key)) {
+                collapsedGens.delete(key);
             } else {
-                collapsedGens.add(gen);
+                collapsedGens.add(key);
             }
 
             // Find the specific generation group element(s) in the DOM
-            // We need to look in both tabs because the same gen might exist in both (though usually not visible)
-            // Actually, we should just find all generation groups that match this gen.
-            // But we don't have IDs on the groups yet.
-            // Let's rely on the header click event target or add IDs.
-            // Adding IDs to generation groups in renderMemberGroup is cleaner.
-
-            // Wait, I can't easily add IDs without re-rendering.
-            // Let's use the fact that the header is inside the group.
-            // But this function is called with 'gen' string.
-
-            // Let's re-render for now? NO, that breaks animation.
-            // We MUST find the element.
-
-            // Strategy: Iterate all generation groups and check their header text.
             const groups = document.querySelectorAll('.generation-group');
             groups.forEach(group => {
-                const header = group.querySelector('.generation-header');
-                const nameSpan = header.querySelector('.gen-header-left span:nth-child(2)'); // Name is 2nd child (after SVG)
-                // Or better, use the onclick attribute? No.
-
-                // Let's look for the name span more robustly
-                const nameContainer = header.querySelector('.gen-header-left');
-                if (nameContainer) {
-                    const spans = nameContainer.querySelectorAll('span');
-                    let nameText = '';
-                    spans.forEach(span => {
-                        if (!span.classList.contains('gen-count')) {
-                            nameText = span.textContent.trim();
-                        }
-                    });
-
-                    if (nameText === gen) {
-                        // Found the group for this gen
-                        if (collapsedGens.has(gen)) {
-                            group.classList.add('collapsed');
-                        } else {
-                            group.classList.remove('collapsed');
-                        }
+                // Check context and gen using data attributes
+                if (group.dataset.context === context && group.dataset.gen === gen) {
+                    if (collapsedGens.has(key)) {
+                        group.classList.add('collapsed');
+                    } else {
+                        group.classList.remove('collapsed');
                     }
                 }
             });
@@ -3765,17 +3950,22 @@
                 return true;
             });
 
-            // Check if all are currently selected
-            const allSelected = genMembers.every(m => m.selected !== false);
+            // Check if all are currently selected in tempSelection
+            const allSelected = genMembers.every(m => tempSelection.has(members.indexOf(m)));
 
             // Toggle state: if all selected -> deselect all; otherwise -> select all
             const newState = !allSelected;
             console.log(`New state for ${gen}: ${newState}`);
 
             genMembers.forEach(m => {
-                m.selected = newState;
-                // Find global index to update DOM
                 const index = members.indexOf(m);
+                if (newState) {
+                    tempSelection.add(index);
+                } else {
+                    tempSelection.delete(index);
+                }
+
+                // Update DOM
                 const card = document.getElementById(`member-card-${index}`);
                 if (card) {
                     if (newState) {
@@ -3790,6 +3980,11 @@
         }
 
         function applySelection() {
+            // Commit changes from tempSelection to members
+            members.forEach((m, i) => {
+                m.selected = tempSelection.has(i);
+            });
+
             updateSelectionButton();
             closeSelectionScreen();
             initWall(); // Refresh marquee with potentially changed member set
@@ -3798,7 +3993,7 @@
         function updateSelectionButton() {
             const selectedCount = members.filter(m => m.selected !== false).length;
             const status = document.getElementById('status');
-            status.innerHTML = `<span class="pulse-dot"></span> ${selectedCount} Member${selectedCount !== 1 ? 's' : ''} Selected`;
+            status.innerHTML = `<span class="pulse-dot"></span> ${selectedCount} Member${selectedCount !== 1 ? 's' : ''} Selected <span class="edit-text">Edit</span>`;
         }
 
         function getSelectedMembers() {
