@@ -25,7 +25,7 @@
             --accent: #d8b4e2;
 
             /* Metals / Ranks */
-            --gold: #d4af37;
+            --gold: #cea621;
             --gold-light: #f9f1d8;
             --silver: #a8a9ad;
             --bronze: #cd7f32;
@@ -2034,7 +2034,7 @@
         }
 
         .member-info {
-            padding: 12px 8px;
+            padding: 4px;
             text-align: center;
             background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 100%);
         }
@@ -3459,8 +3459,20 @@
 
             // Initial Setup
             // img1 is TOP, img2 is BACK
-            const firstMember = validMembers[Math.floor(Math.random() * validMembers.length)];
-            const secondMember = validMembers[Math.floor(Math.random() * validMembers.length)];
+            let lastMemberIdx = Math.floor(Math.random() * validMembers.length);
+            const firstMember = validMembers[lastMemberIdx];
+
+            // Ensure second is different if possible
+            let secondMemberIdx = Math.floor(Math.random() * validMembers.length);
+            if (validMembers.length > 1) {
+                while (secondMemberIdx === lastMemberIdx) {
+                    secondMemberIdx = Math.floor(Math.random() * validMembers.length);
+                }
+            }
+            const secondMember = validMembers[secondMemberIdx];
+
+            // Update last member to be the one currently at the "back" (which will be shown next)
+            lastMemberIdx = secondMemberIdx;
 
             img1.src = firstMember.img;
             img1.className = 'loading-member-img state-top';
@@ -3493,7 +3505,15 @@
                     currTop.classList.add('state-back');
 
                     // Load NEW image into the new Back card
-                    const nextMember = validMembers[Math.floor(Math.random() * validMembers.length)];
+                    let nextMemberIdx = Math.floor(Math.random() * validMembers.length);
+                    if (validMembers.length > 1) {
+                        while (nextMemberIdx === lastMemberIdx) {
+                            nextMemberIdx = Math.floor(Math.random() * validMembers.length);
+                        }
+                    }
+                    lastMemberIdx = nextMemberIdx;
+
+                    const nextMember = validMembers[nextMemberIdx];
                     currTop.src = nextMember.img;
 
                 }, 400); // Wait for exit transition
