@@ -1191,11 +1191,46 @@
             animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
 
+        /* View Transition Styles */
+        #view-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 20px;
+        }
+
+        .view-image {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.4s ease, transform 0.4s ease, filter 0.4s ease;
+            display: block;
+        }
+
+        .view-image.active {
+            opacity: 1;
+            transform: scale(1);
+            filter: blur(0);
+            position: relative;
+            z-index: 2;
+        }
+
+        .view-image.inactive {
+            opacity: 0;
+            transform: scale(1.05);
+            filter: blur(8px);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
         #generated-img {
             max-width: 100%;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
             /* Smooth transition for filter/transform/opacity */
             display: block;
             margin: 0 auto;
@@ -2973,7 +3008,10 @@
 
                     <div class="image-wrapper">
                         <div id="gen-status">Generating certificate...</div>
-                        <img id="generated-img" alt="Ranking Certificate">
+                        <div id="view-container">
+                            <img id="img-list" class="view-image active" src="">
+                            <img id="img-senbatsu" class="view-image inactive" src="">
+                        </div>
                     </div>
                     <div class="save-instruction">👆 Long press to save to Photos</div>
                 </div>
@@ -3897,39 +3935,70 @@
         let generatedSenbatsuImg = "";
 
         function switchView(view) {
-            const img = document.getElementById('generated-img');
+            const container = document.getElementById('view-container');
+            const imgList = document.getElementById('img-list');
+            const imgSenbatsu = document.getElementById('img-senbatsu');
             const btnList = document.getElementById('btn-view-list');
             const btnSenbatsu = document.getElementById('btn-view-senbatsu');
             const senbatsuControls = document.getElementById('senbatsu-controls');
 
-            // 1. Fade Out
-            img.style.opacity = '0';
-            img.style.transform = 'scale(0.98)';
+            // Set fixed height to start animation
+            container.style.height = container.offsetHeight + 'px';
 
-            setTimeout(() => {
-                if (view === 'list') {
-                    if (generatedListImg) img.src = generatedListImg;
-                    btnList.classList.add('active');
-                    btnSenbatsu.classList.remove('active');
-                    senbatsuControls.classList.remove('active');
+            // Force reflow
+            void container.offsetHeight;
+
+            if (view === 'list') {
+                imgList.classList.add('active');
+                imgList.classList.remove('inactive');
+
+                imgSenbatsu.classList.add('inactive');
+                imgSenbatsu.classList.remove('active');
+
+                btnList.classList.add('active');
+                btnSenbatsu.classList.remove('active');
+                senbatsuControls.classList.remove('active');
+            } else {
+                imgSenbatsu.classList.add('active');
+                imgSenbatsu.classList.remove('inactive');
+
+                imgList.classList.add('inactive');
+                imgList.classList.remove('active');
+
+                btnList.classList.remove('active');
+                btnSenbatsu.classList.add('active');
+                senbatsuControls.classList.add('active');
+            }
+
+            // Animate Height
+            // Wait for next frame to allow class changes to take effect (conceptually)
+            // But we can just calculate the target height.
+            // Since images are loaded, we can get their natural height or just wait a tick.
+
+            requestAnimationFrame(() => {
+                const activeImg = view === 'list' ? imgList : imgSenbatsu;
+                // We need to know the rendered height of the active image.
+                // Since it might be hidden/absolute, we can calculate based on width.
+                const width = container.offsetWidth;
+                const aspect = activeImg.naturalHeight / activeImg.naturalWidth;
+                const targetHeight = width * aspect;
+
+                if (targetHeight) {
+                    container.style.height = targetHeight + 'px';
                 } else {
-                    if (generatedSenbatsuImg) img.src = generatedSenbatsuImg;
-                    btnList.classList.remove('active');
-                    btnSenbatsu.classList.add('active');
-                    senbatsuControls.classList.add('active');
+                    container.style.height = 'auto'; // Fallback
                 }
 
-                // 2. Fade In
-                requestAnimationFrame(() => {
-                    img.style.opacity = '1';
-                    img.style.transform = 'scale(1)';
-                });
-            }, 200); // Wait for fade out
+                // Reset to auto after transition
+                setTimeout(() => {
+                    container.style.height = 'auto';
+                }, 400);
+            });
         }
 
         function updateSenbatsuSize() {
             const size = parseInt(document.getElementById('senbatsu-size').value);
-            const img = document.getElementById('generated-img');
+            const img = document.getElementById('img-senbatsu');
             const status = document.getElementById('gen-status');
 
             // Start Transition: Blur & Scale Down
@@ -3944,10 +4013,11 @@
                 status.style.opacity = '1';
             });
 
-            generateSenbatsuImage(size).then(() => {
+            generateSenbatsuImage().then(() => { // No need to pass size, it's read from select
                 // Wait a bit for the generation to feel substantial (optional, but good for UX pacing)
                 setTimeout(() => {
-                    img.src = generatedSenbatsuImg;
+                    // img.src is already updated by generateSenbatsuImage
+                    // img.src = generatedSenbatsuImg; // This line is now redundant
 
                     // End Transition: Unblur & Scale Up
                     requestAnimationFrame(() => {
@@ -4098,7 +4168,8 @@
                             backgroundColor: null
                         }).then(canvas => {
                             generatedListImg = canvas.toDataURL("image/png");
-                            document.getElementById('generated-img').src = generatedListImg;
+                            document.getElementById('img-list').src = generatedListImg;
+
                             document.getElementById('image-output-area').style.display = "block";
                             document.getElementById('gen-status').style.display = "none";
 
@@ -4127,10 +4198,10 @@
                 // Formation Logic
                 const getFormation = (n) => {
                     const formations = {
-                        10: [3, 3, 4],
-                        11: [3, 4, 4],
-                        12: [3, 4, 5],
-                        13: [3, 5, 5],
+                        10: [3, 7, 0],
+                        11: [5, 6, 0],
+                        12: [5, 7, 0],
+                        13: [3, 4, 6],
                         14: [3, 5, 6],
                         15: [3, 6, 6],
                         16: [3, 6, 7],
@@ -4245,6 +4316,7 @@
 
                     members.forEach(m => {
                         const card = document.createElement('div');
+                        card.style.position = 'relative'; // For badge positioning
                         card.style.display = 'flex';
                         card.style.flexDirection = 'column';
                         card.style.alignItems = 'center';
@@ -4272,8 +4344,21 @@
                         img.style.height = imgSize;
                         img.style.borderRadius = '50%';
                         img.style.objectFit = 'cover';
-                        img.style.border = '3px solid white';
-                        img.style.boxShadow = '0 4px 10px rgba(0,0,0,0.15)';
+
+                        // Determine if this member is a Center
+                        // Rank 1 is always center.
+                        // If row1Count is even, Rank 2 is also center.
+                        const isCenter = m.rank === 1 || (row1Count % 2 === 0 && m.rank === 2);
+
+                        // Highlight Center
+                        if (isCenter) {
+                            img.style.border = '3px solid var(--primary)'; // Purple border
+                            img.style.boxShadow = '0 4px 15px rgba(126, 16, 131, 0.4)';
+                        } else {
+                            img.style.border = '3px solid white';
+                            img.style.boxShadow = '0 4px 10px rgba(0,0,0,0.15)';
+                        }
+
                         img.style.marginBottom = '5px';
 
                         const name = document.createElement('div');
@@ -4288,6 +4373,34 @@
                         name.style.width = '100%';
 
                         card.appendChild(img);
+
+                        // Add Center Badge
+                        if (isCenter) {
+                            const badge = document.createElement('div');
+                            badge.innerText = "CENTER";
+                            badge.style.position = 'absolute';
+                            badge.style.top = '75px'; // Adjust based on image size (88px)
+                            badge.style.left = '50%';
+                            badge.style.transform = 'translateX(-50%)';
+                            badge.style.background = 'var(--primary)';
+                            badge.style.color = 'white';
+                            badge.style.fontSize = '0.6rem';
+                            badge.style.fontWeight = '800';
+                            badge.style.padding = '2px 6px 4px 6px';
+                            badge.style.borderRadius = '10px';
+                            badge.style.zIndex = '10';
+                            badge.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+                            badge.style.letterSpacing = '0.5px';
+                            // Ensure text is centered
+                            badge.style.display = 'flex';
+                            badge.style.alignItems = 'center';
+                            badge.style.justifyContent = 'center';
+                            badge.style.lineHeight = '1';
+                            badge.style.textAlign = 'center';
+
+                            card.appendChild(badge);
+                        }
+
                         card.appendChild(name);
                         rowDiv.appendChild(card);
                     });
@@ -4354,6 +4467,7 @@
                             backgroundColor: null
                         }).then(canvas => {
                             generatedSenbatsuImg = canvas.toDataURL("image/png");
+                            document.getElementById('img-senbatsu').src = generatedSenbatsuImg;
                             document.body.removeChild(tempContainer);
                             resolve();
                         }).catch(err => {
