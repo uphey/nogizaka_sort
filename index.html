@@ -2623,7 +2623,7 @@
             font-size: 1.5rem;
             color: var(--primary);
             margin-bottom: 5px;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .loading-subtitle {
@@ -4124,30 +4124,30 @@
                 const sizeSelect = document.getElementById('senbatsu-size');
                 const totalMembers = parseInt(sizeSelect.value, 10);
 
-                // Logic to split members into rows based on total count
-                // Standard formation logic (approx 3 rows)
-                // 3rd Row (Back): Largest
-                // 2nd Row (Middle): Medium
-                // 1st Row (Front): Smallest (Top members)
+                // Formation Logic
+                const getFormation = (n) => {
+                    const formations = {
+                        10: [3, 3, 4],
+                        11: [3, 4, 4],
+                        12: [3, 4, 5],
+                        13: [3, 5, 5],
+                        14: [3, 5, 6],
+                        15: [3, 6, 6],
+                        16: [3, 6, 7],
+                        17: [5, 6, 6],
+                        18: [5, 6, 7],
+                        19: [5, 6, 8],
+                        20: [6, 7, 7],
+                        21: [6, 7, 8],
+                        22: [7, 7, 8]
+                    };
+                    return formations[n] || [5, 6, 7]; // Default to 18
+                };
 
-                let row1Count, row2Count, row3Count;
-
-                if (totalMembers <= 12) {
-                    // Small formation: 3-4-5 or similar
-                    row1Count = Math.floor(totalMembers * 0.25) + 1; // ~3
-                    row2Count = Math.floor(totalMembers * 0.35) + 1; // ~4
-                    row3Count = totalMembers - row1Count - row2Count;
-                } else if (totalMembers <= 16) {
-                    // Medium: 3-5-8 or 4-6-6
-                    row1Count = 4;
-                    row2Count = 6;
-                    row3Count = totalMembers - 10;
-                } else {
-                    // Large: 5-7-rest
-                    row1Count = 5;
-                    row2Count = 7;
-                    row3Count = totalMembers - 12;
-                }
+                const rows = getFormation(totalMembers);
+                const row1Count = rows[0];
+                const row2Count = rows[1];
+                const row3Count = rows[2];
 
                 // Ensure we don't exceed list length
                 const list = window.lastSortedList;
