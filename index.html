@@ -1150,11 +1150,58 @@
             margin: 0 auto 20px;
         }
 
+        .image-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #gen-status {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--primary);
+            font-size: 0.95rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 12px 24px;
+            border-radius: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            z-index: 20;
+            pointer-events: none;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .status-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(126, 16, 131, 0.2);
+            border-top: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
         #generated-img {
-            width: 100%;
-            border-radius: 16px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-            border: 4px solid var(--bg-surface);
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            /* Smooth transition for filter/transform/opacity */
+            display: block;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+            will-change: filter, transform;
         }
 
         .save-instruction {
@@ -2585,6 +2632,116 @@
             letter-spacing: 1px;
             text-transform: uppercase;
         }
+
+        /* View Toggle */
+        #view-toggle {
+            display: none;
+            justify-content: center;
+            gap: 5px;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 5px;
+            border-radius: 50px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            width: fit-content;
+            position: sticky;
+            bottom: 30px;
+            z-index: 10;
+        }
+
+        .view-btn {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(126, 16, 131, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .view-btn:hover:not(.active) {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-main);
+        }
+
+        .senbatsu-controls {
+            display: flex;
+            /* Always flex, but hidden by max-height */
+            justify-content: center;
+            margin-top: 0;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .senbatsu-controls.active {
+            max-height: 100px;
+            /* Sufficient height */
+            opacity: 1;
+            margin: 20px 0;
+        }
+
+
+
+        .senbatsu-pill {
+            display: flex;
+            align-items: center;
+            background: var(--bg-surface);
+            padding: 6px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(126, 16, 131, 0.08);
+            border: 1px solid rgba(126, 16, 131, 0.15);
+            transition: transform 0.2s ease;
+        }
+
+        .senbatsu-pill:active {
+            transform: scale(0.98);
+        }
+
+        .senbatsu-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-right: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .senbatsu-select {
+            appearance: none;
+            -webkit-appearance: none;
+            border: none;
+            background: transparent;
+            color: var(--primary);
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            outline: none;
+            padding-right: 20px;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%237e1083' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right center;
+            background-size: 10px;
+            min-width: 60px;
+            text-align: right;
+        }
     </style>
 </head>
 
@@ -2768,10 +2925,56 @@
 
                 <!-- AUTO GENERATED IMAGE DISPLAY -->
                 <div id="image-output-area">
-                    <div id="gen-status" style="color:#888; font-size:0.9rem; margin-bottom:10px;">Generating
-                        certificate...
+                    <div id="view-toggle" style="display:none;">
+                        <button class="view-btn active" onclick="switchView('list')" id="btn-view-list">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="8" y1="6" x2="21" y2="6"></line>
+                                <line x1="8" y1="12" x2="21" y2="12"></line>
+                                <line x1="8" y1="18" x2="21" y2="18"></line>
+                                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                            </svg>
+                            List
+                        </button>
+                        <button class="view-btn" onclick="switchView('senbatsu')" id="btn-view-senbatsu">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                            Senbatsu
+                        </button>
                     </div>
-                    <img id="generated-img" alt="Ranking Certificate">
+
+                    <div class="senbatsu-controls" id="senbatsu-controls">
+                        <div class="senbatsu-pill">
+                            <span class="senbatsu-label">Formation Size</span>
+                            <select id="senbatsu-size" class="senbatsu-select" onchange="updateSenbatsuSize()">
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                                <option value="13">13</option>
+                                <option value="14">14</option>
+                                <option value="15">15</option>
+                                <option value="16">16</option>
+                                <option value="17">17</option>
+                                <option value="18" selected>18</option>
+                                <option value="19">19</option>
+                                <option value="20">20</option>
+                                <option value="21">21</option>
+                                <option value="22">22</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="image-wrapper">
+                        <div id="gen-status">Generating certificate...</div>
+                        <img id="generated-img" alt="Ranking Certificate">
+                    </div>
                     <div class="save-instruction">👆 Long press to save to Photos</div>
                 </div>
 
@@ -3541,6 +3744,9 @@
             document.getElementById('result-content').style.opacity = '0';
             document.getElementById('result-content').style.display = 'none';
 
+            // Store full list for Senbatsu generation
+            window.lastSortedList = list;
+
             const c = document.getElementById('result-list');
             c.innerHTML = '';
             const total = list.length;
@@ -3591,12 +3797,18 @@
                 const minTimePromise = new Promise(resolve => setTimeout(resolve, 3000));
 
                 // Run generation and timer in parallel
-                await Promise.all([generateResultImage(), minTimePromise]);
+                // We run both generations
+                await Promise.all([generateResultImage(), generateSenbatsuImage(), minTimePromise]);
 
                 // On Success:
                 stopLoadingAnimation();
                 document.getElementById('result-loading').style.display = 'none';
                 document.getElementById('result-content').style.display = 'block';
+
+                // Show Toggle
+                document.getElementById('view-toggle').style.display = 'flex';
+                // Set default view
+                switchView('list');
 
                 // Force reflow
                 void document.getElementById('result-content').offsetWidth;
@@ -3615,6 +3827,77 @@
         }
 
         /* --- MOBILE-SAFE DYNAMIC IMAGE GENERATION --- */
+        let generatedListImg = "";
+        let generatedSenbatsuImg = "";
+
+        function switchView(view) {
+            const img = document.getElementById('generated-img');
+            const btnList = document.getElementById('btn-view-list');
+            const btnSenbatsu = document.getElementById('btn-view-senbatsu');
+            const senbatsuControls = document.getElementById('senbatsu-controls');
+
+            // 1. Fade Out
+            img.style.opacity = '0';
+            img.style.transform = 'scale(0.98)';
+
+            setTimeout(() => {
+                if (view === 'list') {
+                    if (generatedListImg) img.src = generatedListImg;
+                    btnList.classList.add('active');
+                    btnSenbatsu.classList.remove('active');
+                    senbatsuControls.classList.remove('active');
+                } else {
+                    if (generatedSenbatsuImg) img.src = generatedSenbatsuImg;
+                    btnList.classList.remove('active');
+                    btnSenbatsu.classList.add('active');
+                    senbatsuControls.classList.add('active');
+                }
+
+                // 2. Fade In
+                requestAnimationFrame(() => {
+                    img.style.opacity = '1';
+                    img.style.transform = 'scale(1)';
+                });
+            }, 200); // Wait for fade out
+        }
+
+        function updateSenbatsuSize() {
+            const size = parseInt(document.getElementById('senbatsu-size').value);
+            const img = document.getElementById('generated-img');
+            const status = document.getElementById('gen-status');
+
+            // Start Transition: Blur & Scale Down
+            img.style.filter = 'blur(8px) brightness(0.9)';
+            img.style.transform = 'scale(0.96)';
+
+            // Show status
+            status.style.display = 'flex'; // Flex for centering spinner
+            status.innerHTML = '<div class="status-spinner"></div>Assembling Formation...';
+            // Small delay to allow display:flex to apply before opacity transition
+            requestAnimationFrame(() => {
+                status.style.opacity = '1';
+            });
+
+            generateSenbatsuImage(size).then(() => {
+                // Wait a bit for the generation to feel substantial (optional, but good for UX pacing)
+                setTimeout(() => {
+                    img.src = generatedSenbatsuImg;
+
+                    // End Transition: Unblur & Scale Up
+                    requestAnimationFrame(() => {
+                        img.style.filter = 'blur(0px) brightness(1)';
+                        img.style.transform = 'scale(1)';
+                        status.style.opacity = '0';
+
+                        // Cleanup status display after fade out
+                        setTimeout(() => {
+                            status.style.display = 'none';
+                        }, 300);
+                    });
+                }, 400);
+            });
+        }
+
         function generateResultImage() {
             return new Promise((resolve, reject) => {
                 // 1. Create temporary container appended to body
@@ -3634,15 +3917,6 @@
                 tempContainer.style.display = 'flex';
                 tempContainer.style.flexDirection = 'column';
                 tempContainer.style.justifyContent = 'center';
-
-                // Watermark
-                const watermark = document.createElement('div');
-                watermark.style.position = 'absolute';
-                watermark.style.top = '0'; watermark.style.left = '0';
-                watermark.style.width = '100%'; watermark.style.height = '100%';
-                watermark.style.backgroundImage = 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M30 0L60 60H0L30 0Z\' fill=\'%237e1083\' fill-opacity=\'0.03\'/%3E%3C/svg%3E")';
-                watermark.style.opacity = '0.5';
-                tempContainer.appendChild(watermark);
 
                 // Header (Updated Text)
                 const headerHTML = `
@@ -3737,7 +4011,7 @@
                 // Footer (Updated Text)
                 const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
                 const footerHTML = `
-                <div style="margin-top:50px; font-size:1rem; color:var(--primary); border-top:1px solid rgba(126,16,131,0.2); padding-top:25px; display:flex; justify-content:space-between; font-weight:600; position:relative; z-index:2;">
+                <div style="margin-top:50px; font-size:1.2rem; color:var(--primary); border-top:1px solid rgba(126,16,131,0.2); padding-top:25px; display:flex; justify-content:space-between; font-weight:600; position:relative; z-index:2;">
                     <span style="font-family:var(--font-body);">N46Sorter</span>
                     <span style="color:var(--text-secondary); font-weight:400;">${dateStr}</span>
                 </div>
@@ -3757,7 +4031,8 @@
                             useCORS: true,
                             backgroundColor: null
                         }).then(canvas => {
-                            document.getElementById('generated-img').src = canvas.toDataURL("image/png");
+                            generatedListImg = canvas.toDataURL("image/png");
+                            document.getElementById('generated-img').src = generatedListImg;
                             document.getElementById('image-output-area').style.display = "block";
                             document.getElementById('gen-status').style.display = "none";
 
@@ -3775,14 +4050,231 @@
             });
         }
 
-        // Helper for getting text based content for sharing
+        function generateSenbatsuImage(count = 18) {
+            return new Promise((resolve, reject) => {
+                // Get Top N
+                if (!window.lastSortedList || window.lastSortedList.length === 0) {
+                    resolve();
+                    return;
+                }
+
+                const topIndices = window.lastSortedList.slice(0, count);
+                const topMembers = topIndices.map((idx, i) => {
+                    return { ...members[idx], rank: i + 1 };
+                });
+
+                // Formation Logic
+                const getFormation = (n) => {
+                    const formations = {
+                        10: [3, 3, 4],
+                        11: [3, 4, 4],
+                        12: [3, 4, 5],
+                        13: [3, 5, 5],
+                        14: [3, 5, 6],
+                        15: [3, 6, 6],
+                        16: [3, 6, 7],
+                        17: [5, 6, 6],
+                        18: [5, 6, 7],
+                        19: [5, 6, 8],
+                        20: [6, 7, 7],
+                        21: [6, 7, 8],
+                        22: [7, 7, 8]
+                    };
+                    return formations[n] || [5, 6, 7]; // Default to 18
+                };
+
+                const rows = getFormation(count);
+
+                // 1. Create temporary container
+                const tempContainer = document.createElement('div');
+                tempContainer.style.position = 'fixed';
+                tempContainer.style.top = '0';
+                tempContainer.style.left = '200vw';
+                tempContainer.style.width = '800px';
+                tempContainer.style.height = '1000px'; // 4:5 Aspect Ratio (800x1000)
+                tempContainer.style.background = 'linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%)';
+                tempContainer.style.padding = '40px';
+                tempContainer.style.border = '20px solid white';
+                tempContainer.style.boxSizing = 'border-box';
+                tempContainer.style.fontFamily = "'Montserrat', sans-serif";
+                tempContainer.style.display = 'flex';
+                tempContainer.style.flexDirection = 'column';
+                tempContainer.style.justifyContent = 'space-between';
+
+                // Header
+                const headerHTML = `
+                <div style="position:relative; z-index:2; text-align:center; margin-bottom:25px;">
+                    <div style="font-family:var(--font-display); font-size:3.5rem; font-weight:700; color:var(--primary); margin-bottom:5px;">NOGIZAKA46</div>
+                    <div style="font-family:var(--font-body); font-size:1.1rem; text-transform:uppercase; letter-spacing:3px; color:#666; font-weight:600;">My Ideal Member Formation</div>
+                </div>
+                `;
+                tempContainer.innerHTML += headerHTML;
+
+                // Formation Container
+                const formationContainer = document.createElement('div');
+                formationContainer.style.position = 'relative';
+                formationContainer.style.zIndex = '2';
+                formationContainer.style.flex = '1';
+                formationContainer.style.display = 'flex';
+                formationContainer.style.flexDirection = 'column';
+                formationContainer.style.justifyContent = 'center';
+                formationContainer.style.gap = '30px';
+
+                // Helper to create a row
+                const createRow = (members, label) => {
+                    const rowDiv = document.createElement('div');
+                    rowDiv.style.display = 'flex';
+                    rowDiv.style.justifyContent = 'center';
+                    rowDiv.style.alignItems = 'flex-start';
+                    rowDiv.style.gap = '5px';
+
+                    // Label
+                    const labelDiv = document.createElement('div');
+                    labelDiv.innerText = label;
+                    labelDiv.style.position = 'absolute';
+                    labelDiv.style.left = '20px';
+                    labelDiv.style.fontSize = '1rem';
+                    labelDiv.style.fontWeight = 'bold';
+                    labelDiv.style.color = 'var(--primary)';
+                    // rowDiv.appendChild(labelDiv); // Optional: Add row labels if needed
+
+                    members.forEach(m => {
+                        const card = document.createElement('div');
+                        card.style.display = 'flex';
+                        card.style.flexDirection = 'column';
+                        card.style.alignItems = 'center';
+                        card.style.width = '88px';
+
+                        const imgSize = '88px';
+                        const fontSize = '0.95rem';
+
+                        const img = new Image();
+                        img.crossOrigin = "anonymous";
+                        // Use direct URL with optimization
+                        img.src = m.img.replace("w=400", "w=200&h=200&fit=cover");
+
+                        img.onerror = () => {
+                            // Try fallback
+                            const fallbackUrl = getFallbackUrl(m.name);
+                            if (fallbackUrl) {
+                                img.src = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=200&h=200&fit=cover";
+                                // Prevent infinite loop
+                                img.onerror = null;
+                            }
+                        };
+
+                        img.style.width = imgSize;
+                        img.style.height = imgSize;
+                        img.style.borderRadius = '50%';
+                        img.style.objectFit = 'cover';
+                        img.style.border = '3px solid white';
+                        img.style.boxShadow = '0 4px 10px rgba(0,0,0,0.15)';
+                        img.style.marginBottom = '5px';
+
+                        const name = document.createElement('div');
+                        name.innerText = m.name;
+                        name.style.fontSize = fontSize;
+                        name.style.fontWeight = '600';
+                        name.style.color = '#333';
+                        name.style.textAlign = 'center';
+                        name.style.whiteSpace = 'wrap';
+                        name.style.overflow = 'hidden';
+                        name.style.textOverflow = 'ellipsis';
+                        name.style.width = '100%';
+
+                        card.appendChild(img);
+                        card.appendChild(name);
+                        rowDiv.appendChild(card);
+                    });
+                    return rowDiv;
+                };
+
+                // Split members dynamically
+                let currentIndex = 0;
+                const row1Count = rows[0];
+                const row2Count = rows[1];
+                const row3Count = rows[2];
+
+                // Center-out Sort Helper
+                const centerSort = (arr) => {
+                    const res = [];
+                    arr.forEach((m, i) => {
+                        if (i % 2 === 0) res.push(m); // Even indices (0, 2, 4...) -> Right (from center perspective, actually end of array)
+                        else res.unshift(m);          // Odd indices (1, 3, 5...) -> Left (start of array)
+                    });
+                    // Note: The above logic produces [..., 3, 1, 0, 2, 4, ...] pattern
+                    // 0 (Rank 1) -> [0]
+                    // 1 (Rank 2) -> [1, 0]
+                    // 2 (Rank 3) -> [1, 0, 2]
+                    // 3 (Rank 4) -> [3, 1, 0, 2]
+                    // 4 (Rank 5) -> [3, 1, 0, 2, 4]
+                    // Visually: 3, 1, Rank1, 2, 4. This is correct for center-out.
+                    return res;
+                };
+
+                const row1Members = centerSort(topMembers.slice(0, row1Count));
+                const row2Members = centerSort(topMembers.slice(row1Count, row1Count + row2Count));
+                const row3Members = centerSort(topMembers.slice(row1Count + row2Count, row1Count + row2Count + row3Count));
+
+                // Add rows in reverse order (Back to Front visually)
+                if (row3Members.length > 0) formationContainer.appendChild(createRow(row3Members, "3rd Row"));
+                if (row2Members.length > 0) formationContainer.appendChild(createRow(row2Members, "2nd Row"));
+                if (row1Members.length > 0) formationContainer.appendChild(createRow(row1Members, "1st Row"));
+
+                tempContainer.appendChild(formationContainer);
+
+                // Footer
+                const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                const footerHTML = `
+                <div style="margin-top:50px; font-size:1.2rem; color:var(--primary); border-top:1px solid rgba(126,16,131,0.2); padding-top:25px; display:flex; justify-content:space-between; font-weight:600; position:relative; z-index:2;">
+                    <span style="font-family:var(--font-body);">N46Sorter</span>
+                    <span style="color:var(--text-secondary); font-weight:400;">${dateStr}</span>
+                </div>
+                `;
+                tempContainer.innerHTML += footerHTML;
+
+                document.body.appendChild(tempContainer);
+
+                // Wait for images
+                // We need to find all images in tempContainer and wait for them
+                const images = tempContainer.querySelectorAll('img');
+                const promises = Array.from(images).map(img => {
+                    return new Promise(r => {
+                        if (img.complete) r();
+                        else { img.onload = r; img.onerror = r; }
+                    });
+                });
+
+                Promise.all(promises).then(() => {
+                    setTimeout(() => {
+                        html2canvas(tempContainer, {
+                            scale: 1.5,
+                            useCORS: true,
+                            backgroundColor: null
+                        }).then(canvas => {
+                            generatedSenbatsuImg = canvas.toDataURL("image/png");
+                            document.body.removeChild(tempContainer);
+                            resolve();
+                        }).catch(err => {
+                            console.error("Senbatsu Gen Failed", err);
+                            document.body.removeChild(tempContainer);
+                            resolve(); // Resolve anyway to not block
+                        });
+                    }, 1000);
+                });
+            });
+        }
         function getShareText() {
             if (finalTop5.length === 0) return "";
-            const topName = finalTop5[0].name;
-            const secondName = finalTop5.length > 1 ? finalTop5[1].name : "";
-            let text = `My #Nogizaka46 Top 5:\n\n👑 1. ${topName}\n`;
-            if (secondName) text += `🥈 2. ${secondName}\n`;
-            if (finalTop5[2]) text += `🥉 3. ${finalTop5[2].name}\n`;
+            let text = `My #Nogizaka46 Top 5:\n\n`;
+            finalTop5.forEach((m, i) => {
+                if (i === 0) text += `👑 1. ${m.name}\n`;
+                else if (i === 1) text += `🥈 2. ${m.name}\n`;
+                else if (i === 2) text += `🥉 3. ${m.name}\n`;
+                else if (i === 3) text += `4️⃣ 4. ${m.name}\n`;
+                else if (i === 4) text += `5️⃣ 5. ${m.name}\n`;
+                else text += `${i + 1}. ${m.name}\n`;
+            });
             text += `\nFind your Oshi here: https://yoursite.com`; // Replace with your URL
             return text;
         }
@@ -3902,6 +4394,11 @@
             document.getElementById('generated-img').src = "";
             document.getElementById('gen-status').style.display = "block";
             document.getElementById('gen-status').innerText = "Creating certificate...";
+
+            // Reset View Toggle
+            document.getElementById('view-toggle').style.display = 'none';
+            generatedListImg = "";
+            generatedSenbatsuImg = "";
 
             clearProgress(); // Clear progress on restart
 
