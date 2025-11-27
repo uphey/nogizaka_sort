@@ -2798,7 +2798,7 @@
     <div class="bg-orb orb-2"></div>
 
     <header>
-        <div class="logo-container" onclick="goHome()" style="cursor: pointer;">
+        <div class="logo-container" onclick="reloadPage()" style="cursor: pointer;">
             <div class="logo"><span class="logo-triangle-prefix">N46</span>Sorter</div>
         </div>
     </header>
@@ -4519,7 +4519,16 @@
 
         async function shareNative() {
             const text = getShareText();
-            const imgData = document.getElementById('generated-img').src;
+
+            // Determine active image
+            let imgData = "";
+            const btnList = document.getElementById('btn-view-list');
+            if (btnList.classList.contains('active')) {
+                imgData = document.getElementById('img-list').src;
+            } else {
+                imgData = document.getElementById('img-senbatsu').src;
+            }
+
             let filesArray = [];
 
             // Check if we have a generated image
@@ -4606,7 +4615,9 @@
             document.getElementById('progress-txt').innerText = '0%';
 
             document.getElementById('image-output-area').style.display = 'none';
-            document.getElementById('generated-img').src = "";
+            document.getElementById('img-list').src = "";
+            document.getElementById('img-senbatsu').src = "";
+
             document.getElementById('gen-status').style.display = "block";
             document.getElementById('gen-status').innerText = "Creating certificate...";
 
@@ -4615,10 +4626,33 @@
             generatedListImg = "";
             generatedSenbatsuImg = "";
 
+            // Reset View Container State
+            const container = document.getElementById('view-container');
+            container.style.height = 'auto';
+
+            // Reset to List View default
+            document.getElementById('img-list').classList.add('active');
+            document.getElementById('img-list').classList.remove('inactive');
+            document.getElementById('img-senbatsu').classList.add('inactive');
+            document.getElementById('img-senbatsu').classList.remove('active');
+            document.getElementById('btn-view-list').classList.add('active');
+            document.getElementById('btn-view-senbatsu').classList.remove('active');
+            document.getElementById('senbatsu-controls').classList.remove('active');
+
             clearProgress(); // Clear progress on restart
 
             document.getElementById('start-screen').classList.add('active');
             initWall();
+        }
+
+        function reloadPage() {
+            // Prevent reload if certificate is loading
+            const loadingScreen = document.getElementById('result-loading');
+            // Check if it exists and is visible (display is flex or block, not none)
+            if (loadingScreen && getComputedStyle(loadingScreen).display !== 'none') {
+                return;
+            }
+            location.reload();
         }
 
         function openMemberProfile(e, index) {
