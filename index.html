@@ -4459,6 +4459,7 @@
                         rankColor = 'var(--bronze)';
                     }
 
+
                     // Create Row
                     const row = document.createElement('div');
                     // Default padding
@@ -4470,8 +4471,19 @@
                     // Create Image with Proxy & CrossOrigin
                     const img = new Image();
                     img.crossOrigin = "anonymous";
+
+                    // Determine image source
+                    let imgSrc = m.img.replace("w=400", "w=200&h=200&fit=cover");
+
+                    // Check if graduated member (in ALUMNAE_NAME_MAP)
+                    // If so, use fallback URL directly via proxy to avoid 404s on original URL
+                    if (ALUMNAE_NAME_MAP[m.name]) {
+                        const fallbackUrl = IMG_FALLBACK_BASE + ALUMNAE_NAME_MAP[m.name] + '/image.jpg';
+                        imgSrc = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=200&h=200&fit=cover";
+                    }
+
                     // High quality square
-                    img.src = m.img.replace("w=400", "w=200&h=200&fit=cover");
+                    img.src = imgSrc;
                     img.style.cssText = `width:${imgSize}; height:${imgSize}; border-radius:50%; object-fit:cover; border:3px solid ${imgBorder}; box-shadow:0 4px 10px rgba(0,0,0,0.1); flex-shrink:0;`;
 
                     // Push promise
@@ -4694,30 +4706,31 @@
                         const imgSize = '88px';
                         const fontSize = '0.95rem';
 
+                        // Create Image
                         const img = new Image();
                         img.crossOrigin = "anonymous";
-                        // Use direct URL with optimization
-                        img.src = m.img.replace("w=400", "w=200&h=200&fit=cover");
 
+                        // Determine image source
+                        let imgSrc = m.img.replace("w=400", "w=200&h=200&fit=cover");
+
+                        // Check if graduated member (in ALUMNAE_NAME_MAP)
+                        if (ALUMNAE_NAME_MAP[m.name]) {
+                            const fallbackUrl = IMG_FALLBACK_BASE + ALUMNAE_NAME_MAP[m.name] + '/image.jpg';
+                            imgSrc = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=200&h=200&fit=cover";
+                        }
+
+                        img.src = imgSrc;
+
+                        img.onload = resolve;
                         img.onerror = () => {
-                            const retries = parseInt(img.dataset.retryCount || 0);
-                            img.dataset.retryCount = retries + 1;
-
-                            if (retries === 0) {
-                                // Retry 1: Original via Proxy (fixes CORS/Hotlink issues)
-                                img.src = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=200&h=200&fit=cover";
-                            } else if (retries === 1) {
-                                // Retry 2: Fallback via Proxy
+                            // Try fallback if not already tried (though we likely just set it)
+                            if (!ALUMNAE_NAME_MAP[m.name]) {
                                 const fallbackUrl = getFallbackUrl(m.name);
                                 if (fallbackUrl) {
                                     img.src = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=200&h=200&fit=cover";
-                                } else {
-                                    // No fallback, use placeholder
-                                    img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='%23ccc'%3EN/A%3C/text%3E%3C/svg%3E";
+                                    // Prevent infinite loop
+                                    img.onerror = null;
                                 }
-                            } else {
-                                // Give up
-                                img.onerror = null;
                             }
                         };
 
