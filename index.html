@@ -166,7 +166,7 @@
             width: 100%;
             left: 0;
             top: 0;
-            z-index: 2000;
+            z-index: 1000;
             box-shadow: var(--shadow-sm);
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
@@ -692,7 +692,7 @@
             cursor: pointer;
             box-shadow: var(--shadow-sm);
             border: 1px solid rgba(126, 16, 131, 0.1);
-            z-index: 1002;
+            z-index: 999;
             transition: all 0.3s ease;
             font-family: var(--font-body);
         }
@@ -4029,7 +4029,7 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
                     <path d="M8 5v14l11-7z" />
                 </svg>
-                ${t("Start Ranking")}
+                <span data-i18n="Start Ranking">${t("Start Ranking")}</span>
             `;
         }
 
@@ -4700,11 +4700,23 @@
                         img.src = m.img.replace("w=400", "w=200&h=200&fit=cover");
 
                         img.onerror = () => {
-                            // Try fallback
-                            const fallbackUrl = getFallbackUrl(m.name);
-                            if (fallbackUrl) {
-                                img.src = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=200&h=200&fit=cover";
-                                // Prevent infinite loop
+                            const retries = parseInt(img.dataset.retryCount || 0);
+                            img.dataset.retryCount = retries + 1;
+
+                            if (retries === 0) {
+                                // Retry 1: Original via Proxy (fixes CORS/Hotlink issues)
+                                img.src = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=200&h=200&fit=cover";
+                            } else if (retries === 1) {
+                                // Retry 2: Fallback via Proxy
+                                const fallbackUrl = getFallbackUrl(m.name);
+                                if (fallbackUrl) {
+                                    img.src = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=200&h=200&fit=cover";
+                                } else {
+                                    // No fallback, use placeholder
+                                    img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='%23ccc'%3EN/A%3C/text%3E%3C/svg%3E";
+                                }
+                            } else {
+                                // Give up
                                 img.onerror = null;
                             }
                         };
@@ -5640,8 +5652,7 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
                         <path d="M8 5v14l11-7z" />
                     </svg>
-                    </svg>
-                    ${t("Start New Ranking")}
+                    <span data-i18n="Start New Ranking">${t("Start New Ranking")}</span>
                 `;
             } else {
                 document.getElementById('resume-btn').style.display = 'none';
@@ -5649,8 +5660,7 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
                         <path d="M8 5v14l11-7z" />
                     </svg>
-                    </svg>
-                    ${t("Start Ranking")}
+                    <span data-i18n="Start Ranking">${t("Start Ranking")}</span>
                 `;
             }
 
