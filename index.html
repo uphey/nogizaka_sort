@@ -9,7 +9,7 @@
 
     <!-- Fonts -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,600;0,800;1,400&family=Montserrat:wght@300;500;600;700&family=Noto+Sans+JP:wght@300;500;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,600;0,800;1,400&family=Montserrat:wght@300;500;600;700&family=Noto+Sans+JP:wght@300;500;700&family=Zen+Old+Mincho:wght@400;500;600;700;900&display=swap"
         rel="stylesheet">
 
     <!-- HTML2Canvas -->
@@ -52,6 +52,7 @@
             --font-display: 'Bodoni Moda', serif;
             --font-body: 'Montserrat', sans-serif;
             --font-jp: 'Noto Sans JP', sans-serif;
+            --font-jp-display: 'Zen Old Mincho', serif;
 
             /* --- SPACING --- */
             --spacing-xs: 4px;
@@ -165,7 +166,7 @@
             width: 100%;
             left: 0;
             top: 0;
-            z-index: 50;
+            z-index: 2000;
             box-shadow: var(--shadow-sm);
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
@@ -338,7 +339,6 @@
         #start-screen {
             justify-content: center;
             min-height: 80vh;
-            /* Fill clearer space */
         }
 
         .premium-wrapper {
@@ -674,6 +674,55 @@
             .action-deck {
                 padding: 25px;
             }
+        }
+
+        /* Language Toggle */
+        .lang-toggle {
+            position: fixed;
+            top: 80px;
+            /* Default for other screens */
+            right: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(126, 16, 131, 0.1);
+            z-index: 1002;
+            transition: all 0.3s ease;
+            font-family: var(--font-body);
+        }
+
+        /* Position on Start Screen */
+        body:has(#start-screen.active) .lang-toggle {
+            top: 20px;
+        }
+
+        .lang-toggle.hidden,
+        .lang-toggle.loading-hide {
+            transform: translateY(-150%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .lang-toggle:hover {
+            background: var(--bg-surface);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .lang-toggle span {
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .lang-toggle span.active {
+            opacity: 1;
+            color: var(--primary);
         }
 
         /* =========================================
@@ -2474,8 +2523,8 @@
             }
 
             .rank-1 .res-thumb {
-                width: 70px;
-                height: 70px;
+                width: 60px;
+                height: 60px;
             }
 
             .rank-1 .res-name {
@@ -2815,32 +2864,39 @@
     <div id="initial-loader">
         <div class="loader-content">
             <div class="logo"><span class="logo-triangle-prefix">N46</span>Sorter</div>
-            <div class="loader-sub">Discover your Oshi</div>
+            <div class="loader-sub" data-i18n="Discover your Oshi">Discover your Oshi</div>
             <div class="loader-spinner"></div>
-            <div class="loader-text">Loading Data...</div>
+            <div class="loader-text" data-i18n="Loading Data...">Loading Data...</div>
         </div>
     </div>
     <div class="bg-orb orb-1"></div>
     <div class="bg-orb orb-2"></div>
 
+    <!-- Language Toggle (Moved to Body) -->
+    <div class="lang-toggle" onclick="toggleLanguage()">
+        <span id="lang-en" class="active">EN</span> / <span id="lang-ja">JP</span>
+    </div>
+
     <header>
-        <div class="logo-container" onclick="reloadPage()" style="cursor: pointer;">
+        <div class="logo-container" onclick="goHome()" style="cursor: pointer;">
             <div class="logo"><span class="logo-triangle-prefix">N46</span>Sorter</div>
         </div>
     </header>
 
     <div class="container">
-
         <!-- NEW REDESIGNED START SCREEN -->
         <div id="start-screen" class="screen active">
             <div class="premium-wrapper">
-                <div class="brand-tag">Member Sorter</div>
+                <div class="brand-tag" data-i18n="Member Sorter">Member Sorter</div>
 
-                <h1 class="premium-title">NOGIZAKA<br><span>46</span></h1>
+                <h1 class="premium-title">
+                    <div data-i18n="NOGIZAKA">NOGIZAKA</div><span>46</span>
+                </h1>
 
                 <div class="premium-sub">
-                    Find your true favorite member.<br>
-                    Make your choices and reveal your ranking.
+                    <span data-i18n="Find your true favorite member.">Find your true favorite member.</span><br>
+                    <span data-i18n="Make your choices and reveal your ranking.">Make your choices and reveal your
+                        ranking.</span>
                 </div>
 
                 <!-- Tilted Marquee (New Design) -->
@@ -2853,14 +2909,15 @@
                 <!-- Action Controls -->
                 <div class="action-deck">
                     <button id="status" class="status-pill" onclick="openSelectionScreen()" disabled>
-                        <span class="pulse-dot"></span> Loading Data...
+                        <span class="pulse-dot"></span> <span id="status-text" data-i18n="Loading Data...">Loading
+                            Data...</span>
                     </button>
 
                     <button id="start-btn" class="btn-start-lg" onclick="startSort()" disabled>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
                             <path d="M8 5v14l11-7z" />
                         </svg>
-                        Start Ranking
+                        <span data-i18n="Start Ranking">Start Ranking</span>
                     </button>
 
                     <button id="resume-btn" class="btn-resume" onclick="resumeSort()" style="display: none;">
@@ -2869,7 +2926,7 @@
                             <polyline points="13 17 18 12 13 7"></polyline>
                             <polyline points="6 17 11 12 6 7"></polyline>
                         </svg>
-                        Resume Ranking
+                        <span data-i18n="Resume Ranking">Resume Ranking</span>
                     </button>
 
                     <button id="demo-btn" class="btn-lucky" onclick="runDemo()" disabled>
@@ -2882,7 +2939,7 @@
                             <path d="M16 16h.01" stroke-width="3"></path>
                             <path d="M12 12h.01" stroke-width="3"></path>
                         </svg>
-                        Feeling Lucky?
+                        <span data-i18n="Feeling Lucky?">Feeling Lucky?</span>
                     </button>
                 </div>
             </div>
@@ -2914,7 +2971,7 @@
                                 <line x1="12" y1="16" x2="12" y2="12"></line>
                                 <line x1="12" y1="8" x2="12.01" y2="8"></line>
                             </svg>
-                            Profile & Media
+                            <span data-i18n="Profile & Media">Profile & Media</span>
                         </button>
                     </div>
                 </div>
@@ -2932,12 +2989,20 @@
                                 <line x1="12" y1="16" x2="12" y2="12"></line>
                                 <line x1="12" y1="8" x2="12.01" y2="8"></line>
                             </svg>
-                            Profile & Media
+                            <span data-i18n="Profile & Media">Profile & Media</span>
                         </button>
                     </div>
                 </div>
             </div>
             <div class="control-row">
+                <button id="undo-btn" class="btn-sec" onclick="undo()" disabled>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 7v6h6"></path>
+                        <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
+                    </svg>
+                    <span data-i18n="Undo">Undo</span>
+                </button>
                 <button class="btn-sec" onclick="vote('tie')">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
@@ -2947,15 +3012,7 @@
                         <path d="M12 3v18" />
                         <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2" />
                     </svg>
-                    Tie
-                </button>
-                <button id="undo-btn" class="btn-sec" onclick="undo()" disabled>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 7v6h6"></path>
-                        <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
-                    </svg>
-                    Undo
+                    <span data-i18n="Tie">Tie</span>
                 </button>
             </div>
         </div>
@@ -2975,14 +3032,15 @@
                 </div>
                 <div class="loading-text-container">
                     <div class="loading-spinner-premium"></div>
-                    <div class="loading-title">Generating Certificate</div>
-                    <div class="loading-subtitle">Compiling your top members...</div>
+                    <div class="loading-title" data-i18n="Generating Certificate">Generating Certificate</div>
+                    <div class="loading-subtitle" data-i18n="Compiling your top members...">Compiling your top
+                        members...</div>
                 </div>
             </div>
 
             <!-- CONTENT WRAPPER (Hidden initially) -->
             <div id="result-content" style="opacity:0; transition: opacity 0.8s ease;">
-                <h2 class="result-header">Result</h2>
+                <h2 class="result-header" data-i18n="Result">Result</h2>
 
                 <!-- AUTO GENERATED IMAGE DISPLAY -->
                 <div id="image-output-area">
@@ -2997,23 +3055,23 @@
                                 <line x1="3" y1="12" x2="3.01" y2="12"></line>
                                 <line x1="3" y1="18" x2="3.01" y2="18"></line>
                             </svg>
-                            List
+                            <span data-i18n="List">List</span>
                         </button>
                         <button class="view-btn" onclick="switchView('senbatsu')" id="btn-view-senbatsu">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="3" width="7" height="7"></rect>
-                                <rect x="14" y="3" width="7" height="7"></rect>
-                                <rect x="14" y="14" width="7" height="7"></rect>
-                                <rect x="3" y="14" width="7" height="7"></rect>
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                             </svg>
-                            Senbatsu
+                            <span data-i18n="Senbatsu">Senbatsu</span>
                         </button>
                     </div>
 
                     <div class="senbatsu-controls" id="senbatsu-controls">
                         <div class="senbatsu-pill">
-                            <span class="senbatsu-label">Formation Size</span>
+                            <span class="senbatsu-label" data-i18n="Formation Size">Formation Size</span>
                             <div class="senbatsu-value-display" id="senbatsu-value-display">
                                 18
                                 <svg width="10" height="6" viewBox="0 0 10 6" fill="none"
@@ -3041,13 +3099,14 @@
                     </div>
 
                     <div class="image-wrapper">
-                        <div id="gen-status">Generating certificate...</div>
+                        <div id="gen-status" data-i18n="Generating certificate...">Generating certificate...</div>
                         <div id="view-container">
                             <img id="img-list" class="view-image active" src="">
                             <img id="img-senbatsu" class="view-image inactive" src="">
                         </div>
                     </div>
-                    <div class="save-instruction">👆 Long press to save to Photos</div>
+                    <div class="save-instruction" data-i18n="Long press to save to Photos">👆 Long press to save to
+                        Photos</div>
                 </div>
 
                 <!-- SHARE BUTTONS -->
@@ -3057,10 +3116,10 @@
                             <path
                                 d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                         </svg>
-                        Post on X
+                        <span data-i18n="Post on X">Post on X</span>
                     </button>
                     <button class="btn-action btn-threads" onclick="shareThreads()">
-                        <span style="margin-top: -2px;">@</span> Threads
+                        <span style="margin-top: -2px;">@</span> <span data-i18n="Threads">Threads</span>
                     </button>
                     <button class="btn-action btn-system" onclick="shareNative()">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -3069,7 +3128,7 @@
                             <polyline points="16 6 12 2 8 6"></polyline>
                             <line x1="12" y1="2" x2="12" y2="15"></line>
                         </svg>
-                        Share Result
+                        <span data-i18n="Share Result">Share Result</span>
                     </button>
                     <button class="btn-action btn-sec" onclick="copyFullResults(this)"
                         style="background:white; color:#333; border:1px solid #ddd;">
@@ -3078,12 +3137,12 @@
                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                         </svg>
-                        Copy Full Ranking
+                        <span data-i18n="Copy Full Ranking">Copy Full Ranking</span>
                     </button>
                 </div>
 
                 <!-- SECTION HEADER -->
-                <div class="section-header">Full Ranking</div>
+                <div class="section-header" data-i18n="Full Ranking">Full Ranking</div>
 
                 <div class="result-container" id="result-list"></div>
 
@@ -3095,7 +3154,7 @@
                             <path d="M1 20v-6h6"></path>
                             <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
                         </svg>
-                        Sort Again
+                        <span data-i18n="Sort Again">Sort Again</span>
                     </button>
                 </div>
             </div> <!-- End Content Wrapper -->
@@ -3123,7 +3182,7 @@
                 <div class="modal-header-content">
                     <img id="m-img" class="modal-avatar" src="">
                     <h2 id="m-name"
-                        style="font-family:'Bodoni Moda'; color:var(--primary); margin-bottom:10px; position:relative;">
+                        style="font-family:var(--font-display); color:var(--primary); margin-bottom:10px; position:relative;">
                         Name</h2>
                     <div id="m-meta" class="modal-tag">Gen • Birthdate</div>
                 </div>
@@ -3158,7 +3217,9 @@
     <div class="modal-backdrop" id="selection-modal" onclick="closeSelectionScreen()">
         <div class="selection-content" onclick="event.stopPropagation()">
             <div class="selection-header">
-                <h2 style="font-family: 'Bodoni Moda'; color: var(--primary); margin: 0;">Select Members</h2>
+                <h2 style="font-family: var(--font-display); color: var(--primary); margin: 0;"
+                    data-i18n="Select Members">
+                    Select Members</h2>
                 <button class="close-btn" onclick="closeSelectionScreen()">&times;</button>
             </div>
 
@@ -3166,7 +3227,7 @@
                 <!-- Group 1: Current Members -->
                 <div class="toolbar-group active" id="group-current" onclick="switchTab('current')" role="button">
                     <div class="group-info">
-                        <span class="group-title">Current Members</span>
+                        <span class="group-title" data-i18n="Current Members">Current Members</span>
                         <span class="group-count" id="count-current">(0)</span>
                     </div>
                     <div class="switch-container" id="switch-container-current"
@@ -3176,14 +3237,14 @@
                                 onclick="event.stopPropagation(); toggleAllCurrent()">
                             <span class="checkmark"></span>
                         </div>
-                        <span class="switch-label">Select All</span>
+                        <span class="switch-label" data-i18n="Select All">Select All</span>
                     </div>
                 </div>
 
                 <!-- Group 2: Graduated Members -->
                 <div class="toolbar-group" id="group-graduated" onclick="switchTab('graduated')" role="button">
                     <div class="group-info">
-                        <span class="group-title">Graduated Members</span>
+                        <span class="group-title" data-i18n="Graduated Members">Graduated Members</span>
                         <span class="group-count" id="count-graduated">(0)</span>
                     </div>
                     <div class="switch-container" id="switch-container-graduated"
@@ -3193,7 +3254,7 @@
                                 onclick="event.stopPropagation(); toggleAllGraduated()">
                             <span class="checkmark"></span>
                         </div>
-                        <span class="switch-label">Select All</span>
+                        <span class="switch-label" data-i18n="Select All">Select All</span>
                     </div>
                 </div>
             </div>
@@ -3213,6 +3274,26 @@
     <script>
         // CONFIG
         // Enable active state support on mobile
+        // Scroll Detection for Language Toggle
+        let lastScrollY = window.scrollY;
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            const toggle = document.querySelector('.lang-toggle');
+
+            // Only apply on non-start screens (where top is 80px)
+            // Or apply everywhere? User said "hide it when scrolling down".
+            // Usually on start screen there isn't much scroll, but if there is, hiding is fine.
+
+            if (currentScrollY > lastScrollY && currentScrollY > 50) {
+                // Scrolling Down
+                toggle.classList.add('hidden');
+            } else {
+                // Scrolling Up
+                toggle.classList.remove('hidden');
+            }
+            lastScrollY = currentScrollY;
+        }, { passive: true });
+
         document.addEventListener('touchstart', function () { }, { passive: true });
 
         const IMG_BASE = "https://n46db.com/pictures/profilepics/";
@@ -3223,6 +3304,191 @@
         const CACHE_KEY = 'n46_members_v1';
         const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
         const PROGRESS_KEY = 'n46_sort_progress';
+
+        // --- NAME MAPPING ---
+        const NAME_JP_MAPPING = {
+            "Iwase Yumiko": "岩瀬佑美子", "Fukagawa Mai": "深川麻衣", "Matsui Rena": "松井玲奈", "Shinuchi Mai": "新内眞衣",
+            "Shiraishi Mai": "白石麻衣", "Matsumura Sayuri": "松村沙友理", "Eto Misa": "衛藤美彩", "Hashimoto Nanami": "橋本奈々未",
+            "Ando Mikumo": "安藤美雲", "Ito Karin": "伊藤かりん", "Nishikawa Nanami": "西川七海", "Saito Yuuri": "斉藤優里",
+            "Akimoto Manatsu": "秋元真夏", "Miyazawa Seira": "宮澤成良", "Takayama Kazumi": "高山一実", "Sakurai Reika": "桜井玲香",
+            "Nagashima Seira": "永島聖羅", "Nishino Nanase": "西野七瀬", "Wakatsuki Yumi": "若月佑美", "Nakada Kana": "中田花奈",
+            "Kashiwa Yukina": "柏幸奈", "Noujo Ami": "能條愛未", "Inoue Sayuri": "井上小百合", "Yamato Rina": "大和里菜",
+            "Yada Risako": "矢田里沙子", "Kawamura Mahiro": "川村真洋", "Yoshida Ayano Christie": "吉田綾乃クリスティー", "Hatanaka Seira": "畠中清羅",
+            "Ito Nene": "伊藤寧々", "Ikoma Rina": "生駒里奈", "Ichiki Rena": "市來玲奈", "Ito Marika": "伊藤万理華",
+            "Nakamoto Himeka": "中元日芽香", "Kitano Hinako": "北野日奈子", "Yoshimoto Ayaka": "吉本彩華", "Hori Miona": "堀未央奈",
+            "Ikuta Erika": "生田絵梨花", "Saito Chiharu": "斎藤ちはる", "Yamazaki Rena": "山崎怜奈", "Sagara Iori": "相楽伊織",
+            "Higuchi Hina": "樋口日奈", "Hoshino Minami": "星野みなみ", "Kawago Hina": "川後陽菜", "Sato Kaede": "佐藤楓",
+            "Yamamoto Honoka": "山本穂乃香", "Wada Maaya": "和田まあや", "Saito Asuka": "齋藤飛鳥", "Sasaki Kotoko": "佐々木琴子",
+            "Terada Ranze": "寺田蘭世", "Ito Junna": "伊藤純奈", "Umezawa Minami": "梅澤美波", "Tamura Mayu": "田村真佑",
+            "Yumiki Nao": "弓木奈於", "Suzuki Ayane": "鈴木絢音", "Yonetoku Kyoka": "米徳京花", "Yamashita Mizuki": "山下美月",
+            "Mukai Hazuki": "向井葉月", "Ozono Momoko": "大園桃子", "Watanabe Miria": "渡辺みり愛", "Yoda Yuuki": "与田祐希",
+            "Hayakawa Seira": "早川聖来", "Kubo Shiori": "久保史緒里", "Kaki Haruka": "賀喜遥香", "Kitagawa Yuri": "北川悠理",
+            "Sato Rika": "佐藤璃果", "Nakamura Reno": "中村麗乃", "Endo Sakura": "遠藤さくら", "Kanagawa Saya": "金川紗耶",
+            "Sakaguchi Tamami": "阪口珠美", "Ikeda Teresa": "池田瑛紗", "Yakubo Mio": "矢久保美緒", "Ito Riria": "伊藤理々杏",
+            "Kakehashi Sayaka": "掛橋沙耶香", "Shibata Yuna": "柴田柚菜", "Nakanishi Aruno": "中西アルノ", "Kawasaki Sakura": "川﨑桜",
+            "Ichinose Miku": "一ノ瀬美空", "Seimiya Rei": "清宮レイ", "Hayashi Runa": "林瑠奈", "Okamoto Hina": "岡本姫奈",
+            "Matsuo Miyu": "松尾美佑", "Kuromi Haruka": "黒見明香", "Iwamoto Renka": "岩本蓮加", "Tsutsui Ayame": "筒井あやめ",
+            "Okoshi Hinano": "大越ひなの", "Inoue Nagi": "井上和", "Setoguchi Mitsuki": "瀬戸口心月", "Ioki Mao": "五百城茉央",
+            "Okuda Iroha": "奥田いろは", "Atago Kokone": "愛宕心響", "Sugawara Satsuki": "菅原咲月", "Suzuki Yuuna": "鈴木佑捺",
+            "Tomisato Nao": "冨里奈央", "Kaibe Akari": "海邉朱莉", "Ozu Reina": "小津玲奈", "Nagashima Rio": "長嶋凛桜",
+            "Ogawa Aya": "小川彩", "Yada Moeka": "矢田萌華", "Morihira Urumi": "森平麗心", "Masuda Mirine": "増田三莉音",
+            "Kawabata Hina": "川端晃菜"
+        };
+
+        // --- LOCALIZATION ---
+        const LANG_KEY = 'n46_lang_pref';
+        let currentLang = localStorage.getItem(LANG_KEY) || 'ja';
+        const translations = {
+            "nogizaka_sort_mobile.html": "nogizaka_sort_mobile.html",
+            "Nogizaka46 Member Sorter": "乃木坂46メンバーソート",
+            "Sort your favorite Nogizaka46 members!": "推しの乃木坂46メンバーをソートしよう！",
+            "nogizaka46, sorter, ranking, member, idol": "乃木坂46, ソート, ランキング, メンバー, アイドル",
+            "Find your true favorite member.": "本当の推しメンを見つけよう。",
+            "N46Sorter": "N46Sorter",
+            "Member Sorter": "メンバーソート",
+            "NOGIZAKA46": "NOGIZAKA46",
+            "NOGIZAKA": "乃木坂",
+            "Assembling Formation...": "フォーメーションを作成中",
+            "Make your choices and reveal your ranking.": "メンバーを選んで、ランキングを表示しよう。",
+            "Make your choices and reveal your ranking.": "メンバーを選んで、ランキングを表示しよう。",
+            "Discover your Oshi": "推しメンを見つけよう",
+            "Loading Data...": "データ読み込み中…",
+            "Start Ranking": "ランキングを開始",
+            "Start New Ranking": "ランキングをリセット",
+            "Resume Ranking": "ランキングを再開",
+            "Feeling Lucky?": "運試し",
+            "Select Members": "メンバーを選択",
+            "All Members": "全メンバー",
+            "By Gen": "期別",
+            "Filter": "絞り込み",
+            "Select All": "すべて選択",
+            "Deselect": "すべて解除",
+            "Start Sorting": "ソートを開始",
+            "Battle {n} / ~{total}": "バトル {n} / 約{total}",
+            "{p}%": "{p}%",
+            "Tie": "引き分け",
+            "Undo": "一つ前に戻す",
+            "Generating Certificate": "結果を生成中…",
+            "Compiling your top members...": "推しメンを集計中…",
+            "Result": "結果",
+            "List": "一覧",
+            "Senbatsu": "選抜",
+            "Formation Size": "フォーメーション人数",
+            "Share Result": "結果をシェア",
+            "Share on X": "Xでシェア",
+            "Share on Threads": "Threadsでシェア",
+            "Sort Again": "もう一度ソート",
+            "Member Profile": "メンバープロフィール",
+            "Search on Google": "Googleで検索",
+            "Search on Pinterest": "Pinterestで検索",
+            "Search on YouTube": "YouTubeで検索",
+            "Please select at least two members!": "メンバーを2人以上選択してください。",
+            "No save data found.": "セーブデータが見つかりません。",
+            "My #Nogizaka46 Top 5:": "私の #乃木坂46 推しメンTOP5：",
+            "Nogizaka46 Sorter Result": "乃木坂46ソート結果",
+            "#Nogizaka46 #MemberSorter": "#乃木坂46 #メンバーソート",
+            "Are you sure you want to restart?": "本当に最初からやり直しますか？",
+            "Filter by generation or select individual members.": "期別で絞り込むか、個別にメンバーを選択できます。",
+            "Current Members": "在籍メンバー",
+            "Graduated Members": "卒業メンバー",
+            "Graduated": "卒業メンバー",
+            "Apply Selection ({n})": "選択を適用（{n}人）",
+            "1st Gen": "1期生",
+            "2nd Gen": "2期生",
+            "3rd Gen": "3期生",
+            "4th Gen": "4期生",
+            "5th Gen": "5期生",
+            "6th Gen": "6期生",
+            "{Month} {Day}, {Year}": "{Year}．{Month}．{Day}",
+            "Long press to save to Photos": "👆 長押しして写真に保存",
+            "Copied!": "コピーしました！",
+            "Copy Full Results": "結果をすべてコピー",
+            "Copy Full Ranking": "結果をすべてコピー",
+            "Full Ranking": "ランキング",
+            "Sharing failed or was cancelled.": "共有に失敗したか、キャンセルされました。",
+            "No results to copy!": "コピーできる結果がありません。",
+            "Copied to clipboard!": "コピーしました！",
+            "🏆 Nogizaka46 Sorter Full Results 🏆": "🏆 乃木坂46ソート 全結果 🏆",
+            "Create your own ranking at: https://yoursite.com": "自分だけのランキングを作る： https://yoursite.com",
+            "Find your Oshi here: https://yoursite.com": "あなたの推しを見つけよう： https://yoursite.com",
+            "My Ideal Member Formation": "理想のメンバーフォーメーション",
+            "Top 5 Oshi Members": "推しメンTOP5",
+            "CENTER": "センター",
+            "Generating certificate...": "結果を生成中...",
+            "Post on X": "Xに投稿",
+            "Threads": "Threads",
+            "{n} Members Selected": "{n}人のメンバーを選択中",
+            "Edit": "編集",
+            "Profile & Media": "プロフィール"
+        };
+
+        function t(key, params = {}) {
+            let str = (currentLang === 'en') ? key : (translations[key] || key);
+            for (const [k, v] of Object.entries(params)) {
+                str = str.replace(`{${k}}`, v);
+            }
+            return str;
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ja' : 'en';
+            localStorage.setItem(LANG_KEY, currentLang);
+            updateLanguage();
+        }
+
+        function updateLanguage() {
+            // Update HTML lang attribute
+            document.documentElement.lang = currentLang;
+
+            // Update Font Variables based on Language
+            if (currentLang === 'ja') {
+                document.documentElement.style.setProperty('--font-display', "'Bodoni Moda','Zen Old Mincho', serif");
+                document.documentElement.style.setProperty('--font-body', "'Montserrat','Noto Sans JP', sans-serif");
+            } else {
+                document.documentElement.style.setProperty('--font-display', "'Bodoni Moda', serif");
+                document.documentElement.style.setProperty('--font-body', "'Montserrat', sans-serif");
+            }
+
+            // Update Toggle UI
+            const langEn = document.getElementById('lang-en');
+            const langJa = document.getElementById('lang-ja');
+            if (langEn && langJa) {
+                langEn.className = currentLang === 'en' ? 'active' : '';
+                langJa.className = currentLang === 'ja' ? 'active' : '';
+            }
+
+            // Update Text Elements
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (key) {
+                    el.innerText = t(key);
+                }
+            });
+
+            // Update Status Button Text
+            const statusBtn = document.getElementById('status');
+            if (statusBtn && !statusBtn.disabled && members.length > 0) {
+                updateSelectionButton();
+            }
+
+            // Update Battle Screen
+            if (document.getElementById('battle-screen').classList.contains('active')) {
+                if (currentMerge && currentMerge.left.length > 0 && currentMerge.right.length > 0) {
+                    renderCard('left', members[currentMerge.left[0].id]);
+                    renderCard('right', members[currentMerge.right[0].id]);
+                }
+            }
+
+            // Update Results Screen
+            if (document.getElementById('result-screen').classList.contains('active') && window.lastSortedList) {
+                showResults(window.lastSortedList);
+            }
+
+            // Update Selection Screen
+            if (document.getElementById('selection-modal').classList.contains('active')) {
+                renderSelectionScreen();
+            }
+        }
 
         let members = [];
         let queue = [];
@@ -3245,10 +3511,24 @@
                 if ((text.includes("期") || text.includes("Gen")) && /\d{4}\.\d{2}\.\d{2}/.test(text)) {
                     const nameMatch = text.match(/[A-Z]+\s[A-Za-z\s]+/);
                     const dateMatch = text.match(/(\d{4}\.\d{2}\.\d{2})/);
+
+                    // Try to find Japanese name
+                    // Look for Kanji/Kana that is NOT "期" or "生"
+                    const jpNameMatch = text.match(/[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]+/g);
+
                     if (nameMatch) {
                         let rawName = nameMatch[0].trim();
                         const filename = rawName.toLowerCase().replace(/\s+/g, '_') + ".jpg";
                         const displayName = toTitleCase(rawName);
+
+                        let nameJa = displayName;
+                        if (jpNameMatch) {
+                            const candidates = jpNameMatch.filter(s => !s.includes('期') && !s.includes('生') && s.length > 1);
+                            if (candidates.length > 0) {
+                                nameJa = candidates[0];
+                            }
+                        }
+
                         let gen = "Unknown";
                         if (text.includes("3期") || text.includes("3rd")) gen = "3rd Gen";
                         if (text.includes("4期") || text.includes("4th")) gen = "4th Gen";
@@ -3258,7 +3538,7 @@
                         if (text.includes("1期") || text.includes("1st")) gen = "1st Gen";
                         let birthdate = dateMatch ? dateMatch[0] : "Unknown";
                         if (!parsed.find(m => m.name === displayName)) {
-                            parsed.push({ name: displayName, gen: gen, date: birthdate, img: IMG_BASE + filename });
+                            parsed.push({ name: displayName, name_ja: nameJa, gen: gen, date: birthdate, img: IMG_BASE + filename });
                         }
                     }
                 }
@@ -3267,6 +3547,8 @@
         }
 
         async function init(retries = 3) {
+            // Apply saved language immediately
+            updateLanguage();
             const status = document.getElementById('status');
 
             // 1. Check Cache
@@ -3280,8 +3562,13 @@
                         // Initialize selection state
                         members.forEach(m => {
                             m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
-                            // Default selection: Current members only (graduated = false)
                             if (m.selected === undefined) m.selected = !m.graduated;
+                            // Apply mapping
+                            if (NAME_JP_MAPPING[m.name]) {
+                                m.name_ja = NAME_JP_MAPPING[m.name];
+                            } else if (!m.name_ja) {
+                                m.name_ja = m.name;
+                            }
                         });
                         updateSelectionButton();
                         document.getElementById('status').disabled = false;
@@ -3295,7 +3582,7 @@
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
                                     <path d="M8 5v14l11-7z" />
                                 </svg>
-                                Start New Ranking
+                                <span data-i18n="Start New Ranking">${t('Start New Ranking')}</span>
                             `;
                         }
 
@@ -3363,6 +3650,12 @@
                         m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
                         // Default selection: Current members only (graduated = false)
                         if (m.selected === undefined) m.selected = !m.graduated;
+                        // Backfill name_ja from mapping if available
+                        if (NAME_JP_MAPPING[m.name]) {
+                            m.name_ja = NAME_JP_MAPPING[m.name];
+                        } else if (!m.name_ja) {
+                            m.name_ja = m.name; // Fallback
+                        }
                     });
 
                     updateSelectionButton();
@@ -3378,7 +3671,7 @@
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
                                 <path d="M8 5v14l11-7z" />
                             </svg>
-                            Start New Ranking
+                            <span data-i18n="Start New Ranking">${t('Start New Ranking')}</span>
                         `;
                     }
 
@@ -3406,7 +3699,7 @@
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
                                 <path d="M8 5v14l11-7z" />
                             </svg>
-                            Start New Ranking
+                            <span data-i18n="Start New Ranking">${t('Start New Ranking')}</span>
                         `;
                     }
 
@@ -3486,55 +3779,65 @@
         function loadBackup() {
             members = [
                 // 3rd Gen
-                { name: "Ito Riria", gen: "3rd Gen", date: "2002.10.08", img: IMG_BASE + "ito_riria.jpg" },
-                { name: "Iwamoto Renka", gen: "3rd Gen", date: "2004.02.02", img: IMG_BASE + "iwamoto_renka.jpg" },
-                { name: "Umezawa Minami", gen: "3rd Gen", date: "1999.01.06", img: IMG_BASE + "umezawa_minami.jpg" },
-                { name: "Kubo Shiori", gen: "3rd Gen", date: "2001.07.14", img: IMG_BASE + "kubo_shiori.jpg" },
-                { name: "Yoshida Ayano Christie", gen: "3rd Gen", date: "1995.09.06", img: IMG_BASE + "yoshida_ayano_christie.jpg" },
+                { name: "Ito Riria", name_ja: "伊藤理々杏", gen: "3rd Gen", date: "2002.10.08", img: IMG_BASE + "ito_riria.jpg" },
+                { name: "Iwamoto Renka", name_ja: "岩本蓮加", gen: "3rd Gen", date: "2004.02.02", img: IMG_BASE + "iwamoto_renka.jpg" },
+                { name: "Umezawa Minami", name_ja: "梅澤美波", gen: "3rd Gen", date: "1999.01.06", img: IMG_BASE + "umezawa_minami.jpg" },
+                { name: "Kubo Shiori", name_ja: "久保史緒里", gen: "3rd Gen", date: "2001.07.14", img: IMG_BASE + "kubo_shiori.jpg" },
+                { name: "Yoshida Ayano Christie", name_ja: "吉田綾乃クリスティー", gen: "3rd Gen", date: "1995.09.06", img: IMG_BASE + "yoshida_ayano_christie.jpg" },
 
                 // 4th Gen
-                { name: "Endo Sakura", gen: "4th Gen", date: "2001.10.03", img: IMG_BASE + "endo_sakura.jpg" },
-                { name: "Kaki Haruka", gen: "4th Gen", date: "2001.08.08", img: IMG_BASE + "kaki_haruka.jpg" },
-                { name: "Kanagawa Saya", gen: "4th Gen", date: "2001.10.31", img: IMG_BASE + "kanagawa_saya.jpg" },
-                { name: "Kuromi Haruka", gen: "4th Gen", date: "2004.01.19", img: IMG_BASE + "kuromi_haruka.jpg" },
-                { name: "Sato Rika", gen: "4th Gen", date: "2001.08.09", img: IMG_BASE + "sato_rika.jpg" },
-                { name: "Shibata Yuna", gen: "4th Gen", date: "2003.03.03", img: IMG_BASE + "shibata_yuna.jpg" },
-                { name: "Tamura Mayu", gen: "4th Gen", date: "1999.01.12", img: IMG_BASE + "tamura_mayu.jpg" },
-                { name: "Tsutsui Ayame", gen: "4th Gen", date: "2004.06.08", img: IMG_BASE + "tsutsui_ayame.jpg" },
-                { name: "Hayashi Runa", gen: "4th Gen", date: "2003.10.02", img: IMG_BASE + "hayashi_runa.jpg" },
-                { name: "Matsuo Miyu", gen: "4th Gen", date: "2004.01.03", img: IMG_BASE + "matsuo_miyu.jpg" },
-                { name: "Yakubo Mio", gen: "4th Gen", date: "2002.08.14", img: IMG_BASE + "yakubo_mio.jpg" },
-                { name: "Yumiki Nao", gen: "4th Gen", date: "1999.02.03", img: IMG_BASE + "yumiki_nao.jpg" },
+                { name: "Endo Sakura", name_ja: "遠藤さくら", gen: "4th Gen", date: "2001.10.03", img: IMG_BASE + "endo_sakura.jpg" },
+                { name: "Kaki Haruka", name_ja: "賀喜遥香", gen: "4th Gen", date: "2001.08.08", img: IMG_BASE + "kaki_haruka.jpg" },
+                { name: "Kanagawa Saya", name_ja: "金川紗耶", gen: "4th Gen", date: "2001.10.31", img: IMG_BASE + "kanagawa_saya.jpg" },
+                { name: "Kuromi Haruka", name_ja: "黒見明香", gen: "4th Gen", date: "2004.01.19", img: IMG_BASE + "kuromi_haruka.jpg" },
+                { name: "Sato Rika", name_ja: "佐藤璃果", gen: "4th Gen", date: "2001.08.09", img: IMG_BASE + "sato_rika.jpg" },
+                { name: "Shibata Yuna", name_ja: "柴田柚菜", gen: "4th Gen", date: "2003.03.03", img: IMG_BASE + "shibata_yuna.jpg" },
+                { name: "Tamura Mayu", name_ja: "田村真佑", gen: "4th Gen", date: "1999.01.12", img: IMG_BASE + "tamura_mayu.jpg" },
+                { name: "Tsutsui Ayame", name_ja: "筒井あやめ", gen: "4th Gen", date: "2004.06.08", img: IMG_BASE + "tsutsui_ayame.jpg" },
+                { name: "Hayashi Runa", name_ja: "林瑠奈", gen: "4th Gen", date: "2003.10.02", img: IMG_BASE + "hayashi_runa.jpg" },
+                { name: "Matsuo Miyu", name_ja: "松尾美佑", gen: "4th Gen", date: "2004.01.03", img: IMG_BASE + "matsuo_miyu.jpg" },
+                { name: "Yakubo Mio", name_ja: "矢久保美緒", gen: "4th Gen", date: "2002.08.14", img: IMG_BASE + "yakubo_mio.jpg" },
+                { name: "Yumiki Nao", name_ja: "弓木奈於", gen: "4th Gen", date: "1999.02.03", img: IMG_BASE + "yumiki_nao.jpg" },
 
                 // 5th Gen
-                { name: "Ioki Mao", gen: "5th Gen", date: "2005.07.29", img: IMG_BASE + "ioki_mao.jpg" },
-                { name: "Ikeda Teresa", gen: "5th Gen", date: "2002.05.12", img: IMG_BASE + "ikeda_teresa.jpg" },
-                { name: "Ichinose Miku", gen: "5th Gen", date: "2003.05.24", img: IMG_BASE + "ichinose_miku.jpg" },
-                { name: "Inoue Nagi", gen: "5th Gen", date: "2005.02.17", img: IMG_BASE + "inoue_nagi.jpg" },
-                { name: "Okamoto Hina", gen: "5th Gen", date: "2003.12.17", img: IMG_BASE + "okamoto_hina.jpg" },
-                { name: "Ogawa Aya", gen: "5th Gen", date: "2007.06.27", img: IMG_BASE + "ogawa_aya.jpg" },
-                { name: "Okuda Iroha", gen: "5th Gen", date: "2005.08.20", img: IMG_BASE + "okuda_iroha.jpg" },
-                { name: "Kawasaki Sakura", gen: "5th Gen", date: "2003.04.17", img: IMG_BASE + "kawasaki_sakura.jpg" },
-                { name: "Sugawara Satsuki", gen: "5th Gen", date: "2005.10.31", img: IMG_BASE + "sugawara_satsuki.jpg" },
-                { name: "Tomisato Nao", gen: "5th Gen", date: "2006.09.18", img: IMG_BASE + "tomisato_nao.jpg" },
-                { name: "Nakanishi Aruno", gen: "5th Gen", date: "2003.03.17", img: IMG_BASE + "nakanishi_aruno.jpg" },
+                { name: "Ioki Mao", name_ja: "五百城茉央", gen: "5th Gen", date: "2005.07.29", img: IMG_BASE + "ioki_mao.jpg" },
+                { name: "Ikeda Teresa", name_ja: "池田瑛紗", gen: "5th Gen", date: "2002.05.12", img: IMG_BASE + "ikeda_teresa.jpg" },
+                { name: "Ichinose Miku", name_ja: "一ノ瀬美空", gen: "5th Gen", date: "2003.05.24", img: IMG_BASE + "ichinose_miku.jpg" },
+                { name: "Inoue Nagi", name_ja: "井上和", gen: "5th Gen", date: "2005.02.17", img: IMG_BASE + "inoue_nagi.jpg" },
+                { name: "Okamoto Hina", name_ja: "岡本姫奈", gen: "5th Gen", date: "2003.12.17", img: IMG_BASE + "okamoto_hina.jpg" },
+                { name: "Ogawa Aya", name_ja: "小川彩", gen: "5th Gen", date: "2007.06.27", img: IMG_BASE + "ogawa_aya.jpg" },
+                { name: "Okuda Iroha", name_ja: "奥田いろは", gen: "5th Gen", date: "2005.08.20", img: IMG_BASE + "okuda_iroha.jpg" },
+                { name: "Kawasaki Sakura", name_ja: "川﨑桜", gen: "5th Gen", date: "2003.04.17", img: IMG_BASE + "kawasaki_sakura.jpg" },
+                { name: "Sugawara Satsuki", name_ja: "菅原咲月", gen: "5th Gen", date: "2005.10.31", img: IMG_BASE + "sugawara_satsuki.jpg" },
+                { name: "Tomisato Nao", name_ja: "冨里奈央", gen: "5th Gen", date: "2006.09.18", img: IMG_BASE + "tomisato_nao.jpg" },
+                { name: "Nakanishi Aruno", name_ja: "中西アルノ", gen: "5th Gen", date: "2003.03.17", img: IMG_BASE + "nakanishi_aruno.jpg" },
 
                 // 6th Gen
-                { name: "Atago Kokone", gen: "6th Gen", date: "2005.09.17", img: IMG_BASE + "atago_kokone.jpg" },
-                { name: "Okoshi Hinano", gen: "6th Gen", date: "2004.12.01", img: IMG_BASE + "okoshi_hinano.jpg" },
-                { name: "Kaibe Akari", gen: "6th Gen", date: "2007.02.14", img: IMG_BASE + "kaibe_akari.jpg" },
-                { name: "Kawabata Hina", gen: "6th Gen", date: "2011.01.14", img: IMG_BASE + "kawabata_hina.jpg" },
-                { name: "Suzuki Yuuna", gen: "6th Gen", date: "2006.05.18", img: IMG_BASE + "suzuki_yuuna.jpg" },
-                { name: "Setoguchi Mitsuki", gen: "6th Gen", date: "2005.07.16", img: IMG_BASE + "setoguchi_mitsuki.jpg" },
-                { name: "Nagashima Rio", gen: "6th Gen", date: "2007.05.25", img: IMG_BASE + "nagashima_rio.jpg" },
-                { name: "Masuda Mirine", gen: "6th Gen", date: "2009.11.01", img: IMG_BASE + "masuda_mirine.jpg" },
-                { name: "Morihira Urumi", gen: "6th Gen", date: "2008.10.05", img: IMG_BASE + "morihira_urumi.jpg" },
-                { name: "Yada Moeka", gen: "6th Gen", date: "2008.01.27", img: IMG_BASE + "yada_moeka.jpg" },
-                { name: "Ozu Reina", gen: "6th Gen", date: "2007.04.17", img: IMG_BASE + "ozu_reina.jpg" }
+                { name: "Atago Kokone", name_ja: "安田虎子", gen: "6th Gen", date: "2005.09.17", img: IMG_BASE + "atago_kokone.jpg" },
+                { name: "Okoshi Hinano", name_ja: "大越陽菜乃", gen: "6th Gen", date: "2004.12.01", img: IMG_BASE + "okoshi_hinano.jpg" },
+                { name: "Kaibe Akari", name_ja: "海部あかり", gen: "6th Gen", date: "2007.02.14", img: IMG_BASE + "kaibe_akari.jpg" },
+                { name: "Kawabata Hina", name_ja: "川端日菜", gen: "6th Gen", date: "2011.01.14", img: IMG_BASE + "kawabata_hina.jpg" },
+                { name: "Suzuki Yuuna", name_ja: "鈴木優菜", gen: "6th Gen", date: "2006.05.18", img: IMG_BASE + "suzuki_yuuna.jpg" },
+                { name: "Setoguchi Mitsuki", name_ja: "瀬戸口満月", gen: "6th Gen", date: "2005.07.16", img: IMG_BASE + "setoguchi_mitsuki.jpg" },
+                { name: "Nagashima Rio", name_ja: "長島里音", gen: "6th Gen", date: "2007.05.25", img: IMG_BASE + "nagashima_rio.jpg" },
+                { name: "Masuda Mirine", name_ja: "増田海里音", gen: "6th Gen", date: "2009.11.01", img: IMG_BASE + "masuda_mirine.jpg" },
+                { name: "Morihira Urumi", name_ja: "森平麗美", gen: "6th Gen", date: "2008.10.05", img: IMG_BASE + "morihira_urumi.jpg" },
+                { name: "Yada Moeka", name_ja: "矢田萌香", gen: "6th Gen", date: "2008.01.27", img: IMG_BASE + "yada_moeka.jpg" },
+                { name: "Ozu Reina", name_ja: "小津麗奈", gen: "6th Gen", date: "2007.04.17", img: IMG_BASE + "ozu_reina.jpg" }
             ];
             members.forEach(m => {
                 m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
+                if (m.selected === undefined) m.selected = !m.graduated;
+                if (NAME_JP_MAPPING[m.name]) {
+                    m.name_ja = NAME_JP_MAPPING[m.name];
+                } else if (!m.name_ja) {
+                    m.name_ja = m.name;
+                }
             });
+            const status = document.getElementById('status');
+            if (status) {
+                status.innerHTML = `<span class="pulse-dot"></span> ${members.length} Members Ready (Offline)`;
+            }
         }
 
         function startSort() {
@@ -3573,7 +3876,7 @@
             if (members.length === 0) return;
 
             if (localStorage.getItem(PROGRESS_KEY)) {
-                if (!confirm("Starting a Lucky Draw will clear your current progress. Are you sure?")) {
+                if (!confirm(t("Starting a Lucky Draw will clear your current progress. Are you sure?"))) {
                     return;
                 }
             }
@@ -3581,7 +3884,7 @@
             // Get only selected members
             const selectedMembers = getSelectedMembers();
             if (selectedMembers.length < 2) {
-                alert("Please select at least 2 members for a Lucky Draw!");
+                alert(t("Please select at least 2 members for a Lucky Draw!"));
                 return;
             }
 
@@ -3658,8 +3961,11 @@
             img.dataset.name = member.name; // Add name for error handling
             img.removeAttribute('data-fallback-tried'); // Reset fallback state
             img.src = member.img;
-            document.getElementById(`name-${side}`).innerText = member.name;
-            document.getElementById(`gen-${side}`).innerText = member.gen;
+
+            const displayName = currentLang === 'ja' && member.name_ja ? member.name_ja : member.name;
+            document.getElementById(`name-${side}`).innerText = displayName;
+            document.getElementById(`gen-${side}`).innerText = t(member.gen);
+
             const btn = document.querySelector(`#name-${side}`).parentElement.querySelector('.btn-profile');
             btn.dataset.name = member.name; btn.dataset.gen = member.gen; btn.dataset.date = member.date; btn.dataset.img = member.img;
         }
@@ -3723,7 +4029,7 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
                     <path d="M8 5v14l11-7z" />
                 </svg>
-                Start Ranking
+                ${t("Start Ranking")}
             `;
         }
 
@@ -3854,6 +4160,9 @@
 
             // Show Loading, Hide Content
             document.getElementById('result-loading').style.display = 'flex';
+            // Hide language toggle during loading
+            document.querySelector('.lang-toggle').classList.add('loading-hide');
+
             startLoadingAnimation();
             document.getElementById('result-content').style.opacity = '0';
             document.getElementById('result-content').style.display = 'none';
@@ -3894,7 +4203,7 @@
                 }
                 // Else keep currentRank and currentScore
 
-                if (i < 5) finalTop5.push({ rank: currentRank, name: m.name, img: m.img, score: currentScore });
+                if (i < 5) finalTop5.push({ rank: currentRank, name: m.name, name_ja: m.name_ja, img: m.img, score: currentScore });
 
                 const div = document.createElement('div');
                 let rowClass = 'result-row';
@@ -3910,12 +4219,14 @@
                 // We'll add 'show' class immediately but the container is hidden
                 div.classList.add('show');
 
+                const displayName = currentLang === 'ja' && m.name_ja ? m.name_ja : m.name;
+
                 div.innerHTML = `
                 <div class="rank-num">${currentRank}</div>
                 <img class="res-thumb" src="${m.img}" data-name="${m.name}" onerror="handleError(this)">
                 <div class="res-info">
-                    <div class="res-name">${m.name}</div>
-                    <div class="res-gen" style="font-size:0.7rem; color:var(--primary); background:rgba(126,16,131,0.08); padding:2px 8px; border-radius:10px; display:inline-block; margin-top:4px;">${m.gen}</div>
+                    <div class="res-name">${displayName}</div>
+                    <div class="res-gen" style="font-size:0.7rem; color:var(--primary); background:rgba(126,16,131,0.08); padding:2px 8px; border-radius:10px; display:inline-block; margin-top:4px;">${t(m.gen)}</div>
                 </div>
                 <div class="res-score">${currentScore} pts</div>
                 <button class="btn-profile" style="width:32px; height:32px; padding:0; border-radius:50%; display:flex; align-items:center; justify-content:center;" data-name="${m.name}" data-gen="${m.gen}" data-date="${m.date}" data-img="${m.img}" onclick="openModal(event)">
@@ -3941,6 +4252,9 @@
                 // On Success:
                 stopLoadingAnimation();
                 document.getElementById('result-loading').style.display = 'none';
+                // Show language toggle again
+                document.querySelector('.lang-toggle').classList.remove('loading-hide');
+
                 document.getElementById('result-content').style.display = 'block';
 
                 // Show Toggle
@@ -3959,6 +4273,7 @@
                 // Show content anyway
                 stopLoadingAnimation();
                 document.getElementById('result-loading').style.display = 'none';
+                document.querySelector('.lang-toggle').classList.remove('loading-hide');
                 document.getElementById('result-content').style.display = 'block';
                 document.getElementById('result-content').style.opacity = '1';
             }
@@ -4053,7 +4368,7 @@
 
             // Show status
             status.style.display = 'flex'; // Flex for centering spinner
-            status.innerHTML = '<div class="status-spinner"></div>Assembling Formation...';
+            status.innerHTML = `<div class="status-spinner"></div>${t("Assembling Formation...")}`;
             // Small delay to allow display:flex to apply before opacity transition
             requestAnimationFrame(() => {
                 status.style.opacity = '1';
@@ -4104,7 +4419,7 @@
                 const headerHTML = `
                 <div style="position:relative; z-index:2;">
                     <div style="font-family:var(--font-display); font-size:3.5rem; font-weight:700; color:var(--primary); margin-bottom:5px; text-shadow:2px 2px 0 var(--text-light);">NOGIZAKA46</div>
-                    <div style="font-family:var(--font-body); font-size:1.2rem; text-transform:uppercase; letter-spacing:4px; color:#666; margin-bottom:40px; font-weight:600;">Top 5 Oshi Members</div>
+                    <div style="font-family:var(--font-body); font-size:1.2rem; text-transform:uppercase; letter-spacing:4px; color:#666; margin-bottom:40px; font-weight:600;">${t("Top 5 Oshi Members")}</div>
                 </div>
             `;
 
@@ -4182,8 +4497,9 @@
                     <div style="font-family:var(--font-display); font-size:${rankSize}; font-weight:700; width:60px; color:${rankColor}; margin-right:25px;">${m.rank}</div>
                 `;
                     row.appendChild(img);
+                    const displayName = currentLang === 'ja' && m.name_ja ? m.name_ja : m.name;
                     row.innerHTML += `
-                    <div style="font-family:var(--font-display); font-size:${nameSize}; font-weight:700; color:${nameColor}; flex:1; text-align:left; padding-left:25px;">${m.name}</div>
+                    <div style="font-family:var(--font-display); font-size:${nameSize}; font-weight:700; color:${nameColor}; flex:1; text-align:left; padding-left:25px;">${displayName}</div>
                     <div style="font-family:var(--font-body); font-size:1.1rem; font-weight:700; color:var(--primary); background:rgba(126,16,131,0.08); padding:6px 15px; border-radius:20px; margin-left:auto; white-space:nowrap;">${m.score} pts</div>
                 `;
 
@@ -4191,9 +4507,16 @@
                 });
 
                 // Footer (Updated Text)
-                const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                let dateStr;
+                if (currentLang === 'ja') {
+                    const d = new Date();
+                    dateStr = `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()}`;
+                } else {
+                    const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                    dateStr = new Date().toLocaleDateString('en-US', dateOptions);
+                }
                 const footerHTML = `
-                <div style="margin-top:50px; font-size:1.2rem; color:var(--primary); border-top:1px solid rgba(126,16,131,0.2); padding-top:25px; display:flex; justify-content:space-between; font-weight:600; position:relative; z-index:2;">
+                <div style="margin-top:40px; font-size:1.2rem; color:var(--primary); border-top:1px solid rgba(126,16,131,0.2); padding-top:20px; display:flex; justify-content:space-between; font-weight:600; position:relative; z-index:2;">
                     <span style="font-family:var(--font-body);">N46Sorter</span>
                     <span style="color:var(--text-secondary); font-weight:400;">${dateStr}</span>
                 </div>
@@ -4327,7 +4650,7 @@
                 const headerHTML = `
                 <div style="position:relative; z-index:2; text-align:center; margin-bottom:25px;">
                     <div style="font-family:var(--font-display); font-size:3.5rem; font-weight:700; color:var(--primary); margin-bottom:5px;">NOGIZAKA46</div>
-                    <div style="font-family:var(--font-body); font-size:1.1rem; text-transform:uppercase; letter-spacing:3px; color:#666; font-weight:600;">My Ideal Member Formation</div>
+                    <div style="font-family:var(--font-body); font-size:1.1rem; text-transform:uppercase; letter-spacing:3px; color:#666; font-weight:600;">${t("My Ideal Member Formation")}</div>
                 </div>
                 `;
                 tempContainer.innerHTML += headerHTML;
@@ -4407,8 +4730,9 @@
 
                         img.style.marginBottom = '5px';
 
+                        const displayName = currentLang === 'ja' && m.name_ja ? m.name_ja : m.name;
                         const name = document.createElement('div');
-                        name.innerText = m.name;
+                        name.innerText = displayName;
                         name.style.fontSize = fontSize;
                         name.style.fontWeight = '600';
                         name.style.color = '#333';
@@ -4423,20 +4747,21 @@
                         // Add Center Badge
                         if (isCenter) {
                             const badge = document.createElement('div');
-                            badge.innerText = "CENTER";
+                            badge.innerText = t("CENTER");
                             badge.style.position = 'absolute';
                             badge.style.top = '75px'; // Adjust based on image size (88px)
                             badge.style.left = '50%';
                             badge.style.transform = 'translateX(-50%)';
                             badge.style.background = 'var(--primary)';
                             badge.style.color = 'white';
-                            badge.style.fontSize = '0.6rem';
+                            badge.style.fontSize = '0.7rem';
                             badge.style.fontWeight = '800';
                             badge.style.padding = '2px 6px 4px 6px';
                             badge.style.borderRadius = '10px';
                             badge.style.zIndex = '10';
                             badge.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
                             badge.style.letterSpacing = '0.5px';
+                            badge.style.whiteSpace = 'nowrap';
                             // Ensure text is centered
                             badge.style.display = 'flex';
                             badge.style.alignItems = 'center';
@@ -4484,7 +4809,14 @@
                 tempContainer.appendChild(formationContainer);
 
                 // Footer
-                const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                let dateStr;
+                if (currentLang === 'ja') {
+                    const d = new Date();
+                    dateStr = `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()}`;
+                } else {
+                    const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                    dateStr = new Date().toLocaleDateString('en-US', dateOptions);
+                }
                 const footerHTML = `
                 <div style="margin-top:50px; font-size:1.2rem; color:var(--primary); border-top:1px solid rgba(126,16,131,0.2); padding-top:25px; display:flex; justify-content:space-between; font-weight:600; position:relative; z-index:2;">
                     <span style="font-family:var(--font-body);">N46Sorter</span>
@@ -4527,16 +4859,17 @@
         }
         function getShareText() {
             if (finalTop5.length === 0) return "";
-            let text = `My #Nogizaka46 Top 5:\n\n`;
+            let text = `${t("My #Nogizaka46 Top 5:")}\n\n`;
             finalTop5.forEach((m, i) => {
-                if (i === 0) text += `👑 1. ${m.name}\n`;
-                else if (i === 1) text += `🥈 2. ${m.name}\n`;
-                else if (i === 2) text += `🥉 3. ${m.name}\n`;
-                else if (i === 3) text += `4️⃣ 4. ${m.name}\n`;
-                else if (i === 4) text += `5️⃣ 5. ${m.name}\n`;
-                else text += `${i + 1}. ${m.name}\n`;
+                const displayName = currentLang === 'ja' && m.name_ja ? m.name_ja : m.name;
+                if (i === 0) text += `👑 1. ${displayName}\n`;
+                else if (i === 1) text += `🥈 2. ${displayName}\n`;
+                else if (i === 2) text += `🥉 3. ${displayName}\n`;
+                else if (i === 3) text += `4️⃣ 4. ${displayName}\n`;
+                else if (i === 4) text += `5️⃣ 5. ${displayName}\n`;
+                else text += `${i + 1}. ${displayName}\n`;
             });
-            text += `\nFind your Oshi here: https://yoursite.com`; // Replace with your URL
+            text += `\n${t("Find your Oshi here: https://yoursite.com")}`;
             return text;
         }
 
@@ -4586,7 +4919,7 @@
 
             if (navigator.share) {
                 const shareData = {
-                    title: 'Nogizaka46 Sorter Result',
+                    title: t('Nogizaka46 Sorter Result'),
                     text: text
                 };
 
@@ -4607,7 +4940,7 @@
         }
 
         function copyFullResults(btnElement) {
-            let text = "🏆 Nogizaka46 Sorter Full Results 🏆\n\n";
+            let text = `${t("🏆 Nogizaka46 Sorter Full Results 🏆")}\n\n`;
             // Use finalTop5 if available, but we want the FULL list.
             // The full list is in 'sortedList' which is passed to showResult, 
             // but we need to access it. We can reconstruct it from the DOM or store it globally.
@@ -4615,7 +4948,7 @@
 
             const rows = document.querySelectorAll('.result-row');
             if (rows.length === 0) {
-                alert("No results to copy!");
+                alert(t("No results to copy!"));
                 return;
             }
 
@@ -4625,7 +4958,7 @@
                 text += `${rank}. ${name}\n`;
             });
 
-            text += `\nCreate your own ranking at: https://yoursite.com`;
+            text += `\n${t("Create your own ranking at: https://yoursite.com")}`;
 
             navigator.clipboard.writeText(text).then(() => {
                 // alert("Full results copied to clipboard!");
@@ -4635,7 +4968,7 @@
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
-                        Copied!
+                        ${t("Copied to clipboard!")}
                     `;
                     btnElement.style.background = "#e8f5e9";
                     btnElement.style.color = "#2e7d32";
@@ -4705,8 +5038,9 @@
             e.stopPropagation();
             const member = members[index];
             document.getElementById('m-img').src = member.img;
-            document.getElementById('m-name').innerText = member.name;
-            document.getElementById('m-meta').innerText = `${member.gen} • ${member.date}`;
+            const displayName = currentLang === 'ja' && member.name_ja ? member.name_ja : member.name;
+            document.getElementById('m-name').innerText = displayName;
+            document.getElementById('m-meta').innerText = `${t(member.gen)} • ${member.date}`;
 
             const q = encodeURIComponent("Nogizaka46 " + member.name);
             document.getElementById('link-google').href = `https://www.google.com/search?q=${q}&tbm=isch`;
@@ -4719,9 +5053,18 @@
             e.stopPropagation();
             const btn = e.currentTarget;
             const name = btn.dataset.name;
+            const member = members.find(m => m.name === name);
+
             document.getElementById('m-img').src = btn.dataset.img;
-            document.getElementById('m-name').innerText = name;
-            document.getElementById('m-meta').innerText = `${btn.dataset.gen} • ${btn.dataset.date}`;
+
+            if (member) {
+                const displayName = currentLang === 'ja' && member.name_ja ? member.name_ja : member.name;
+                document.getElementById('m-name').innerText = displayName;
+                document.getElementById('m-meta').innerText = `${t(member.gen)} • ${member.date}`;
+            } else {
+                document.getElementById('m-name').innerText = name;
+                document.getElementById('m-meta').innerText = `${btn.dataset.gen} • ${btn.dataset.date}`;
+            }
             const q = encodeURIComponent("Nogizaka46 " + name);
             document.getElementById('link-google').href = `https://www.google.com/search?q=${q}&tbm=isch`;
             document.getElementById('link-pinterest').href = `https://www.pinterest.com/search/pins/?q=${q}`;
@@ -4780,7 +5123,7 @@
             // Update Apply Button
             const applyBtn = document.querySelector('.btn-apply-selection');
             if (applyBtn) {
-                applyBtn.innerHTML = `Apply Selection (${totalSelected})`;
+                applyBtn.innerHTML = t("Apply Selection ({n})", { n: totalSelected });
             }
 
             // Organize by generation
@@ -4806,7 +5149,7 @@
                         const genTotal = groupedMembers[gen].length;
                         const genSelected = groupedMembers[gen].filter(m => tempSelection.has(members.indexOf(m))).length;
                         const allSelected = genSelected === genTotal;
-                        const btnText = allSelected ? 'Deselect' : 'Select All';
+                        const btnText = allSelected ? t('Deselect') : t('Select All');
                         const collapseKey = `${context}-${gen}`;
                         const isCollapsed = collapsedGens.has(collapseKey);
 
@@ -4816,10 +5159,10 @@
                                     <svg class="chevron" viewBox="0 0 24 24">
                                         <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                                     </svg>
-                                    <span>${gen}</span>
+                                    <span>${t(gen)}</span>
                                     <span class="gen-count">${genSelected}/${genTotal}</span>
                                 </div>
-                                <button class="gen-toggle-btn" onclick="event.stopPropagation(); toggleGeneration('${gen}')">${btnText}</button>
+                                <button class="gen-toggle-btn" onclick="event.stopPropagation(); toggleGeneration('${gen}', '${context}')">${btnText}</button>
                             </div>
                             <div class="member-grid-wrapper">
                                 <div class="member-grid-inner">
@@ -4843,8 +5186,8 @@
                                         <img class="member-thumb" src="${m.img}" data-name="${m.name}" onerror="handleError(this)">
                                     </div>
                                     <div class="member-info">
-                                        <div class="member-name">${m.name}</div>
-                                        <div class="member-gen">${m.gen}</div>
+                                        <div class="member-name">${currentLang === 'ja' && m.name_ja ? m.name_ja : m.name}</div>
+                                        <div class="member-gen">${t(m.gen)}</div>
                                     </div>
                                 </div>`;
                         });
@@ -4886,7 +5229,7 @@
             // Update Apply Button
             const applyBtn = document.querySelector('.btn-apply-selection');
             if (applyBtn) {
-                applyBtn.innerHTML = `Apply Selection (${totalSelected})`;
+                applyBtn.innerHTML = t("Apply Selection ({n})", { n: totalSelected });
                 // Update onclick to use applySelection
                 applyBtn.onclick = applySelection;
             }
@@ -4926,11 +5269,15 @@
                                 }
                             });
 
-                            if (nameSpan && nameSpan.textContent.trim() === gen) {
+                            // Check if this header corresponds to the current gen
+                            // Since nameSpan text might be localized, we should rely on data attributes if possible
+                            // But the header itself doesn't have data-gen. The parent .generation-group does.
+                            const group = header.closest('.generation-group');
+                            if (group && group.getAttribute('data-gen') === gen) {
                                 if (countSpan) countSpan.textContent = `${genSelected}/${genTotal}`;
 
                                 const btn = header.querySelector('.gen-toggle-btn');
-                                if (btn) btn.textContent = allSelected ? 'Deselect' : 'Select All';
+                                if (btn) btn.textContent = allSelected ? t('Deselect') : t('Select All');
                             }
                         }
                     });
@@ -5063,9 +5410,11 @@
             updateCounts();
         }
 
-        function toggleGeneration(gen) {
-            // Check if all members in this gen are currently selected in tempSelection
-            const genMembers = members.filter(m => m.gen === gen);
+        function toggleGeneration(gen, context) {
+            // Check if all members in this gen (and context) are currently selected
+            const isGraduatedContext = context === 'graduated';
+            const genMembers = members.filter(m => m.gen === gen && m.graduated === isGraduatedContext);
+
             const allSelected = genMembers.every(m => tempSelection.has(members.indexOf(m)));
             const newState = !allSelected;
 
@@ -5164,7 +5513,9 @@
         function updateSelectionButton() {
             const selectedCount = members.filter(m => m.selected !== false).length;
             const status = document.getElementById('status');
-            status.innerHTML = `<span class="pulse-dot"></span> ${selectedCount} Member${selectedCount !== 1 ? 's' : ''} Selected <span class="edit-text">Edit</span>`;
+            const label = t("{n} Members Selected", { n: selectedCount });
+            const edit = t("Edit");
+            status.innerHTML = `<span class="pulse-dot"></span> ${label} <span class="edit-text">${edit}</span>`;
         }
 
         function getSelectedMembers() {
@@ -5289,7 +5640,8 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
                         <path d="M8 5v14l11-7z" />
                     </svg>
-                    Start New Ranking
+                    </svg>
+                    ${t("Start New Ranking")}
                 `;
             } else {
                 document.getElementById('resume-btn').style.display = 'none';
@@ -5297,7 +5649,8 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
                         <path d="M8 5v14l11-7z" />
                     </svg>
-                    Start Ranking
+                    </svg>
+                    ${t("Start Ranking")}
                 `;
             }
 
