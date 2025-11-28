@@ -3561,7 +3561,7 @@
                         members = data;
                         // Initialize selection state
                         members.forEach(m => {
-                            m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
+                            m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&h=400&fit=cover&output=webp";
                             if (m.selected === undefined) m.selected = !m.graduated;
                             // Apply mapping
                             if (NAME_JP_MAPPING[m.name]) {
@@ -3647,7 +3647,7 @@
 
                     // Global proxy usage and initialize selection
                     members.forEach(m => {
-                        m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
+                        m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&h=400&fit=cover&output=webp";
                         // Default selection: Current members only (graduated = false)
                         if (m.selected === undefined) m.selected = !m.graduated;
                         // Backfill name_ja from mapping if available
@@ -4223,7 +4223,7 @@
 
                 div.innerHTML = `
                 <div class="rank-num">${currentRank}</div>
-                <img class="res-thumb" src="${m.img}" data-name="${m.name}" onerror="handleError(this)">
+                <img class="res-thumb" src="${m.img}" data-name="${m.name}" crossorigin="anonymous" onerror="handleError(this)">
                 <div class="res-info">
                     <div class="res-name">${displayName}</div>
                     <div class="res-gen" style="font-size:0.7rem; color:var(--primary); background:rgba(126,16,131,0.08); padding:2px 8px; border-radius:10px; display:inline-block; margin-top:4px;">${t(m.gen)}</div>
@@ -4470,8 +4470,8 @@
                     // Create Image with Proxy & CrossOrigin
                     const img = new Image();
                     img.crossOrigin = "anonymous";
-                    // High quality square
-                    img.src = m.img.replace("w=400", "w=200&h=200&fit=cover");
+                    // Use original w=400 image to match cache and avoid issues
+                    img.src = m.img;
                     img.style.cssText = `width:${imgSize}; height:${imgSize}; border-radius:50%; object-fit:cover; border:3px solid ${imgBorder}; box-shadow:0 4px 10px rgba(0,0,0,0.1); flex-shrink:0;`;
 
                     // Push promise
@@ -4482,7 +4482,8 @@
                             const fallbackUrl = getFallbackUrl(m.name);
                             if (fallbackUrl) {
                                 // Use wsrv.nl proxy for fallback as well to ensure CORS
-                                img.src = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=200&h=200&fit=cover";
+                                // Use w=400 to match handleError logic
+                                img.src = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=400&h=400&fit=cover&output=webp";
                                 // If fallback fails, we just resolve (show broken/empty)
                                 img.onerror = resolve;
                                 img.onload = resolve;
@@ -4697,15 +4698,20 @@
                         const img = new Image();
                         img.crossOrigin = "anonymous";
                         // Use direct URL with optimization
-                        img.src = m.img.replace("w=400", "w=200&h=200&fit=cover");
+                        // Use original w=400 image
+                        img.src = m.img;
 
+                        img.onload = resolve;
                         img.onerror = () => {
                             // Try fallback
                             const fallbackUrl = getFallbackUrl(m.name);
                             if (fallbackUrl) {
-                                img.src = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=200&h=200&fit=cover";
+                                img.src = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=400&h=400&fit=cover&output=webp";
                                 // Prevent infinite loop
-                                img.onerror = null;
+                                img.onerror = resolve;
+                                img.onload = resolve;
+                            } else {
+                                resolve();
                             }
                         };
 
@@ -5610,7 +5616,7 @@
 
                 if (fallbackUrl) {
                     // Proxy through wsrv.nl for caching and optimization
-                    const proxiedUrl = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=400&output=webp";
+                    const proxiedUrl = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=400&h=400&fit=cover&output=webp";
 
                     img.src = proxiedUrl;
                     img.dataset.fallbackTried = "true";
