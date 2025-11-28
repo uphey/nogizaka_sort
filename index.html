@@ -4605,6 +4605,9 @@
                 const list = window.lastSortedList;
                 const count = Math.min(list.length, totalMembers);
 
+                // Image loading promises
+                const imagePromises = [];
+
                 // Map objects back to member data, preserving rank/score info if needed
                 // Actually, we need to recalculate rank/score for display
                 // Let's reuse the logic from showResults or just calculate on the fly
@@ -4721,18 +4724,26 @@
 
                         img.src = imgSrc;
 
-                        img.onload = resolve;
-                        img.onerror = () => {
-                            // Try fallback if not already tried (though we likely just set it)
-                            if (!ALUMNAE_NAME_MAP[m.name]) {
-                                const fallbackUrl = getFallbackUrl(m.name);
-                                if (fallbackUrl) {
-                                    img.src = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=200&h=200&fit=cover";
-                                    // Prevent infinite loop
-                                    img.onerror = null;
+                        // Push to promises
+                        imagePromises.push(new Promise(r => {
+                            img.onload = r;
+                            img.onerror = () => {
+                                // Try fallback if not already tried
+                                if (!ALUMNAE_NAME_MAP[m.name]) {
+                                    const fallbackUrl = getFallbackUrl(m.name);
+                                    if (fallbackUrl) {
+                                        img.src = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=200&h=200&fit=cover";
+                                        // Handle fallback load/error
+                                        img.onload = r;
+                                        img.onerror = r;
+                                    } else {
+                                        r();
+                                    }
+                                } else {
+                                    r();
                                 }
-                            }
-                        };
+                            };
+                        }));
 
                         img.style.width = imgSize;
                         img.style.height = imgSize;
@@ -4853,16 +4864,7 @@
                 document.body.appendChild(tempContainer);
 
                 // Wait for images
-                // We need to find all images in tempContainer and wait for them
-                const images = tempContainer.querySelectorAll('img');
-                const promises = Array.from(images).map(img => {
-                    return new Promise(r => {
-                        if (img.complete) r();
-                        else { img.onload = r; img.onerror = r; }
-                    });
-                });
-
-                Promise.all(promises).then(() => {
+                Promise.all(imagePromises).then(() => {
                     setTimeout(() => {
                         html2canvas(tempContainer, {
                             scale: 1.5,
