@@ -4402,7 +4402,8 @@
                 const tempContainer = document.createElement('div');
                 tempContainer.style.position = 'fixed';
                 tempContainer.style.top = '0';
-                tempContainer.style.left = '200vw'; // Far right
+                tempContainer.style.left = '0'; // On-screen
+                tempContainer.style.zIndex = '-9999'; // Behind everything
                 tempContainer.style.width = '800px';
                 tempContainer.style.height = '1000px'; // Force 4:5 ratio
                 tempContainer.style.background = 'linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%)';
@@ -4484,7 +4485,13 @@
 
                     // Push promise
                     imagePromises.push(new Promise(resolve => {
-                        img.onload = resolve;
+                        img.onload = () => {
+                            if (img.decode) {
+                                img.decode().then(resolve).catch(resolve);
+                            } else {
+                                resolve();
+                            }
+                        };
                         img.onerror = () => {
                             // Try fallback
                             const fallbackUrl = getFallbackUrl(m.name);
@@ -4493,7 +4500,13 @@
                                 img.src = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=200&h=200&fit=cover";
                                 // If fallback fails, we just resolve (show broken/empty)
                                 img.onerror = resolve;
-                                img.onload = resolve;
+                                img.onload = () => {
+                                    if (img.decode) {
+                                        img.decode().then(resolve).catch(resolve);
+                                    } else {
+                                        resolve();
+                                    }
+                                };
                             } else {
                                 resolve();
                             }
@@ -4649,7 +4662,8 @@
                 const tempContainer = document.createElement('div');
                 tempContainer.style.position = 'fixed';
                 tempContainer.style.top = '0';
-                tempContainer.style.left = '200vw';
+                tempContainer.style.left = '0';
+                tempContainer.style.zIndex = '-9999';
                 tempContainer.style.width = '800px';
                 tempContainer.style.height = '1000px'; // 4:5 Aspect Ratio (800x1000)
                 tempContainer.style.background = 'linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%)';
@@ -4724,7 +4738,13 @@
 
                         // Push to promises
                         imagePromises.push(new Promise(r => {
-                            img.onload = r;
+                            img.onload = () => {
+                                if (img.decode) {
+                                    img.decode().then(r).catch(r);
+                                } else {
+                                    r();
+                                }
+                            };
                             img.onerror = () => {
                                 // Try fallback if not already tried
                                 if (!ALUMNAE_NAME_MAP[m.name]) {
@@ -4732,7 +4752,13 @@
                                     if (fallbackUrl) {
                                         img.src = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=200&h=200&fit=cover";
                                         // Handle fallback load/error
-                                        img.onload = r;
+                                        img.onload = () => {
+                                            if (img.decode) {
+                                                img.decode().then(r).catch(r);
+                                            } else {
+                                                r();
+                                            }
+                                        };
                                         img.onerror = r;
                                     } else {
                                         r();
