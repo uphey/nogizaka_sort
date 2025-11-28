@@ -4482,10 +4482,6 @@
                         imgSrc = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=200&h=200&fit=cover";
                     }
 
-                    // High quality square
-                    img.src = imgSrc;
-                    img.style.cssText = `width:${imgSize}; height:${imgSize}; border-radius:50%; object-fit:cover; border:3px solid ${imgBorder}; box-shadow:0 4px 10px rgba(0,0,0,0.1); flex-shrink:0;`;
-
                     // Push promise
                     imagePromises.push(new Promise(resolve => {
                         img.onload = resolve;
@@ -4503,6 +4499,10 @@
                             }
                         };
                     }));
+
+                    // High quality square
+                    img.src = imgSrc;
+                    img.style.cssText = `width:${imgSize}; height:${imgSize}; border-radius:50%; object-fit:cover; border:3px solid ${imgBorder}; box-shadow:0 4px 10px rgba(0,0,0,0.1); flex-shrink:0;`;
 
                     // Inner HTML
                     row.innerHTML = `
@@ -4722,8 +4722,6 @@
                             imgSrc = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=200&h=200&fit=cover";
                         }
 
-                        img.src = imgSrc;
-
                         // Push to promises
                         imagePromises.push(new Promise(r => {
                             img.onload = r;
@@ -4744,6 +4742,8 @@
                                 }
                             };
                         }));
+
+                        img.src = imgSrc;
 
                         img.style.width = imgSize;
                         img.style.height = imgSize;
