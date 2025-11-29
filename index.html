@@ -8,6 +8,49 @@
     <title>N46Sorter | 乃木坂46ソート</title>
     <meta name="description"
         content="Rank your favorite Nogizaka46 members with this premium sorter. Create your own top member list and share it with friends.">
+    <meta name="keywords"
+        content="Nogizaka46, Sorter, Ranking, Member, Idol, 乃木坂46, ソート, ランキング, メンバー, アイドル, 乃木坂46排名, 成員排序, 偶像">
+    <meta name="author" content="N46Sorter">
+    <meta name="theme-color" content="#7e1083">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://n46db.com/sorter/">
+    <meta property="og:title" content="N46Sorter | 乃木坂46ソート">
+    <meta property="og:description"
+        content="Rank your favorite Nogizaka46 members with this premium sorter. Create your own top member list and share it with friends.">
+    <meta property="og:image" content="https://n46db.com/sorter/og-image.jpg">
+    <meta property="og:site_name" content="N46Sorter">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://n46db.com/sorter/">
+    <meta property="twitter:title" content="N46Sorter | 乃木坂46ソート">
+    <meta property="twitter:description"
+        content="Rank your favorite Nogizaka46 members with this premium sorter. Create your own top member list and share it with friends.">
+    <meta property="twitter:image" content="https://n46db.com/sorter/og-image.jpg">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "N46Sorter",
+      "applicationCategory": "EntertainmentApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "A premium web application to rank and sort Nogizaka46 members.",
+      "author": {
+        "@type": "Person",
+        "name": "N46Sorter"
+      }
+    }
+    </script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3454,7 +3497,9 @@
             "Starting a Lucky Draw will clear your current progress. Are you sure?": "運試しを開始すると、現在の進行状況がリセットされます。よろしいですか？",
             "Leaving this screen will clear your results. Continue?": "この画面を離れると結果が消去されます。続行しますか？",
             "Edit": "編集",
-            "Profile & Media": "プロフィール"
+            "Profile & Media": "プロフィール",
+            "meta_title": "N46Sorter | 乃木坂46ソート",
+            "meta_description": "推しの乃木坂46メンバーをソートしよう！自分だけのランキングを作ってシェアしよう。"
         };
 
         function t(key, params = {}) {
@@ -3479,9 +3524,24 @@
             if (currentLang === 'ja') {
                 document.documentElement.style.setProperty('--font-display', "'Bodoni Moda','Zen Old Mincho', serif");
                 document.documentElement.style.setProperty('--font-body', "'Montserrat','Noto Sans JP', sans-serif");
+
+                // Update SEO Tags for Japanese
+                document.title = translations["meta_title"];
+                document.querySelector('meta[name="description"]').setAttribute("content", translations["meta_description"]);
+                document.querySelector('meta[property="og:title"]').setAttribute("content", translations["meta_title"]);
+                document.querySelector('meta[property="og:description"]').setAttribute("content", translations["meta_description"]);
+                document.querySelector('meta[property="og:locale"]').setAttribute("content", "ja_JP");
             } else {
                 document.documentElement.style.setProperty('--font-display', "'Bodoni Moda', serif");
                 document.documentElement.style.setProperty('--font-body', "'Montserrat', sans-serif");
+
+                // Update SEO Tags for English (Default)
+                document.title = "N46Sorter | 乃木坂46ソート";
+                const desc = "Rank your favorite Nogizaka46 members with this premium sorter. Create your own top member list and share it with friends.";
+                document.querySelector('meta[name="description"]').setAttribute("content", desc);
+                document.querySelector('meta[property="og:title"]').setAttribute("content", "N46Sorter | 乃木坂46ソート");
+                document.querySelector('meta[property="og:description"]').setAttribute("content", desc);
+                document.querySelector('meta[property="og:locale"]').setAttribute("content", "en_US");
             }
 
             // Update Toggle UI
