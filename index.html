@@ -3030,7 +3030,7 @@
             </div>
             <div class="battle-area">
                 <div class="battle-card" onclick="vote('left')">
-                    <div class="card-img-frame"><img id="img-left" class="card-img" src="" alt="Left Member"
+                    <div class="card-img-frame"><img id="img-left" class="card-img" alt="Left Member"
                             onerror="handleError(this)">
                     </div>
                     <div class="card-content">
@@ -3049,7 +3049,7 @@
                     </div>
                 </div>
                 <div class="battle-card" onclick="vote('right')">
-                    <div class="card-img-frame"><img id="img-right" class="card-img" src="" alt="Right Member"
+                    <div class="card-img-frame"><img id="img-right" class="card-img" alt="Right Member"
                             onerror="handleError(this)">
                     </div>
                     <div class="card-content">
@@ -3099,8 +3099,8 @@
                     <div class="loading-card layer-1"></div>
                     <div class="loading-card layer-2"></div>
                     <div class="loading-card layer-3">
-                        <img id="loading-member-img-1" src="" class="loading-member-img" alt="Loading Member">
-                        <img id="loading-member-img-2" src="" class="loading-member-img"
+                        <img id="loading-member-img-1" class="loading-member-img" alt="Loading Member">
+                        <img id="loading-member-img-2" class="loading-member-img"
                             style="position:absolute; top:0; left:0;" alt="Loading Member">
                     </div>
                 </div>
@@ -3175,8 +3175,8 @@
                     <div class="image-wrapper">
                         <div id="gen-status" data-i18n="Generating certificate...">Generating certificate...</div>
                         <div id="view-container">
-                            <img id="img-list" class="view-image active" src="" alt="Result List">
-                            <img id="img-senbatsu" class="view-image inactive" src="" alt="Senbatsu Formation">
+                            <img id="img-list" class="view-image active" alt="Result List">
+                            <img id="img-senbatsu" class="view-image inactive" alt="Senbatsu Formation">
                         </div>
                     </div>
                     <div class="save-instruction" data-i18n="Long press to save to Photos">👆 Long press to save to
@@ -3254,7 +3254,7 @@
 
                 <button class="close-btn" onclick="closeModal()">&times;</button>
                 <div class="modal-header-content">
-                    <img id="m-img" class="modal-avatar" src="" alt="Member Profile">
+                    <img id="m-img" class="modal-avatar" alt="Member Profile">
                     <h2 id="m-name"
                         style="font-family:var(--font-display); color:var(--primary); margin-bottom:10px; position:relative;">
                         Name</h2>
@@ -4544,7 +4544,7 @@
 
             // 3. Define Promises
             // A. Minimum wait time
-            const minWaitPromise = new Promise(resolve => setTimeout(resolve, 2000));
+            const minWaitPromise = new Promise(resolve => setTimeout(resolve, 2500));
 
             // B. Generation + Image Load
             const generationPromise = generateSenbatsuImage().then(() => {
