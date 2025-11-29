@@ -3030,7 +3030,8 @@
             </div>
             <div class="battle-area">
                 <div class="battle-card" onclick="vote('left')">
-                    <div class="card-img-frame"><img id="img-left" class="card-img" src="" onerror="handleError(this)">
+                    <div class="card-img-frame"><img id="img-left" class="card-img" src="" alt="Left Member"
+                            onerror="handleError(this)">
                     </div>
                     <div class="card-content">
                         <div class="card-name" id="name-left">Name</div>
@@ -3048,7 +3049,8 @@
                     </div>
                 </div>
                 <div class="battle-card" onclick="vote('right')">
-                    <div class="card-img-frame"><img id="img-right" class="card-img" src="" onerror="handleError(this)">
+                    <div class="card-img-frame"><img id="img-right" class="card-img" src="" alt="Right Member"
+                            onerror="handleError(this)">
                     </div>
                     <div class="card-content">
                         <div class="card-name" id="name-right">Name</div>
@@ -3097,9 +3099,9 @@
                     <div class="loading-card layer-1"></div>
                     <div class="loading-card layer-2"></div>
                     <div class="loading-card layer-3">
-                        <img id="loading-member-img-1" src="" class="loading-member-img">
+                        <img id="loading-member-img-1" src="" class="loading-member-img" alt="Loading Member">
                         <img id="loading-member-img-2" src="" class="loading-member-img"
-                            style="position:absolute; top:0; left:0;">
+                            style="position:absolute; top:0; left:0;" alt="Loading Member">
                     </div>
                 </div>
                 <div class="loading-text-container">
@@ -3173,8 +3175,8 @@
                     <div class="image-wrapper">
                         <div id="gen-status" data-i18n="Generating certificate...">Generating certificate...</div>
                         <div id="view-container">
-                            <img id="img-list" class="view-image active" src="">
-                            <img id="img-senbatsu" class="view-image inactive" src="">
+                            <img id="img-list" class="view-image active" src="" alt="Result List">
+                            <img id="img-senbatsu" class="view-image inactive" src="" alt="Senbatsu Formation">
                         </div>
                     </div>
                     <div class="save-instruction" data-i18n="Long press to save to Photos">👆 Long press to save to
@@ -3252,7 +3254,7 @@
 
                 <button class="close-btn" onclick="closeModal()">&times;</button>
                 <div class="modal-header-content">
-                    <img id="m-img" class="modal-avatar" src="">
+                    <img id="m-img" class="modal-avatar" src="" alt="Member Profile">
                     <h2 id="m-name"
                         style="font-family:var(--font-display); color:var(--primary); margin-bottom:10px; position:relative;">
                         Name</h2>
@@ -3852,6 +3854,7 @@
             wallMembers.forEach(m => {
                 const img = document.createElement('img');
                 img.src = m.img;
+                img.alt = m.name;
                 img.className = 'wall-img';
                 img.onerror = function () { this.style.display = 'none' };
                 track.appendChild(img);
@@ -4099,6 +4102,7 @@
             img.dataset.name = member.name; // Add name for error handling
             img.removeAttribute('data-fallback-tried'); // Reset fallback state
             img.src = member.img;
+            img.alt = member.name;
 
             const displayName = currentLang === 'ja' && member.name_ja ? member.name_ja : member.name;
             document.getElementById(`name-${side}`).innerText = displayName;
@@ -4233,7 +4237,7 @@
                 const img = new Image();
                 img.src = m.img;
                 img.onload = () => {
-                    preloadBuffer.push(m.img);
+                    preloadBuffer.push({ src: m.img, name: m.name });
                     if (isAnimationRunning && preloadBuffer.length < BUFFER_SIZE) preloadNext();
                 };
                 // If error, just try another one
@@ -4258,9 +4262,11 @@
             const secondMember = validMembers[secondMemberIdx];
 
             img1.src = firstMember.img;
+            img1.alt = firstMember.name;
             img1.className = 'loading-member-img state-top';
 
             img2.src = secondMember.img;
+            img2.alt = secondMember.name;
             img2.className = 'loading-member-img state-back';
 
             let activeIdx = 1; // 1 is currently TOP
@@ -4288,17 +4294,19 @@
                     currTop.classList.add('state-back');
 
                     // Load NEW image from buffer or fallback
-                    let nextSrc;
+                    let nextData;
                     if (preloadBuffer.length > 0) {
-                        nextSrc = preloadBuffer.shift();
+                        nextData = preloadBuffer.shift();
                         preloadNext(); // Replenish
                     } else {
                         // Fallback if buffer empty
                         let nextMemberIdx = Math.floor(Math.random() * validMembers.length);
-                        nextSrc = validMembers[nextMemberIdx].img;
+                        const m = validMembers[nextMemberIdx];
+                        nextData = { src: m.img, name: m.name };
                     }
 
-                    currTop.src = nextSrc;
+                    currTop.src = nextData.src;
+                    currTop.alt = nextData.name;
 
                 }, 400); // Wait for exit transition
 
@@ -4384,7 +4392,7 @@
 
                 div.innerHTML = `
                 <div class="rank-num">${currentRank}</div>
-                <img class="res-thumb" src="${m.img}" data-name="${m.name}" crossorigin="anonymous" onerror="handleError(this)">
+                <img class="res-thumb" src="${m.img}" alt="${m.name}" data-name="${m.name}" crossorigin="anonymous" onerror="handleError(this)">
                 <div class="res-info">
                     <div class="res-name">${displayName}</div>
                     <div class="res-gen" style="font-size:0.7rem; color:var(--primary); background:rgba(126,16,131,0.08); padding:2px 8px; border-radius:10px; display:inline-block; margin-top:4px;">${t(m.gen)}</div>
@@ -4644,6 +4652,7 @@
                     // Use original w=400 image to match cache and avoid issues
                     // Force square crop for generation to avoid html2canvas distortion
                     img.src = m.img.replace("&w=400&output=webp", "&w=400&h=400&fit=cover&output=webp");
+                    img.alt = m.name;
                     img.style.cssText = `width:${imgSize}; height:${imgSize}; border-radius:50%; object-fit:cover; border:3px solid ${imgBorder}; box-shadow:0 4px 10px rgba(0,0,0,0.1); flex-shrink:0;`;
 
                     // Push promise
@@ -4876,6 +4885,7 @@
                         // Use original w=400 image
                         // Force square crop for generation to avoid html2canvas distortion
                         img.src = m.img.replace("&w=400&output=webp", "&w=400&h=400&fit=cover&output=webp");
+                        img.alt = m.name;
 
                         img.onload = resolve;
                         img.onerror = () => {
