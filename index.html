@@ -15,21 +15,21 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://n46db.com/sorter/">
+    <meta property="og:url" content="https://n46sorter.com">
     <meta property="og:title" content="N46Sorter | 乃木坂46ソート">
     <meta property="og:description"
         content="Rank your favorite Nogizaka46 members with this premium sorter. Create your own top member list and share it with friends.">
-    <meta property="og:image" content="https://n46db.com/sorter/og-image.jpg">
+    <meta property="og:image" content="https://n46sorter.com/og-image.jpg">
     <meta property="og:site_name" content="N46Sorter">
     <meta property="og:locale" content="en_US">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://n46db.com/sorter/">
+    <meta property="twitter:url" content="https://n46sorter.com">
     <meta property="twitter:title" content="N46Sorter | 乃木坂46ソート">
     <meta property="twitter:description"
         content="Rank your favorite Nogizaka46 members with this premium sorter. Create your own top member list and share it with friends.">
-    <meta property="twitter:image" content="https://n46db.com/sorter/og-image.jpg">
+    <meta property="twitter:image" content="https://n46sorter.com/og-image.jpg">
 
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
@@ -1132,7 +1132,7 @@
             background: linear-gradient(135deg, #fffbf0 0%, #fff 100%);
             border: 2px solid var(--gold);
             padding: 30px 25px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             transform: scale(1.05);
             opacity: 0;
             box-shadow: 0 15px 40px rgba(212, 175, 55, 0.25);
@@ -3428,7 +3428,7 @@
             "Start Ranking": "ランキングを開始",
             "Start New Ranking": "ランキングをリセット",
             "Resume Ranking": "ランキングを再開",
-            "Feeling Lucky?": "運試し",
+            "Feeling Lucky?": "ランダム生成",
             "Select Members": "メンバーを選択",
             "All Members": "全メンバー",
             "By Gen": "期別",
@@ -3439,7 +3439,7 @@
             "Battle {n} / ~{total}": "バトル {n} / 約{total}",
             "{p}%": "{p}%",
             "Tie": "引き分け",
-            "Undo": "一つ前に戻す",
+            "Undo": "前に戻す",
             "Generating Certificate": "結果を生成中…",
             "Compiling your top members...": "推しメンを集計中…",
             "Result": "結果",
@@ -3494,7 +3494,7 @@
             "Please select at least 2 members for a Lucky Draw!": "メンバーを2人以上選択してください。",
             "Could not resume previous session.": "前回のセッションを再開できませんでした。",
             "Starting a new ranking will clear your current progress. Are you sure?": "新しいランキングを開始すると、現在の進行状況がリセットされます。よろしいですか？",
-            "Starting a Lucky Draw will clear your current progress. Are you sure?": "運試しを開始すると、現在の進行状況がリセットされます。よろしいですか？",
+            "Starting a Lucky Draw will clear your current progress. Are you sure?": "ランダム生成を開始すると、現在の進行状況がリセットされます。よろしいですか？",
             "Leaving this screen will clear your results. Continue?": "この画面を離れると結果が消去されます。続行しますか？",
             "Edit": "編集",
             "Profile & Media": "プロフィール",
@@ -3656,7 +3656,7 @@
                         members = data;
                         // Initialize selection state
                         members.forEach(m => {
-                            m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&h=400&fit=cover&output=webp";
+                            m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
                             if (m.selected === undefined) m.selected = !m.graduated;
                             // Apply mapping
                             if (NAME_JP_MAPPING[m.name]) {
@@ -3742,7 +3742,7 @@
 
                     // Global proxy usage and initialize selection
                     members.forEach(m => {
-                        m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&h=400&fit=cover&output=webp";
+                        m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
                         // Default selection: Current members only (graduated = false)
                         if (m.selected === undefined) m.selected = !m.graduated;
                         // Backfill name_ja from mapping if available
@@ -4027,11 +4027,54 @@
                     break;
                 }
             }
+
+
             return block;
         }
 
+        // Estimate total battles dynamically based on current state
+        function estimateTotalBattles() {
+            // 1. Battles already done
+            let total = battlesCount;
+
+            // 2. Battles remaining in current merge
+            if (currentMerge) {
+                // Worst case: size of left + size of right - 1
+                // But we must account for items already merged into 'result' if we were tracking them.
+                // Actually, currentMerge.left and currentMerge.right are what's REMAINING.
+                // So remaining comparisons = left.length + right.length - 1
+                if (currentMerge.left.length > 0 && currentMerge.right.length > 0) {
+                    total += (currentMerge.left.length + currentMerge.right.length - 1);
+                }
+            }
+
+            // 3. Battles remaining in future merges (Queue simulation)
+            // We clone the queue structure (just lengths) to simulate
+            let tempQueue = queue.map(arr => arr.length);
+
+            // If current merge exists, its result will be pushed to queue eventually
+            if (currentMerge) {
+                tempQueue.push(currentMerge.result.length + currentMerge.left.length + currentMerge.right.length);
+            }
+
+            // Simulate Merge Sort until 1 item remains
+            while (tempQueue.length > 1) {
+                let a = tempQueue.shift();
+                let b = tempQueue.shift();
+                // Comparisons for merging two sorted arrays of size a and b is a + b - 1
+                total += (a + b - 1);
+                tempQueue.push(a + b);
+            }
+
+            return total;
+        }
+
         function updateUI(id1, id2) {
-            const pct = Math.min(100, Math.floor((battlesCount / maxBattles) * 100));
+            const total = estimateTotalBattles();
+            // Ensure we don't divide by zero or have weird jumps
+            const safeTotal = total > 0 ? total : 1;
+            const pct = Math.min(100, Math.floor((battlesCount / safeTotal) * 100));
+
             document.getElementById('progress-fill').style.width = pct + '%';
             document.getElementById('progress-txt').innerText = pct + '%';
 
@@ -4150,7 +4193,9 @@
                 document.getElementById('undo-btn').disabled = history.length === 0;
 
                 // Update progress bar
-                const pct = Math.min(100, Math.floor((battlesCount / maxBattles) * 100));
+                const total = estimateTotalBattles();
+                const safeTotal = total > 0 ? total : 1;
+                const pct = Math.min(100, Math.floor((battlesCount / safeTotal) * 100));
                 document.getElementById('progress-fill').style.width = pct + '%';
                 document.getElementById('progress-txt').innerText = pct + '%';
 
@@ -4473,16 +4518,15 @@
                                         stroke-linejoin="round" />
                                 </svg>`;
             }
-            // The 'size' variable is no longer directly used here, as generateSenbatsuImage reads from the select directly.
-            // const size = parseInt(document.getElementById('senbatsu-size').value); 
+
             const img = document.getElementById('img-senbatsu');
             const status = document.getElementById('gen-status');
 
-            // Start Transition: Blur & Scale Down
+            // 1. Start Transition: Blur & Scale Down
             img.style.filter = 'blur(8px) brightness(0.9)';
             img.style.transform = 'scale(0.96)';
 
-            // Show status
+            // 2. Show status
             status.style.display = 'flex'; // Flex for centering spinner
             status.innerHTML = `<div class="status-spinner"></div>${t("Assembling Formation...")}`;
             // Small delay to allow display:flex to apply before opacity transition
@@ -4490,24 +4534,35 @@
                 status.style.opacity = '1';
             });
 
-            generateSenbatsuImage().then(() => { // No need to pass size, it's read from select
-                // Wait a bit for the generation to feel substantial (optional, but good for UX pacing)
-                setTimeout(() => {
-                    // img.src is already updated by generateSenbatsuImage
-                    // img.src = generatedSenbatsuImg; // This line is now redundant
+            // 3. Define Promises
+            // A. Minimum wait time
+            const minWaitPromise = new Promise(resolve => setTimeout(resolve, 2000));
 
-                    // End Transition: Unblur & Scale Up
-                    requestAnimationFrame(() => {
-                        img.style.filter = 'blur(0px) brightness(1)';
-                        img.style.transform = 'scale(1)';
-                        status.style.opacity = '0';
+            // B. Generation + Image Load
+            const generationPromise = generateSenbatsuImage().then(() => {
+                return new Promise(resolve => {
+                    if (img.complete) {
+                        resolve();
+                    } else {
+                        img.onload = resolve;
+                        img.onerror = resolve;
+                    }
+                });
+            });
 
-                        // Cleanup status display after fade out
-                        setTimeout(() => {
-                            status.style.display = 'none';
-                        }, 300);
-                    });
-                }, 400);
+            // 4. Wait for BOTH
+            Promise.all([minWaitPromise, generationPromise]).then(() => {
+                // End Transition: Unblur & Scale Up
+                requestAnimationFrame(() => {
+                    img.style.filter = 'blur(0px) brightness(1)';
+                    img.style.transform = 'scale(1)';
+                    status.style.opacity = '0';
+
+                    // Cleanup status display after fade out
+                    setTimeout(() => {
+                        status.style.display = 'none';
+                    }, 300);
+                });
             });
         }
 
@@ -4587,7 +4642,8 @@
                     const img = new Image();
                     img.crossOrigin = "anonymous";
                     // Use original w=400 image to match cache and avoid issues
-                    img.src = m.img;
+                    // Force square crop for generation to avoid html2canvas distortion
+                    img.src = m.img.replace("&w=400&output=webp", "&w=400&h=400&fit=cover&output=webp");
                     img.style.cssText = `width:${imgSize}; height:${imgSize}; border-radius:50%; object-fit:cover; border:3px solid ${imgBorder}; box-shadow:0 4px 10px rgba(0,0,0,0.1); flex-shrink:0;`;
 
                     // Push promise
@@ -4818,7 +4874,8 @@
                         img.crossOrigin = "anonymous";
                         // Use direct URL with optimization
                         // Use original w=400 image
-                        img.src = m.img;
+                        // Force square crop for generation to avoid html2canvas distortion
+                        img.src = m.img.replace("&w=400&output=webp", "&w=400&h=400&fit=cover&output=webp");
 
                         img.onload = resolve;
                         img.onerror = () => {
@@ -5738,7 +5795,7 @@
 
                 if (fallbackUrl) {
                     // Proxy through wsrv.nl for caching and optimization
-                    const proxiedUrl = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=400&h=400&fit=cover&output=webp";
+                    const proxiedUrl = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=400&output=webp";
 
                     img.src = proxiedUrl;
                     img.dataset.fallbackTried = "true";
