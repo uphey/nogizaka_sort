@@ -143,6 +143,19 @@
             animation-delay: -5s;
         }
 
+        /* Prevent Selection & Dragging Utility */
+        .lang-toggle,
+        .marquee-content img,
+        .card-img,
+        .member-card img,
+        .modal-avatar,
+        .res-thumb,
+        .loading-member-img {
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-user-drag: none;
+        }
+
         @keyframes floatOrb {
 
             0%,
@@ -676,11 +689,9 @@
             }
         }
 
-        /* Language Toggle */
         .lang-toggle {
             position: fixed;
             top: 80px;
-            /* Default for other screens */
             right: 20px;
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(10px);
@@ -697,7 +708,6 @@
             font-family: var(--font-body);
         }
 
-        /* Position on Start Screen */
         body:has(#start-screen.active) .lang-toggle {
             top: 20px;
         }
@@ -725,11 +735,6 @@
             color: var(--primary);
         }
 
-        /* =========================================
-           ORIGINAL STYLES FOR OTHER SCREENS
-           ========================================= */
-
-        /* --- BATTLE SCREEN --- */
         .progress-wrapper {
             width: 100%;
             max-width: 500px;
@@ -833,7 +838,6 @@
             flex-direction: column;
             align-items: flex-start;
             min-width: 0;
-            /* Allow truncation if needed */
         }
 
         .card-name {
@@ -965,7 +969,6 @@
             }
         }
 
-        /* --- RESULTS --- */
         .result-header {
             font-family: var(--font-display);
             color: var(--primary);
@@ -982,7 +985,6 @@
             padding-bottom: 40px;
         }
 
-        /* Section Header */
         .section-header {
             font-family: var(--font-display);
             font-size: 1.8rem;
@@ -1188,7 +1190,6 @@
             margin-right: 10px;
         }
 
-        /* --- GENERATED IMAGE DISPLAY --- */
         #image-output-area {
             text-align: center;
             margin-bottom: 20px;
@@ -1240,7 +1241,6 @@
             animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
 
-        /* View Transition Styles */
         #view-container {
             position: relative;
             width: 100%;
@@ -1279,7 +1279,6 @@
             max-width: 100%;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            /* Smooth transition for filter/transform/opacity */
             display: block;
             margin: 0 auto;
             position: relative;
@@ -1310,7 +1309,6 @@
             }
         }
 
-        /* --- ACTIONS --- */
         .actions-container {
             display: flex;
             justify-content: center;
@@ -1411,15 +1409,12 @@
             }
         }
 
-        /* --- CAPTURE CARD (FIXED BEHIND CONTENT) --- */
         #capture-container {
             position: fixed;
             top: 0;
             left: 0;
             z-index: -9999;
-            /* BEHIND EVERYTHING */
             width: 800px;
-            /* HD Resolution */
             background: linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%);
             padding: 60px 50px;
             border: 20px solid var(--bg-surface);
@@ -1462,7 +1457,6 @@
             font-weight: 600;
         }
 
-        /* Capture Rows */
         .cap-row {
             display: flex;
             align-items: center;
@@ -1578,7 +1572,6 @@
             letter-spacing: 1px;
         }
 
-        /* --- MODAL --- */
         .modal-backdrop {
             position: fixed;
             top: 0;
@@ -1623,8 +1616,6 @@
             text-align: center;
             background: #fffffff0;
         }
-
-        /* Removed modal-header-bg */
 
         .modal-header-content {
             position: relative;
@@ -1719,8 +1710,6 @@
 
 
 
-        /* --- SELECTION SCREEN --- */
-        /* Animations */
         @keyframes modalFadeIn {
             from {
                 opacity: 0;
@@ -1782,7 +1771,6 @@
             flex-direction: column;
             box-shadow: var(--glass-shadow);
             border: 1px solid var(--glass-border);
-            /* Transition for open/close */
             transform: scale(0.95);
             opacity: 0;
             transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
@@ -1793,7 +1781,6 @@
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s;
             pointer-events: none;
-            /* Prevent clicks when fading out */
         }
 
         #selection-modal.active {
@@ -1821,7 +1808,6 @@
             display: block;
         }
 
-        /* Mobile Bottom Sheet Transition */
         @media (max-width: 768px) {
             #selection-modal {
                 align-items: flex-end;
@@ -1837,7 +1823,6 @@
                 margin: 0;
                 transform: translateY(100%);
                 opacity: 1;
-                /* Keep fully opaque for slide */
                 transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
                 will-change: transform;
             }
@@ -1860,7 +1845,6 @@
             opacity: 0;
             padding: 10px;
             contain: content;
-            /* Start invisible for staggered animation */
             animation: cardEntry 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
 
@@ -1893,7 +1877,6 @@
             transition: all 0.2s ease;
         }
 
-        /* Increase touch target */
         .member-info-btn::after {
             content: '';
             position: absolute;
@@ -2005,7 +1988,6 @@
             justify-content: space-between;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             cursor: pointer;
-            /* Make header clickable */
         }
 
         .gen-header-left {
@@ -2036,7 +2018,6 @@
             transform: rotate(-90deg);
         }
 
-        /* Smooth Collapse Animation */
         .member-grid-wrapper {
             display: grid;
             grid-template-rows: 1fr;
@@ -2064,7 +2045,6 @@
 
         .generation-header::after {
             display: none;
-            /* Remove the previous line separator */
         }
 
         .gen-toggle-btn {
@@ -2133,7 +2113,6 @@
             justify-content: center;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
             opacity: 0;
-            /* Hidden by default for cleaner look */
             transform: scale(0.8);
         }
 
@@ -2257,7 +2236,6 @@
             line-height: 1;
             padding: 5px;
             margin-right: -10px;
-            /* Compensate for padding/visual balance if needed, or just 0 */
             color: var(--primary);
         }
 
@@ -2363,7 +2341,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Custom Checkbox */
         .custom-checkbox {
             position: relative;
             width: 20px;
@@ -2557,7 +2534,6 @@
             }
         }
 
-        /* Global Button Press Effect */
         button:active,
         .btn-start-lg:active,
         .btn-apply-selection:active,
@@ -2572,7 +2548,6 @@
             transition: transform 0.1s ease;
         }
 
-        /* Make text unselectable in all buttons */
         button,
         .btn-start-lg,
         .btn-apply-selection,
@@ -2590,7 +2565,6 @@
             -ms-user-select: none;
         }
 
-        /* --- NEW LOADING SCREEN --- */
         .loading-screen {
             display: none;
             flex-direction: column;
@@ -2666,21 +2640,18 @@
             backface-visibility: hidden;
         }
 
-        /* State: Top Card (Visible) */
         .loading-member-img.state-top {
             z-index: 10;
             transform: translateX(0) rotate(0deg) scale(1);
             opacity: 1;
         }
 
-        /* State: Exiting (Sliding Out) */
         .loading-member-img.state-exit {
             z-index: 11;
             transform: translateX(120%) rotate(15deg) scale(1);
             opacity: 0;
         }
 
-        /* State: Back (Waiting) */
         .loading-member-img.state-back {
             z-index: 5;
             transform: scale(0.95);
@@ -2722,7 +2693,6 @@
             text-transform: uppercase;
         }
 
-        /* View Toggle */
         #view-toggle {
             display: none;
             justify-content: center;
@@ -2770,7 +2740,6 @@
 
         .senbatsu-controls {
             display: flex;
-            /* Always flex, but hidden by max-height */
             justify-content: center;
             margin-top: 0;
             max-height: 0;
@@ -2860,7 +2829,6 @@
     <div class="bg-animate"></div>
     <div class="bg-pattern"></div>
 
-    <!-- INITIAL LOADER -->
     <div id="initial-loader">
         <div class="loader-content">
             <div class="logo"><span class="logo-triangle-prefix">N46</span>Sorter</div>
@@ -2872,7 +2840,6 @@
     <div class="bg-orb orb-1"></div>
     <div class="bg-orb orb-2"></div>
 
-    <!-- Language Toggle (Moved to Body) -->
     <div class="lang-toggle" onclick="toggleLanguage()">
         <span id="lang-ja" class="active">JP</span> / <span id="lang-en">EN</span>
     </div>
@@ -2884,7 +2851,6 @@
     </header>
 
     <div class="container">
-        <!-- NEW REDESIGNED START SCREEN -->
         <div id="start-screen" class="screen active">
             <div class="premium-wrapper">
                 <div class="brand-tag" data-i18n="Member Sorter">Member Sorter</div>
@@ -2899,14 +2865,11 @@
                         ranking.</span>
                 </div>
 
-                <!-- Tilted Marquee (New Design) -->
                 <div class="marquee-tilt">
                     <div id="wall-track" class="marquee-content">
-                        <!-- JS injects images here -->
                     </div>
                 </div>
 
-                <!-- Action Controls -->
                 <div class="action-deck">
                     <button id="status" class="status-pill" onclick="openSelectionScreen()" disabled>
                         <span class="pulse-dot"></span> <span id="status-text" data-i18n="Loading Data...">Loading
@@ -2945,7 +2908,6 @@
             </div>
         </div>
 
-        <!-- BATTLE SCREEN (Original) -->
         <div id="battle-screen" class="screen">
             <div class="progress-wrapper">
                 <div
@@ -3017,9 +2979,7 @@
             </div>
         </div>
 
-        <!-- RESULTS SCREEN (Original) -->
         <div id="result-screen" class="screen">
-            <!-- LOADING OVERLAY -->
             <div id="result-loading" class="loading-screen">
                 <div class="loading-card-stack">
                     <div class="loading-card layer-1"></div>
@@ -3038,11 +2998,9 @@
                 </div>
             </div>
 
-            <!-- CONTENT WRAPPER (Hidden initially) -->
             <div id="result-content" style="opacity:0; transition: opacity 0.8s ease;">
                 <h2 class="result-header" data-i18n="Result">Result</h2>
 
-                <!-- AUTO GENERATED IMAGE DISPLAY -->
                 <div id="image-output-area">
                     <div id="view-toggle" style="display:none;">
                         <button class="view-btn active" onclick="switchView('list')" id="btn-view-list">
@@ -3109,7 +3067,6 @@
                         Photos</div>
                 </div>
 
-                <!-- SHARE BUTTONS -->
                 <div class="actions-container">
                     <button class="btn-action btn-x" onclick="shareX()">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="white" style="margin-right:8px;">
@@ -3141,7 +3098,6 @@
                     </button>
                 </div>
 
-                <!-- SECTION HEADER -->
                 <div class="section-header" data-i18n="Full Ranking">Full Ranking</div>
 
                 <div class="result-container" id="result-list"></div>
@@ -3157,12 +3113,11 @@
                         <span data-i18n="Sort Again">Sort Again</span>
                     </button>
                 </div>
-            </div> <!-- End Content Wrapper -->
+            </div>
         </div>
 
     </div>
 
-    <!-- PREMIUM CAPTURE NODE (Hidden behind content) -->
     <div id="capture-container">
         <div class="cap-header">NOGIZAKA46</div>
         <div class="cap-sub">Top 5 Oshi Member</div>
@@ -3173,7 +3128,6 @@
         </div>
     </div>
 
-    <!-- MODAL -->
     <div class="modal-backdrop" id="modal" onclick="closeModal()" style="z-index: 1100;">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
@@ -3213,7 +3167,6 @@
         </div>
     </div>
 
-    <!-- SELECTION SCREEN MODAL -->
     <div class="modal-backdrop" id="selection-modal" onclick="closeSelectionScreen()">
         <div class="selection-content" onclick="event.stopPropagation()">
             <div class="selection-header">
@@ -3224,7 +3177,7 @@
             </div>
 
             <div class="selection-toolbar">
-                <!-- Group 1: Current Members -->
+
                 <div class="toolbar-group active" id="group-current" onclick="switchTab('current')" role="button">
                     <div class="group-info">
                         <span class="group-title" data-i18n="Current Members">Current Members</span>
@@ -3241,7 +3194,7 @@
                     </div>
                 </div>
 
-                <!-- Group 2: Graduated Members -->
+
                 <div class="toolbar-group" id="group-graduated" onclick="switchTab('graduated')" role="button">
                     <div class="group-info">
                         <span class="group-title" data-i18n="Graduated Members">Graduated Members</span>
@@ -3260,7 +3213,7 @@
             </div>
 
             <div class="selection-body" id="selection-list">
-                <!-- JS will populate this -->
+
             </div>
 
             <div class="selection-footer">
@@ -3272,23 +3225,16 @@
     </div>
 
     <script>
-        // CONFIG
-        // Enable active state support on mobile
-        // Scroll Detection for Language Toggle
         let lastScrollY = window.scrollY;
         window.addEventListener('scroll', () => {
             const currentScrollY = window.scrollY;
             const toggle = document.querySelector('.lang-toggle');
 
-            // Only apply on non-start screens (where top is 80px)
-            // Or apply everywhere? User said "hide it when scrolling down".
-            // Usually on start screen there isn't much scroll, but if there is, hiding is fine.
-
             if (currentScrollY > lastScrollY && currentScrollY > 50) {
-                // Scrolling Down
+
                 toggle.classList.add('hidden');
             } else {
-                // Scrolling Up
+
                 toggle.classList.remove('hidden');
             }
             lastScrollY = currentScrollY;
@@ -3302,10 +3248,9 @@
         const TARGET = encodeURIComponent("https://n46db.com/");
         const TARGET_GRADUATED = encodeURIComponent("https://n46db.com/index.php?graduated=yes&sortby=dob&noearly=on");
         const CACHE_KEY = 'n46_members_v1';
-        const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+        const CACHE_DURATION = 24 * 60 * 60 * 1000;
         const PROGRESS_KEY = 'n46_sort_progress';
 
-        // --- NAME MAPPING ---
         const NAME_JP_MAPPING = {
             "Iwase Yumiko": "岩瀬佑美子", "Fukagawa Mai": "深川麻衣", "Matsui Rena": "松井玲奈", "Shinuchi Mai": "新内眞衣",
             "Shiraishi Mai": "白石麻衣", "Matsumura Sayuri": "松村沙友理", "Eto Misa": "衛藤美彩", "Hashimoto Nanami": "橋本奈々未",
@@ -3331,11 +3276,10 @@
             "Okoshi Hinano": "大越ひなの", "Inoue Nagi": "井上和", "Setoguchi Mitsuki": "瀬戸口心月", "Ioki Mao": "五百城茉央",
             "Okuda Iroha": "奥田いろは", "Atago Kokone": "愛宕心響", "Sugawara Satsuki": "菅原咲月", "Suzuki Yuuna": "鈴木佑捺",
             "Tomisato Nao": "冨里奈央", "Kaibe Akari": "海邉朱莉", "Ozu Reina": "小津玲奈", "Nagashima Rio": "長嶋凛桜",
-            "Ogawa Aya": "小川彩", "Yada Moeka": "矢田萌華", "Morihira Urumi": "森平麗心", "Masuda Mirine": "増田三莉音",
+            "Ogawa Aya": "小川彩", "Yada Moeka": "矢田萌香", "Morihira Urumi": "森平麗心", "Masuda Mirine": "増田三莉音",
             "Kawabata Hina": "川端晃菜"
         };
 
-        // --- LOCALIZATION ---
         const LANG_KEY = 'n46_lang_pref';
         let currentLang = localStorage.getItem(LANG_KEY) || 'ja';
         const translations = {
@@ -3422,7 +3366,7 @@
             "Please select at least 2 members for a Lucky Draw!": "メンバーを2人以上選択してください。",
             "Could not resume previous session.": "前回のセッションを再開できませんでした。",
             "Starting a new ranking will clear your current progress. Are you sure?": "新しいランキングを開始すると、現在の進行状況がリセットされます。よろしいですか？",
-            "Starting a Lucky Draw will clear your current progress. Are you sure?": "運試しを開始すると、現在の進行状況がリセットされます。よろしいですか？",
+            "Starting a Lucky Draw will clear your current progress. Are you to sure?": "運試しを開始すると、現在の進行状況がリセットされます。よろしいですか？",
             "Leaving this screen will clear your results. Continue?": "この画面を離れると結果が消去されます。続行しますか？",
             "Edit": "編集",
             "Profile & Media": "プロフィール"
@@ -3443,10 +3387,10 @@
         }
 
         function updateLanguage() {
-            // Update HTML lang attribute
+
             document.documentElement.lang = currentLang;
 
-            // Update Font Variables based on Language
+
             if (currentLang === 'ja') {
                 document.documentElement.style.setProperty('--font-display', "'Bodoni Moda','Zen Old Mincho', serif");
                 document.documentElement.style.setProperty('--font-body', "'Montserrat','Noto Sans JP', sans-serif");
@@ -3455,7 +3399,7 @@
                 document.documentElement.style.setProperty('--font-body', "'Montserrat', sans-serif");
             }
 
-            // Update Toggle UI
+
             const langEn = document.getElementById('lang-en');
             const langJa = document.getElementById('lang-ja');
             if (langEn && langJa) {
@@ -3463,7 +3407,7 @@
                 langJa.className = currentLang === 'ja' ? 'active' : '';
             }
 
-            // Update Text Elements
+
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (key) {
@@ -3471,13 +3415,13 @@
                 }
             });
 
-            // Update Status Button Text
+
             const statusBtn = document.getElementById('status');
             if (statusBtn && !statusBtn.disabled && members.length > 0) {
                 updateSelectionButton();
             }
 
-            // Update Battle Screen
+
             if (document.getElementById('battle-screen').classList.contains('active')) {
                 if (currentMerge && currentMerge.left.length > 0 && currentMerge.right.length > 0) {
                     renderCard('left', members[currentMerge.left[0].id]);
@@ -3485,12 +3429,12 @@
                 }
             }
 
-            // Update Results Screen
+
             if (document.getElementById('result-screen').classList.contains('active') && window.lastSortedList) {
                 showResults(window.lastSortedList);
             }
 
-            // Update Selection Screen
+
             if (document.getElementById('selection-modal').classList.contains('active')) {
                 renderSelectionScreen();
             }
@@ -3505,7 +3449,7 @@
         let isAnimating = false;
         let finalTop5 = [];
 
-        // Helper function to parse members from HTML
+
         function parseMembersFromHTML(textContent) {
             const parser = new DOMParser();
             const doc = parser.parseFromString(textContent, "text/html");
@@ -3518,8 +3462,7 @@
                     const nameMatch = text.match(/[A-Z]+\s[A-Za-z\s]+/);
                     const dateMatch = text.match(/(\d{4}\.\d{2}\.\d{2})/);
 
-                    // Try to find Japanese name
-                    // Look for Kanji/Kana that is NOT "期" or "生"
+
                     const jpNameMatch = text.match(/[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]+/g);
 
                     if (nameMatch) {
@@ -3553,11 +3496,11 @@
         }
 
         async function init(retries = 3) {
-            // Apply saved language immediately
+
             updateLanguage();
             const status = document.getElementById('status');
 
-            // 1. Check Cache
+
             try {
                 const cached = localStorage.getItem(CACHE_KEY);
                 if (cached) {
@@ -3565,11 +3508,11 @@
                     if (Date.now() - timestamp < CACHE_DURATION) {
                         console.log("Using cached data");
                         members = data;
-                        // Initialize selection state
+
                         members.forEach(m => {
                             m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&h=400&fit=cover&output=webp";
                             if (m.selected === undefined) m.selected = !m.graduated;
-                            // Apply mapping
+
                             if (NAME_JP_MAPPING[m.name]) {
                                 m.name_ja = NAME_JP_MAPPING[m.name];
                             } else if (!m.name_ja) {
@@ -3581,7 +3524,7 @@
                         document.getElementById('start-btn').disabled = false;
                         document.getElementById('demo-btn').disabled = false;
 
-                        // Check for saved progress
+
                         if (localStorage.getItem(PROGRESS_KEY)) {
                             document.getElementById('resume-btn').style.display = 'flex';
                             document.getElementById('start-btn').innerHTML = `
@@ -3605,9 +3548,9 @@
             }
 
 
-            // 2. Fetch if no cache - fetch both current and graduated members
+
             try {
-                // Fetch both URLs in parallel
+
                 const [currentRes, graduatedRes] = await Promise.all([
                     fetch(PROXY + TARGET),
                     fetch(PROXY + TARGET_GRADUATED)
@@ -3620,22 +3563,22 @@
 
                 if (!currentText) throw new Error("Empty response from current members");
 
-                // Parse both responses
+
                 const currentMembers = parseMembersFromHTML(currentText);
                 const graduatedMembers = parseMembersFromHTML(graduatedText);
 
-                // Create a Set of current member names for quick lookup
+
                 const currentNames = new Set(currentMembers.map(m => m.name));
 
-                // Mark graduated status and merge
+
                 const allMembers = [];
 
-                // Add current members (graduated: false)
+
                 currentMembers.forEach(m => {
                     allMembers.push({ ...m, graduated: false });
                 });
 
-                // Add graduated members that are NOT in current members (graduated: true)
+
                 graduatedMembers.forEach(m => {
                     if (!currentNames.has(m.name)) {
                         allMembers.push({ ...m, graduated: true });
@@ -3643,7 +3586,7 @@
                 });
 
                 if (allMembers.length > 0) {
-                    // Save combined data to cache
+
                     localStorage.setItem(CACHE_KEY, JSON.stringify({
                         timestamp: Date.now(),
                         data: allMembers
@@ -3651,16 +3594,16 @@
 
                     members = allMembers;
 
-                    // Global proxy usage and initialize selection
+
                     members.forEach(m => {
                         m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&h=400&fit=cover&output=webp";
-                        // Default selection: Current members only (graduated = false)
+
                         if (m.selected === undefined) m.selected = !m.graduated;
-                        // Backfill name_ja from mapping if available
+
                         if (NAME_JP_MAPPING[m.name]) {
                             m.name_ja = NAME_JP_MAPPING[m.name];
                         } else if (!m.name_ja) {
-                            m.name_ja = m.name; // Fallback
+                            m.name_ja = m.name;
                         }
                     });
 
@@ -3670,7 +3613,7 @@
                     document.getElementById('demo-btn').disabled = false;
                     initWall();
 
-                    // Check for saved progress
+
                     if (localStorage.getItem(PROGRESS_KEY)) {
                         document.getElementById('resume-btn').style.display = 'flex';
                         document.getElementById('start-btn').innerHTML = `
@@ -3681,7 +3624,7 @@
                         `;
                     }
 
-                    // Hide Loader
+
                     setTimeout(() => {
                         document.getElementById('initial-loader').classList.add('loaded');
                     }, 500);
@@ -3698,7 +3641,7 @@
                     document.getElementById('start-btn').disabled = false;
                     document.getElementById('demo-btn').disabled = false;
 
-                    // Check for saved progress
+
                     if (localStorage.getItem(PROGRESS_KEY)) {
                         document.getElementById('resume-btn').style.display = 'flex';
                         document.getElementById('start-btn').innerHTML = `
@@ -3711,7 +3654,7 @@
 
                     initWall();
 
-                    // Hide Loader even on error
+
                     setTimeout(() => {
                         document.getElementById('initial-loader').classList.add('loaded');
                     }, 500);
@@ -3722,10 +3665,10 @@
         function initWall() {
             const track = document.getElementById('wall-track');
 
-            // Filter to only show selected members
+
             let selectedMembers = members.filter(m => m.selected !== false);
 
-            // If no members selected, use specific fallback images
+
             if (selectedMembers.length < 1) {
                 selectedMembers = [
                     { img: "https://wsrv.nl/?url=" + encodeURIComponent("https://www.sponichi.co.jp/entertainment/news/2022/02/04/jpeg/20220204s00041000257000p_view.webp") + "&w=400&output=webp", name: "" },
@@ -3733,30 +3676,19 @@
                 ];
             }
 
-            // 1. Calculate how many items needed to cover screen width + buffer
-            // Item width = 100px + 20px gap = 120px
             const itemWidth = 120;
             const screenWidth = window.innerWidth;
-            // We need enough items to cover the screen width at least once.
-            // To be safe and allow for smooth scrolling, let's aim for 1.5x screen width for the "base set".
-            // Actually, for the loop to work with translate(-50%), the "base set" MUST be >= screen width.
-            // Let's aim for 2x screen width for the base set just to be super safe against resizing.
             const itemsNeeded = Math.ceil((screenWidth * 2) / itemWidth);
 
-            // 2. Prepare the pool (only from selected members)
+
             let pool = [...selectedMembers].sort(() => 0.5 - Math.random());
 
-            // 3. Duplicate pool until we have enough items for the BASE set
+
             while (pool.length < itemsNeeded) {
                 pool = [...pool, ...pool];
             }
 
-            // If pool became huge (e.g. small member list, huge screen), trim it to just what's needed + a bit
-            // But actually, having more is fine.
 
-            // 4. Create the Final Wall Members: Two identical sets of the Base Set
-            // This ensures that when we translate -50% (width of one Base Set),
-            // the second Base Set is in the exact position the first one started.
             const wallMembers = [...pool, ...pool];
 
             track.innerHTML = '';
@@ -3768,13 +3700,12 @@
                 track.appendChild(img);
             });
 
-            // Dynamic duration: Speed control
-            // Adjusted to be slower than 0.2 but faster than original
+
             const duration = Math.max(10, wallMembers.length * 1);
 
-            // Force animation restart
+
             track.style.animation = 'none';
-            track.offsetHeight; /* trigger reflow */
+            track.offsetHeight;
             track.style.animation = `scrollWall ${duration}s linear infinite`;
         }
 
@@ -3784,14 +3715,12 @@
 
         function loadBackup() {
             members = [
-                // 3rd Gen
                 { name: "Ito Riria", name_ja: "伊藤理々杏", gen: "3rd Gen", date: "2002.10.08", img: IMG_BASE + "ito_riria.jpg" },
                 { name: "Iwamoto Renka", name_ja: "岩本蓮加", gen: "3rd Gen", date: "2004.02.02", img: IMG_BASE + "iwamoto_renka.jpg" },
                 { name: "Umezawa Minami", name_ja: "梅澤美波", gen: "3rd Gen", date: "1999.01.06", img: IMG_BASE + "umezawa_minami.jpg" },
                 { name: "Kubo Shiori", name_ja: "久保史緒里", gen: "3rd Gen", date: "2001.07.14", img: IMG_BASE + "kubo_shiori.jpg" },
                 { name: "Yoshida Ayano Christie", name_ja: "吉田綾乃クリスティー", gen: "3rd Gen", date: "1995.09.06", img: IMG_BASE + "yoshida_ayano_christie.jpg" },
 
-                // 4th Gen
                 { name: "Endo Sakura", name_ja: "遠藤さくら", gen: "4th Gen", date: "2001.10.03", img: IMG_BASE + "endo_sakura.jpg" },
                 { name: "Kaki Haruka", name_ja: "賀喜遥香", gen: "4th Gen", date: "2001.08.08", img: IMG_BASE + "kaki_haruka.jpg" },
                 { name: "Kanagawa Saya", name_ja: "金川紗耶", gen: "4th Gen", date: "2001.10.31", img: IMG_BASE + "kanagawa_saya.jpg" },
@@ -3805,7 +3734,6 @@
                 { name: "Yakubo Mio", name_ja: "矢久保美緒", gen: "4th Gen", date: "2002.08.14", img: IMG_BASE + "yakubo_mio.jpg" },
                 { name: "Yumiki Nao", name_ja: "弓木奈於", gen: "4th Gen", date: "1999.02.03", img: IMG_BASE + "yumiki_nao.jpg" },
 
-                // 5th Gen
                 { name: "Ioki Mao", name_ja: "五百城茉央", gen: "5th Gen", date: "2005.07.29", img: IMG_BASE + "ioki_mao.jpg" },
                 { name: "Ikeda Teresa", name_ja: "池田瑛紗", gen: "5th Gen", date: "2002.05.12", img: IMG_BASE + "ikeda_teresa.jpg" },
                 { name: "Ichinose Miku", name_ja: "一ノ瀬美空", gen: "5th Gen", date: "2003.05.24", img: IMG_BASE + "ichinose_miku.jpg" },
@@ -3818,7 +3746,6 @@
                 { name: "Tomisato Nao", name_ja: "冨里奈央", gen: "5th Gen", date: "2006.09.18", img: IMG_BASE + "tomisato_nao.jpg" },
                 { name: "Nakanishi Aruno", name_ja: "中西アルノ", gen: "5th Gen", date: "2003.03.17", img: IMG_BASE + "nakanishi_aruno.jpg" },
 
-                // 6th Gen
                 { name: "Atago Kokone", name_ja: "安田虎子", gen: "6th Gen", date: "2005.09.17", img: IMG_BASE + "atago_kokone.jpg" },
                 { name: "Okoshi Hinano", name_ja: "大越陽菜乃", gen: "6th Gen", date: "2004.12.01", img: IMG_BASE + "okoshi_hinano.jpg" },
                 { name: "Kaibe Akari", name_ja: "海部あかり", gen: "6th Gen", date: "2007.02.14", img: IMG_BASE + "kaibe_akari.jpg" },
@@ -3826,7 +3753,7 @@
                 { name: "Suzuki Yuuna", name_ja: "鈴木優菜", gen: "6th Gen", date: "2006.05.18", img: IMG_BASE + "suzuki_yuuna.jpg" },
                 { name: "Setoguchi Mitsuki", name_ja: "瀬戸口満月", gen: "6th Gen", date: "2005.07.16", img: IMG_BASE + "setoguchi_mitsuki.jpg" },
                 { name: "Nagashima Rio", name_ja: "長島里音", gen: "6th Gen", date: "2007.05.25", img: IMG_BASE + "nagashima_rio.jpg" },
-                { name: "Masuda Mirine", name_ja: "増田海里音", gen: "6th Gen", date: "2009.11.01", img: IMG_BASE + "masuda_mirine.jpg" },
+                { name: "Masuda Mirine", name_ja: "増田三莉音", gen: "6th Gen", date: "2009.11.01", img: IMG_BASE + "masuda_mirine.jpg" },
                 { name: "Morihira Urumi", name_ja: "森平麗美", gen: "6th Gen", date: "2008.10.05", img: IMG_BASE + "morihira_urumi.jpg" },
                 { name: "Yada Moeka", name_ja: "矢田萌香", gen: "6th Gen", date: "2008.01.27", img: IMG_BASE + "yada_moeka.jpg" },
                 { name: "Ozu Reina", name_ja: "小津麗奈", gen: "6th Gen", date: "2007.04.17", img: IMG_BASE + "ozu_reina.jpg" }
@@ -3853,7 +3780,7 @@
                 }
             }
 
-            // Get only selected members
+
             const selectedMembers = getSelectedMembers();
             if (selectedMembers.length < 2) {
                 alert(t("Please select at least 2 members to rank!"));
@@ -3863,10 +3790,9 @@
             document.getElementById('start-screen').classList.remove('active');
             document.getElementById('battle-screen').classList.add('active');
 
-            // Build queue using indices from the full members array
-            // Initialize queue with objects
+
             queue = selectedMembers.map(m => [{ id: members.indexOf(m), tiedWithId: null }]);
-            // Shuffle
+
             for (let i = queue.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [queue[i], queue[j]] = [queue[j], queue[i]];
@@ -3874,7 +3800,7 @@
             maxBattles = selectedMembers.length * Math.log2(selectedMembers.length);
             battlesCount = 0; history = []; currentMerge = null;
             document.getElementById('undo-btn').disabled = true;
-            clearProgress(); // Clear progress when starting a new sort
+
             nextBattle();
         }
 
@@ -3887,7 +3813,7 @@
                 }
             }
 
-            // Get only selected members
+
             const selectedMembers = getSelectedMembers();
             if (selectedMembers.length < 2) {
                 alert(t("Please select at least 2 members for a Lucky Draw!"));
@@ -3895,8 +3821,7 @@
             }
 
             document.getElementById('start-screen').classList.remove('active');
-            // Create demo order using indices from full members array
-            // Convert to objects to track ties
+
             const demoOrder = selectedMembers.map(m => ({ id: members.indexOf(m), tiedWithId: null })).sort(() => 0.5 - Math.random());
             showResults(demoOrder);
         }
@@ -3914,7 +3839,7 @@
 
         function finishMerge() {
             while (currentMerge.left.length > 0) {
-                // Move remaining tied blocks
+
                 currentMerge.result.push(...pullTiedBlock(currentMerge.left));
             }
             while (currentMerge.right.length > 0) {
@@ -3923,12 +3848,12 @@
             queue.push(currentMerge.result); currentMerge = null;
         }
 
-        // Helper to pull a block of tied members
+
         function pullTiedBlock(arr) {
             if (arr.length === 0) return [];
             const block = [arr.shift()];
 
-            // While the next item is tied to the last item in the block
+
             while (arr.length > 0) {
                 const last = block[block.length - 1];
                 const next = arr[0];
@@ -3964,8 +3889,8 @@
         function renderCard(side, member) {
             const img = document.getElementById(`img-${side}`);
             img.style.opacity = "";
-            img.dataset.name = member.name; // Add name for error handling
-            img.removeAttribute('data-fallback-tried'); // Reset fallback state
+            img.dataset.name = member.name;
+            img.removeAttribute('data-fallback-tried');
             img.src = member.img;
 
             const displayName = currentLang === 'ja' && member.name_ja ? member.name_ja : member.name;
@@ -3979,18 +3904,18 @@
         function vote(choice) {
             if (isAnimating) return;
             history.push(JSON.parse(JSON.stringify({ queue, currentMerge, battlesCount })));
-            battlesCount++; // Increment ONLY on new vote
+            battlesCount++;
 
             if (choice === 'left') {
                 currentMerge.result.push(...pullTiedBlock(currentMerge.left));
             } else if (choice === 'right') {
                 currentMerge.result.push(...pullTiedBlock(currentMerge.right));
             } else {
-                // Tie: Merge both blocks and link them
+
                 let blockL = pullTiedBlock(currentMerge.left);
                 let blockR = pullTiedBlock(currentMerge.right);
 
-                // Link the last of Left to the first of Right
+
                 if (blockL.length > 0 && blockR.length > 0) {
                     blockL[blockL.length - 1].tiedWithId = blockR[0].id;
                 }
@@ -4023,7 +3948,7 @@
                 history,
                 battlesCount,
                 maxBattles,
-                members // Save members to ensure ID consistency if data changes
+                members
             };
             localStorage.setItem(PROGRESS_KEY, JSON.stringify(state));
         }
@@ -4050,17 +3975,14 @@
                 history = state.history;
                 battlesCount = state.battlesCount;
                 maxBattles = state.maxBattles;
-                // We don't overwrite 'members' from cache/fetch with saved 'members' 
-                // unless we want to be strictly offline-safe. 
-                // For now, let's assume the fetched members are compatible.
-                // Or better: use the saved members to guarantee consistency.
+
                 if (state.members) members = state.members;
 
                 document.getElementById('start-screen').classList.remove('active');
                 document.getElementById('battle-screen').classList.add('active');
                 document.getElementById('undo-btn').disabled = history.length === 0;
 
-                // Update progress bar
+
                 const pct = Math.min(100, Math.floor((battlesCount / maxBattles) * 100));
                 document.getElementById('progress-fill').style.width = pct + '%';
                 document.getElementById('progress-txt').innerText = pct + '%';
@@ -4068,7 +3990,7 @@
                 nextBattle();
             } catch (e) {
                 console.error("Resume failed", e);
-                clearProgress();
+
                 alert(t("Could not resume previous session."));
             }
         }
@@ -4086,12 +4008,35 @@
 
             isAnimationRunning = true;
 
-            // Initial Setup
-            // img1 is TOP, img2 is BACK
+
+            const preloadBuffer = [];
+            const BUFFER_SIZE = 5;
+
+            function preloadNext() {
+                if (preloadBuffer.length >= BUFFER_SIZE) return;
+
+                let nextIdx = Math.floor(Math.random() * validMembers.length);
+                const m = validMembers[nextIdx];
+
+                const img = new Image();
+                img.src = m.img;
+                img.onload = () => {
+                    preloadBuffer.push(m.img);
+                    if (isAnimationRunning && preloadBuffer.length < BUFFER_SIZE) preloadNext();
+                };
+
+                img.onerror = () => {
+                    if (isAnimationRunning && preloadBuffer.length < BUFFER_SIZE) preloadNext();
+                };
+            }
+
+
+            for (let i = 0; i < 3; i++) preloadNext();
+
+
             let lastMemberIdx = Math.floor(Math.random() * validMembers.length);
             const firstMember = validMembers[lastMemberIdx];
 
-            // Ensure second is different if possible
             let secondMemberIdx = Math.floor(Math.random() * validMembers.length);
             if (validMembers.length > 1) {
                 while (secondMemberIdx === lastMemberIdx) {
@@ -4100,16 +4045,13 @@
             }
             const secondMember = validMembers[secondMemberIdx];
 
-            // Update last member to be the one currently at the "back" (which will be shown next)
-            lastMemberIdx = secondMemberIdx;
-
             img1.src = firstMember.img;
             img1.className = 'loading-member-img state-top';
 
             img2.src = secondMember.img;
             img2.className = 'loading-member-img state-back';
 
-            let activeIdx = 1; // 1 is currently TOP
+            let activeIdx = 1;
 
             loadingInterval = setInterval(() => {
                 if (!isAnimationRunning) return;
@@ -4117,40 +4059,41 @@
                 const currTop = activeIdx === 1 ? img1 : img2;
                 const currBack = activeIdx === 1 ? img2 : img1;
 
-                // 1. Animate Top -> Exit
+
                 currTop.classList.remove('state-top');
                 currTop.classList.add('state-exit');
 
-                // 2. Animate Back -> Top (Reveal)
+
                 currBack.classList.remove('state-back');
                 currBack.classList.add('state-top');
 
-                // 3. Prepare next card (after transition)
+
                 setTimeout(() => {
                     if (!isAnimationRunning) return;
 
-                    // Reset old Top to Back
+
                     currTop.classList.remove('state-exit');
                     currTop.classList.add('state-back');
 
-                    // Load NEW image into the new Back card
-                    let nextMemberIdx = Math.floor(Math.random() * validMembers.length);
-                    if (validMembers.length > 1) {
-                        while (nextMemberIdx === lastMemberIdx) {
-                            nextMemberIdx = Math.floor(Math.random() * validMembers.length);
-                        }
+
+                    let nextSrc;
+                    if (preloadBuffer.length > 0) {
+                        nextSrc = preloadBuffer.shift();
+                        preloadNext();
+                    } else {
+
+                        let nextMemberIdx = Math.floor(Math.random() * validMembers.length);
+                        nextSrc = validMembers[nextMemberIdx].img;
                     }
-                    lastMemberIdx = nextMemberIdx;
 
-                    const nextMember = validMembers[nextMemberIdx];
-                    currTop.src = nextMember.img;
+                    currTop.src = nextSrc;
 
-                }, 400); // Wait for exit transition
+                }, 400);
 
-                // Swap indices
+
                 activeIdx = activeIdx === 1 ? 2 : 1;
 
-            }, 800); // Interval > Transition time
+            }, 800);
         }
 
         function stopLoadingAnimation() {
@@ -4162,18 +4105,18 @@
             document.getElementById('battle-screen').classList.remove('active');
             document.getElementById('result-screen').classList.add('active');
 
-            clearProgress(); // Clear progress on completion
 
-            // Show Loading, Hide Content
+
+
             document.getElementById('result-loading').style.display = 'flex';
-            // Hide language toggle during loading
+
             document.querySelector('.lang-toggle').classList.add('loading-hide');
 
             startLoadingAnimation();
             document.getElementById('result-content').style.opacity = '0';
             document.getElementById('result-content').style.display = 'none';
 
-            // Store full list for Senbatsu generation
+
             window.lastSortedList = list;
 
             const c = document.getElementById('result-list');
@@ -4185,14 +4128,12 @@
             let currentScore = 100;
 
             list.forEach((itemRaw, i) => {
-                // Compatibility check: Handle legacy number indices vs new object structure
+
                 let item = (typeof itemRaw === 'object' && itemRaw !== null) ? itemRaw : { id: itemRaw, tiedWithId: null };
 
                 const m = members[item.id];
 
-                // Determine Rank and Score
-                // If i > 0 and this item was tied with the previous item (check ID match), use same rank/score
-                // Note: The 'tiedWithId' on the PREVIOUS item points to THIS item's ID if they were tied.
+
                 let isTiedWithPrev = false;
                 if (i > 0) {
                     let prevItemRaw = list[i - 1];
@@ -4207,7 +4148,7 @@
                     currentRank = i + 1;
                     currentScore = total > 1 ? Math.round(((total - i) / total) * 100) : 100;
                 }
-                // Else keep currentRank and currentScore
+
 
                 if (i < 5) finalTop5.push({ rank: currentRank, name: m.name, name_ja: m.name_ja, img: m.img, score: currentScore });
 
@@ -4219,10 +4160,7 @@
 
                 div.className = rowClass;
 
-                // Remove delay logic here, we will show all at once or stagger after image
-                // let delay = ... 
-                // setTimeout(() => { div.classList.add('show'); }, delay);
-                // We'll add 'show' class immediately but the container is hidden
+
                 div.classList.add('show');
 
                 const displayName = currentLang === 'ja' && m.name_ja ? m.name_ja : m.name;
@@ -4246,37 +4184,37 @@
                 c.appendChild(div);
             });
 
-            // TRIGGER ASYNC GENERATION
+
             try {
-                // Enforce minimum 3 seconds loading time
+
                 const minTimePromise = new Promise(resolve => setTimeout(resolve, 3000));
 
-                // Run generation and timer in parallel
-                // We run both generations
+
+
                 await Promise.all([generateResultImage(), generateSenbatsuImage(), minTimePromise]);
 
-                // On Success:
+
                 stopLoadingAnimation();
                 document.getElementById('result-loading').style.display = 'none';
-                // Show language toggle again
+
                 document.querySelector('.lang-toggle').classList.remove('loading-hide');
 
                 document.getElementById('result-content').style.display = 'block';
 
-                // Show Toggle
+
                 document.getElementById('view-toggle').style.display = 'flex';
-                // Set default view
+
                 switchView('list');
 
-                // Force reflow
+
                 void document.getElementById('result-content').offsetWidth;
 
-                // Fade in
+
                 document.getElementById('result-content').style.opacity = '1';
 
             } catch (err) {
                 console.error("Generation failed", err);
-                // Show content anyway
+
                 stopLoadingAnimation();
                 document.getElementById('result-loading').style.display = 'none';
                 document.querySelector('.lang-toggle').classList.remove('loading-hide');
@@ -4285,7 +4223,6 @@
             }
         }
 
-        /* --- MOBILE-SAFE DYNAMIC IMAGE GENERATION --- */
         let generatedListImg = "";
         let generatedSenbatsuImg = "";
 
@@ -4297,10 +4234,9 @@
             const btnSenbatsu = document.getElementById('btn-view-senbatsu');
             const senbatsuControls = document.getElementById('senbatsu-controls');
 
-            // Set fixed height to start animation
+
             container.style.height = container.offsetHeight + 'px';
 
-            // Force reflow
             void container.offsetHeight;
 
             if (view === 'list') {
@@ -4325,15 +4261,15 @@
                 senbatsuControls.classList.add('active');
             }
 
-            // Animate Height
-            // Wait for next frame to allow class changes to take effect (conceptually)
-            // But we can just calculate the target height.
-            // Since images are loaded, we can get their natural height or just wait a tick.
+
+
+
+
 
             requestAnimationFrame(() => {
                 const activeImg = view === 'list' ? imgList : imgSenbatsu;
-                // We need to know the rendered height of the active image.
-                // Since it might be hidden/absolute, we can calculate based on width.
+
+
                 const width = container.offsetWidth;
                 const aspect = activeImg.naturalHeight / activeImg.naturalWidth;
                 const targetHeight = width * aspect;
@@ -4341,12 +4277,11 @@
                 if (targetHeight) {
                     container.style.height = targetHeight + 'px';
                 } else {
-                    container.style.height = 'auto'; // Fallback
                 }
 
-                // Reset to auto after transition
+
                 setTimeout(() => {
-                    container.style.height = 'auto';
+
                 }, 400);
             });
         }
@@ -4355,7 +4290,7 @@
             const sizeSelect = document.getElementById('senbatsu-size');
             const displayValue = document.getElementById('senbatsu-value-display');
             if (displayValue) {
-                // Update text but keep the SVG icon
+
                 displayValue.innerHTML = `${sizeSelect.value} 
                                 <svg width="10" height="6" viewBox="0 0 10 6" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
@@ -4363,36 +4298,34 @@
                                         stroke-linejoin="round" />
                                 </svg>`;
             }
-            // The 'size' variable is no longer directly used here, as generateSenbatsuImage reads from the select directly.
-            // const size = parseInt(document.getElementById('senbatsu-size').value); 
+
             const img = document.getElementById('img-senbatsu');
             const status = document.getElementById('gen-status');
 
-            // Start Transition: Blur & Scale Down
+
             img.style.filter = 'blur(8px) brightness(0.9)';
             img.style.transform = 'scale(0.96)';
 
-            // Show status
-            status.style.display = 'flex'; // Flex for centering spinner
+
             status.innerHTML = `<div class="status-spinner"></div>${t("Assembling Formation...")}`;
-            // Small delay to allow display:flex to apply before opacity transition
+
             requestAnimationFrame(() => {
                 status.style.opacity = '1';
             });
 
-            generateSenbatsuImage().then(() => { // No need to pass size, it's read from select
-                // Wait a bit for the generation to feel substantial (optional, but good for UX pacing)
-                setTimeout(() => {
-                    // img.src is already updated by generateSenbatsuImage
-                    // img.src = generatedSenbatsuImg; // This line is now redundant
+            generateSenbatsuImage().then(() => {
 
-                    // End Transition: Unblur & Scale Up
+                setTimeout(() => {
+
+
+
+
                     requestAnimationFrame(() => {
                         img.style.filter = 'blur(0px) brightness(1)';
                         img.style.transform = 'scale(1)';
                         status.style.opacity = '0';
 
-                        // Cleanup status display after fade out
+
                         setTimeout(() => {
                             status.style.display = 'none';
                         }, 300);
@@ -4403,14 +4336,12 @@
 
         function generateResultImage() {
             return new Promise((resolve, reject) => {
-                // 1. Create temporary container appended to body
-                // Positioned offscreen but NOT hidden via display:none
+
+
                 const tempContainer = document.createElement('div');
                 tempContainer.style.position = 'fixed';
                 tempContainer.style.top = '0';
-                tempContainer.style.left = '200vw'; // Far right
                 tempContainer.style.width = '800px';
-                tempContainer.style.height = '1000px'; // Force 4:5 ratio
                 tempContainer.style.background = 'linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%)';
                 tempContainer.style.padding = '50px';
                 tempContainer.style.border = '20px solid white';
@@ -4421,7 +4352,7 @@
                 tempContainer.style.flexDirection = 'column';
                 tempContainer.style.justifyContent = 'center';
 
-                // Header (Updated Text)
+
                 const headerHTML = `
                 <div style="position:relative; z-index:2;">
                     <div style="font-family:var(--font-display); font-size:3.5rem; font-weight:700; color:var(--primary); margin-bottom:5px; text-shadow:2px 2px 0 var(--text-light);">${t("NOGIZAKA46")}</div>
@@ -4429,13 +4360,13 @@
                 </div>
             `;
 
-                // List Container
+
                 const listContainer = document.createElement('div');
                 listContainer.style.position = 'relative';
                 listContainer.style.zIndex = '2';
                 listContainer.style.width = '100%';
 
-                // Images to load promise
+
                 const imagePromises = [];
 
                 finalTop5.forEach((m, i) => {
@@ -4447,16 +4378,13 @@
                     let rankSize = '2rem';
                     let nameSize = '1.5rem';
 
-                    // Updated Rank 1 Styles (Compacted)
+
                     if (m.rank === 1) {
                         bgStyle = 'background:linear-gradient(to right,#fff,#fffcf0); border:2px solid var(--gold); box-shadow:0 15px 40px rgba(212,175,55,0.2); padding: 25px 30px;';
                         rankColor = 'var(--gold)';
                         nameColor = '#4a3b10';
                         imgBorder = 'var(--gold)';
-                        // Adjusted Rank 1 Sizes
-                        imgSize = '100px'; // Reduced from 120
-                        rankSize = '3rem'; // Reduced from 3.5
-                        nameSize = '2rem'; // Reduced from 2.2
+
                     } else if (m.rank === 2) {
                         bgStyle += 'border-left:8px solid var(--silver);';
                         rankColor = 'var(--silver)';
@@ -4465,41 +4393,40 @@
                         rankColor = 'var(--bronze)';
                     }
 
-                    // Create Row
+
                     const row = document.createElement('div');
-                    // Default padding
+
                     let rowPadding = '15px 30px';
-                    if (m.rank === 1) rowPadding = '25px 30px'; // Reduced from 40
 
                     row.style.cssText = `display:flex; align-items:center; padding:${rowPadding}; margin-bottom:15px; border-radius:16px; ${bgStyle}`;
 
-                    // Create Image with Proxy & CrossOrigin
+
                     const img = new Image();
                     img.crossOrigin = "anonymous";
-                    // Use original w=400 image to match cache and avoid issues
+
                     img.src = m.img;
                     img.style.cssText = `width:${imgSize}; height:${imgSize}; border-radius:50%; object-fit:cover; border:3px solid ${imgBorder}; box-shadow:0 4px 10px rgba(0,0,0,0.1); flex-shrink:0;`;
 
-                    // Push promise
+
                     imagePromises.push(new Promise(resolve => {
                         img.onload = resolve;
                         img.onerror = () => {
-                            // Try fallback
+
                             const fallbackUrl = getFallbackUrl(m.name);
                             if (fallbackUrl) {
-                                // Use wsrv.nl proxy for fallback as well to ensure CORS
-                                // Use w=400 to match handleError logic
+
+
                                 img.src = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=400&h=400&fit=cover&output=webp";
-                                // If fallback fails, we just resolve (show broken/empty)
+
                                 img.onerror = resolve;
                                 img.onload = resolve;
                             } else {
-                                resolve();
+
                             }
                         };
                     }));
 
-                    // Inner HTML
+
                     row.innerHTML = `
                     <div style="font-family:var(--font-display); font-size:${rankSize}; font-weight:700; width:60px; color:${rankColor}; margin-right:25px;">${m.rank}</div>
                 `;
@@ -4513,7 +4440,7 @@
                     listContainer.appendChild(row);
                 });
 
-                // Footer (Updated Text)
+
                 let dateStr;
                 if (currentLang === 'ja') {
                     const d = new Date();
@@ -4534,12 +4461,11 @@
                 tempContainer.innerHTML += footerHTML;
                 document.body.appendChild(tempContainer);
 
-                // Wait for images -> Capture -> Display -> Cleanup
+
                 Promise.all(imagePromises).then(() => {
-                    // Slight delay to ensure rendering - Increased to 1000ms for reliability
+
                     setTimeout(() => {
                         html2canvas(tempContainer, {
-                            scale: 1.5, // Mobile safe scale
                             useCORS: true,
                             backgroundColor: null
                         }).then(canvas => {
@@ -4549,14 +4475,12 @@
                             document.getElementById('image-output-area').style.display = "block";
                             document.getElementById('gen-status').style.display = "none";
 
-                            // Clean up
+
                             document.body.removeChild(tempContainer);
-                            resolve(); // SUCCESS
                         }).catch(err => {
                             console.error(err);
                             document.getElementById('gen-status').innerText = "Generation Failed. Try taking a screenshot.";
                             document.body.removeChild(tempContainer);
-                            reject(err); // FAIL
                         });
                     }, 1000);
                 });
@@ -4570,11 +4494,11 @@
                     return;
                 }
 
-                // Get formation size
+
                 const sizeSelect = document.getElementById('senbatsu-size');
                 const totalMembers = parseInt(sizeSelect.value, 10);
 
-                // Formation Logic
+
                 const getFormation = (n) => {
                     const formations = {
                         10: [3, 7, 0],
@@ -4591,7 +4515,7 @@
                         21: [6, 7, 8],
                         22: [7, 7, 8]
                     };
-                    return formations[n] || [5, 6, 7]; // Default to 18
+                    return formations[n] || formations[18];
                 };
 
                 const rows = getFormation(totalMembers);
@@ -4599,13 +4523,13 @@
                 const row2Count = rows[1];
                 const row3Count = rows[2];
 
-                // Ensure we don't exceed list length
+
                 const list = window.lastSortedList;
                 const count = Math.min(list.length, totalMembers);
 
-                // Map objects back to member data, preserving rank/score info if needed
-                // Actually, we need to recalculate rank/score for display
-                // Let's reuse the logic from showResults or just calculate on the fly
+
+
+
 
                 const topMembers = [];
                 const total = list.length;
@@ -4640,13 +4564,12 @@
                     });
                 }
 
-                // 1. Create temporary container
                 const tempContainer = document.createElement('div');
                 tempContainer.style.position = 'fixed';
                 tempContainer.style.top = '0';
-                tempContainer.style.left = '200vw';
+
                 tempContainer.style.width = '800px';
-                tempContainer.style.height = '1000px'; // 4:5 Aspect Ratio (800x1000)
+                tempContainer.style.height = '1000px';
                 tempContainer.style.background = 'linear-gradient(135deg, #fffbf5 0%, #f3e7f5 100%)';
                 tempContainer.style.padding = '40px';
                 tempContainer.style.border = '20px solid white';
@@ -4656,7 +4579,6 @@
                 tempContainer.style.flexDirection = 'column';
                 tempContainer.style.justifyContent = 'space-between';
 
-                // Header
                 const headerHTML = `
                 <div style="position:relative; z-index:2; text-align:center; margin-bottom:25px;">
                     <div style="font-family:var(--font-display); font-size:3.5rem; font-weight:700; color:var(--primary); margin-bottom:5px;">${t("NOGIZAKA46")}</div>
@@ -4665,7 +4587,7 @@
                 `;
                 tempContainer.innerHTML += headerHTML;
 
-                // Formation Container
+
                 const formationContainer = document.createElement('div');
                 formationContainer.style.position = 'relative';
                 formationContainer.style.zIndex = '2';
@@ -4675,7 +4597,7 @@
                 formationContainer.style.justifyContent = 'center';
                 formationContainer.style.gap = '30px';
 
-                // Helper to create a row
+
                 const createRow = (members, label) => {
                     const rowDiv = document.createElement('div');
                     rowDiv.style.display = 'flex';
@@ -4683,7 +4605,7 @@
                     rowDiv.style.alignItems = 'flex-start';
                     rowDiv.style.gap = '5px';
 
-                    // Label
+
                     const labelDiv = document.createElement('div');
                     labelDiv.innerText = label;
                     labelDiv.style.position = 'absolute';
@@ -4691,11 +4613,11 @@
                     labelDiv.style.fontSize = '1rem';
                     labelDiv.style.fontWeight = 'bold';
                     labelDiv.style.color = 'var(--primary)';
-                    // rowDiv.appendChild(labelDiv); // Optional: Add row labels if needed
+
 
                     members.forEach(m => {
                         const card = document.createElement('div');
-                        card.style.position = 'relative'; // For badge positioning
+                        card.style.position = 'relative';
                         card.style.display = 'flex';
                         card.style.flexDirection = 'column';
                         card.style.alignItems = 'center';
@@ -4706,21 +4628,21 @@
 
                         const img = new Image();
                         img.crossOrigin = "anonymous";
-                        // Use direct URL with optimization
-                        // Use original w=400 image
+
+
                         img.src = m.img;
 
                         img.onload = resolve;
                         img.onerror = () => {
-                            // Try fallback
+
                             const fallbackUrl = getFallbackUrl(m.name);
                             if (fallbackUrl) {
                                 img.src = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=400&h=400&fit=cover&output=webp";
-                                // Prevent infinite loop
+
                                 img.onerror = resolve;
                                 img.onload = resolve;
                             } else {
-                                resolve();
+
                             }
                         };
 
@@ -4729,14 +4651,14 @@
                         img.style.borderRadius = '50%';
                         img.style.objectFit = 'cover';
 
-                        // Determine if this member is a Center
-                        // Rank 1 is always center.
-                        // If row1Count is even, Rank 2 is also center.
+
+
+
                         const isCenter = m.rank === 1 || (row1Count % 2 === 0 && m.rank === 2);
 
-                        // Highlight Center
+
                         if (isCenter) {
-                            img.style.border = '3px solid var(--primary)'; // Purple border
+                            img.style.border = '3px solid var(--primary)';
                             img.style.boxShadow = '0 4px 15px rgba(126, 16, 131, 0.4)';
                         } else {
                             img.style.border = '3px solid white';
@@ -4759,12 +4681,12 @@
 
                         card.appendChild(img);
 
-                        // Add Center Badge
+
                         if (isCenter) {
                             const badge = document.createElement('div');
                             badge.innerText = t("CENTER");
                             badge.style.position = 'absolute';
-                            badge.style.top = '75px'; // Adjust based on image size (88px)
+                            badge.style.top = '70px';
                             badge.style.left = '50%';
                             badge.style.transform = 'translateX(-50%)';
                             badge.style.background = 'var(--primary)';
@@ -4777,7 +4699,7 @@
                             badge.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
                             badge.style.letterSpacing = '0.5px';
                             badge.style.whiteSpace = 'nowrap';
-                            // Ensure text is centered
+
                             badge.style.display = 'flex';
                             badge.style.alignItems = 'center';
                             badge.style.justifyContent = 'center';
@@ -4795,20 +4717,23 @@
 
 
 
-                // Center-out Sort Helper
+
                 const centerSort = (arr) => {
                     const res = [];
                     arr.forEach((m, i) => {
-                        if (i % 2 === 0) res.push(m); // Even indices (0, 2, 4...) -> Right (from center perspective, actually end of array)
-                        else res.unshift(m);          // Odd indices (1, 3, 5...) -> Left (start of array)
+                        if (i % 2 === 0) {
+                            res.push(m);
+                        } else {
+                            res.unshift(m);
+                        }
                     });
-                    // Note: The above logic produces [..., 3, 1, 0, 2, 4, ...] pattern
-                    // 0 (Rank 1) -> [0]
-                    // 1 (Rank 2) -> [1, 0]
-                    // 2 (Rank 3) -> [1, 0, 2]
-                    // 3 (Rank 4) -> [3, 1, 0, 2]
-                    // 4 (Rank 5) -> [3, 1, 0, 2, 4]
-                    // Visually: 3, 1, Rank1, 2, 4. This is correct for center-out.
+
+
+
+
+
+
+
                     return res;
                 };
 
@@ -4816,14 +4741,13 @@
                 const row2Members = centerSort(topMembers.slice(row1Count, row1Count + row2Count));
                 const row3Members = centerSort(topMembers.slice(row1Count + row2Count, row1Count + row2Count + row3Count));
 
-                // Add rows in reverse order (Back to Front visually)
+
                 if (row3Members.length > 0) formationContainer.appendChild(createRow(row3Members, "3rd Row"));
                 if (row2Members.length > 0) formationContainer.appendChild(createRow(row2Members, "2nd Row"));
                 if (row1Members.length > 0) formationContainer.appendChild(createRow(row1Members, "1st Row"));
 
                 tempContainer.appendChild(formationContainer);
 
-                // Footer
                 let dateStr;
                 if (currentLang === 'ja') {
                     const d = new Date();
@@ -4842,8 +4766,6 @@
 
                 document.body.appendChild(tempContainer);
 
-                // Wait for images
-                // We need to find all images in tempContainer and wait for them
                 const images = tempContainer.querySelectorAll('img');
                 const promises = Array.from(images).map(img => {
                     return new Promise(r => {
@@ -4855,18 +4777,17 @@
                 Promise.all(promises).then(() => {
                     setTimeout(() => {
                         html2canvas(tempContainer, {
-                            scale: 1.5,
+
                             useCORS: true,
                             backgroundColor: null
                         }).then(canvas => {
                             generatedSenbatsuImg = canvas.toDataURL("image/png");
                             document.getElementById('img-senbatsu').src = generatedSenbatsuImg;
                             document.body.removeChild(tempContainer);
-                            resolve();
+
                         }).catch(err => {
                             console.error("Senbatsu Gen Failed", err);
                             document.body.removeChild(tempContainer);
-                            resolve(); // Resolve anyway to not block
                         });
                     }, 1000);
                 });
@@ -4895,11 +4816,11 @@
 
         function shareThreads() {
             const text = getShareText();
-            // Threads deep link format
+
             window.open("https://www.threads.net/intent/post?text=" + encodeURIComponent(text), '_blank');
         }
 
-        // Helper to convert Data URI to Blob
+
         function dataURItoBlob(dataURI) {
             const byteString = atob(dataURI.split(',')[1]);
             const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
@@ -4914,7 +4835,7 @@
         async function shareNative() {
             const text = getShareText();
 
-            // Determine active image
+
             let imgData = "";
             const btnList = document.getElementById('btn-view-list');
             if (btnList.classList.contains('active')) {
@@ -4925,7 +4846,7 @@
 
             let filesArray = [];
 
-            // Check if we have a generated image
+
             if (imgData && imgData.startsWith('data:image')) {
                 const blob = dataURItoBlob(imgData);
                 const file = new File([blob], "nogizaka_sort_result.png", { type: "image/png" });
@@ -4938,7 +4859,7 @@
                     text: text
                 };
 
-                // Try to share with file if supported
+
                 if (filesArray.length > 0 && navigator.canShare && navigator.canShare({ files: filesArray })) {
                     shareData.files = filesArray;
                 }
@@ -4947,19 +4868,18 @@
                     await navigator.share(shareData);
                 } catch (err) {
                     console.error("Share failed:", err);
-                    // alert("Sharing failed or was cancelled."); // Removed as per request
+
                 }
             } else {
-                // alert("Sharing is not supported on this browser. Please use the 'Copy Full Results' button.");
+
             }
         }
 
         function copyFullResults(btnElement) {
             let text = `${t("🏆 Nogizaka46 Sorter Full Results 🏆")}\n\n`;
-            // Use finalTop5 if available, but we want the FULL list.
-            // The full list is in 'sortedList' which is passed to showResult, 
-            // but we need to access it. We can reconstruct it from the DOM or store it globally.
-            // Better to use the DOM to ensure it matches what the user sees.
+
+
+
 
             const rows = document.querySelectorAll('.result-row');
             if (rows.length === 0) {
@@ -4976,7 +4896,7 @@
             text += `\n${t("Create your own ranking at: https://yoursite.com")}`;
 
             navigator.clipboard.writeText(text).then(() => {
-                // alert("Full results copied to clipboard!");
+
                 if (btnElement) {
                     const originalHTML = btnElement.innerHTML;
                     btnElement.innerHTML = `
@@ -5018,16 +4938,16 @@
             document.getElementById('gen-status').style.display = "block";
             document.getElementById('gen-status').innerText = "Creating certificate...";
 
-            // Reset View Toggle
+
             document.getElementById('view-toggle').style.display = 'none';
             generatedListImg = "";
             generatedSenbatsuImg = "";
 
-            // Reset View Container State
+
             const container = document.getElementById('view-container');
             container.style.height = 'auto';
 
-            // Reset to List View default
+
             document.getElementById('img-list').classList.add('active');
             document.getElementById('img-list').classList.remove('inactive');
             document.getElementById('img-senbatsu').classList.add('inactive');
@@ -5036,16 +4956,14 @@
             document.getElementById('btn-view-senbatsu').classList.remove('active');
             document.getElementById('senbatsu-controls').classList.remove('active');
 
-            clearProgress(); // Clear progress on restart
-
             document.getElementById('start-screen').classList.add('active');
             initWall();
         }
 
         function reloadPage() {
-            // Prevent reload if certificate is loading
+
             const loadingScreen = document.getElementById('result-loading');
-            // Check if it exists and is visible (display is flex or block, not none)
+
             if (loadingScreen && getComputedStyle(loadingScreen).display !== 'none') {
                 return;
             }
@@ -5091,14 +5009,11 @@
         }
         function closeModal() { document.getElementById('modal').classList.remove('active'); }
 
-        // Selection Screen Functions
         let activeTab = 'current';
-        const collapsedGens = new Set(); // Track collapsed generations
-        let tempSelection = new Set(); // Draft selection state
+        const collapsedGens = new Set();
+        let tempSelection = new Set();
 
-        // Selection Screen Functions
         function openSelectionScreen() {
-            // Initialize tempSelection from current members state
             tempSelection.clear();
             members.forEach((m, i) => {
                 if (m.selected !== false) {
@@ -5109,10 +5024,9 @@
             renderSelectionScreen();
             const modal = document.getElementById('selection-modal');
 
-            // Force reflow
             void modal.offsetWidth;
             modal.classList.add('active');
-            switchTab('current'); // Ensure correct initial state
+            switchTab('current');
         }
 
         function closeSelectionScreen() {
@@ -5123,28 +5037,23 @@
         function renderSelectionScreen() {
             const list = document.getElementById('selection-list');
 
-            // Use graduated property instead of hardcoded gens
             const currentMembers = members.filter(m => m.graduated === false);
             const graduatedMembers = members.filter(m => m.graduated === true);
 
-            // Calculate counts
             const currentSelected = currentMembers.filter(m => m.selected !== false).length;
             const graduatedSelected = graduatedMembers.filter(m => m.selected !== false).length;
             const totalSelected = currentSelected + graduatedSelected;
 
-            // Update Group Counts (New Toolbar)
             const countCurrent = document.getElementById('count-current');
             const countGraduated = document.getElementById('count-graduated');
             if (countCurrent) countCurrent.innerText = `(${currentSelected}/${currentMembers.length})`;
             if (countGraduated) countGraduated.innerText = `(${graduatedSelected}/${graduatedMembers.length})`;
 
-            // Update Apply Button
             const applyBtn = document.querySelector('.btn-apply-selection');
             if (applyBtn) {
                 applyBtn.innerHTML = t("Apply Selection ({n})", { n: totalSelected });
             }
 
-            // Organize by generation
             const genOrder = ['1st Gen', '2nd Gen', '3rd Gen', '4th Gen', '5th Gen', '6th Gen'];
 
             function groupByGen(memberList) {
@@ -5163,7 +5072,6 @@
                 let html = '';
                 genOrder.forEach(gen => {
                     if (groupedMembers[gen]) {
-                        // Check if all members in this gen are selected
                         const genTotal = groupedMembers[gen].length;
                         const genSelected = groupedMembers[gen].filter(m => tempSelection.has(members.indexOf(m))).length;
                         const allSelected = genSelected === genTotal;
@@ -5188,7 +5096,6 @@
                         groupedMembers[gen].forEach((m, i) => {
                             const memberIndex = members.findIndex(mem => mem.name === m.name);
                             const isSelected = tempSelection.has(memberIndex);
-                            // Cap delay to first 10 items to prevent long blocking time
                             const delay = Math.min(i, 10) * 0.03;
                             html += `
                                 <div id="member-card-${memberIndex}" class="member-card ${isSelected ? 'selected' : ''}" onclick="toggleMember(${memberIndex})" style="animation-delay: ${delay}s">
@@ -5225,34 +5132,28 @@
                 </div>
             `;
 
-            updateCounts(); // Initial count update
+            updateCounts();
         }
 
         function updateCounts() {
-            // Use graduated property instead of hardcoded gens
             const currentMembers = members.filter(m => m.graduated === false);
             const graduatedMembers = members.filter(m => m.graduated === true);
 
-            // Calculate counts
             const currentSelected = currentMembers.filter(m => tempSelection.has(members.indexOf(m))).length;
             const graduatedSelected = graduatedMembers.filter(m => tempSelection.has(members.indexOf(m))).length;
             const totalSelected = currentSelected + graduatedSelected;
 
-            // Update Group Counts (New Toolbar)
             const countCurrent = document.getElementById('count-current');
             const countGraduated = document.getElementById('count-graduated');
             if (countCurrent) countCurrent.innerText = `(${currentSelected}/${currentMembers.length})`;
             if (countGraduated) countGraduated.innerText = `(${graduatedSelected}/${graduatedMembers.length})`;
 
-            // Update Apply Button
             const applyBtn = document.querySelector('.btn-apply-selection');
             if (applyBtn) {
                 applyBtn.innerHTML = t("Apply Selection ({n})", { n: totalSelected });
-                // Update onclick to use applySelection
                 applyBtn.onclick = applySelection;
             }
 
-            // Update Generation Header Counts & Buttons
             const genOrder = ['1st Gen', '2nd Gen', '3rd Gen', '4th Gen', '5th Gen', '6th Gen'];
 
             function updateScopedHeaders(containerId, memberList) {
@@ -5606,7 +5507,7 @@
             if (ALUMNAE_NAME_MAP[name]) {
                 return IMG_FALLBACK_BASE + ALUMNAE_NAME_MAP[name] + '/image.jpg';
             } else {
-                // Default logic: "Lastname Firstname" -> "lastname_firstname"
+
                 const cleanName = name.trim().toLowerCase();
                 const parts = cleanName.split(/\s+/);
                 if (parts.length >= 2) {
@@ -5627,14 +5528,14 @@
                 const fallbackUrl = getFallbackUrl(name);
 
                 if (fallbackUrl) {
-                    // Proxy through wsrv.nl for caching and optimization
+
                     const proxiedUrl = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=400&h=400&fit=cover&output=webp";
 
                     img.src = proxiedUrl;
                     img.dataset.fallbackTried = "true";
                     img.style.opacity = "1";
 
-                    // Update global member data
+
                     const member = members.find(m => m.name === name);
                     if (member) member.img = proxiedUrl;
 
@@ -5647,13 +5548,13 @@
 
         init();
         function goHome() {
-            // Prevent navigation if loading results
+
             const loadingScreen = document.getElementById('result-loading');
             if (loadingScreen && getComputedStyle(loadingScreen).display === 'flex') {
                 return;
             }
 
-            // Confirm exit if on result screen
+
             if (document.getElementById('result-screen').classList.contains('active')) {
                 if (!confirm(t("Leaving this screen will clear your results. Continue?"))) {
                     return;
@@ -5664,7 +5565,7 @@
             document.getElementById('result-screen').classList.remove('active');
             document.getElementById('start-screen').classList.add('active');
 
-            // Check for saved progress to update UI
+
             if (localStorage.getItem(PROGRESS_KEY)) {
                 document.getElementById('resume-btn').style.display = 'flex';
                 document.getElementById('start-btn').innerHTML = `
