@@ -2949,7 +2949,7 @@
         <div id="battle-screen" class="screen">
             <div class="progress-wrapper">
                 <div
-                    style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:600; color:#666; margin-bottom:4px;">
+                    style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:600; color:var(--primary); margin-bottom:4px;">
                     <span>PROGRESS</span><span id="progress-txt">0%</span>
                 </div>
                 <div class="progress-track">
@@ -3346,7 +3346,7 @@
             "Find your true favorite member.": "本当の推しメンを見つけよう。",
             "N46Sorter": "N46Sorter",
             "Member Sorter": "メンバーソート",
-            "NOGIZAKA46": "NOGIZAKA46",
+            "NOGIZAKA46": "乃木坂46",
             "NOGIZAKA": "乃木坂",
             "Assembling Formation...": "フォーメーションを作成中",
             "Make your choices and reveal your ranking.": "メンバーを選んで、ランキングを表示しよう。",
@@ -3418,6 +3418,12 @@
             "Post on X": "Xに投稿",
             "Threads": "Threads",
             "{n} Members Selected": "{n}人のメンバーを選択中",
+            "Please select at least 2 members to rank!": "メンバーを2人以上選択してください。",
+            "Please select at least 2 members for a Lucky Draw!": "メンバーを2人以上選択してください。",
+            "Could not resume previous session.": "前回のセッションを再開できませんでした。",
+            "Starting a new ranking will clear your current progress. Are you sure?": "新しいランキングを開始すると、現在の進行状況がリセットされます。よろしいですか？",
+            "Starting a Lucky Draw will clear your current progress. Are you sure?": "運試しを開始すると、現在の進行状況がリセットされます。よろしいですか？",
+            "Leaving this screen will clear your results. Continue?": "この画面を離れると結果が消去されます。続行しますか？",
             "Edit": "編集",
             "Profile & Media": "プロフィール"
         };
@@ -3842,7 +3848,7 @@
 
         function startSort() {
             if (localStorage.getItem(PROGRESS_KEY)) {
-                if (!confirm("Starting a new ranking will clear your current progress. Are you sure?")) {
+                if (!confirm(t("Starting a new ranking will clear your current progress. Are you sure?"))) {
                     return;
                 }
             }
@@ -3850,7 +3856,7 @@
             // Get only selected members
             const selectedMembers = getSelectedMembers();
             if (selectedMembers.length < 2) {
-                alert("Please select at least 2 members to rank!");
+                alert(t("Please select at least 2 members to rank!"));
                 return;
             }
 
@@ -4063,7 +4069,7 @@
             } catch (e) {
                 console.error("Resume failed", e);
                 clearProgress();
-                alert("Could not resume previous session.");
+                alert(t("Could not resume previous session."));
             }
         }
         let loadingInterval;
@@ -4418,7 +4424,7 @@
                 // Header (Updated Text)
                 const headerHTML = `
                 <div style="position:relative; z-index:2;">
-                    <div style="font-family:var(--font-display); font-size:3.5rem; font-weight:700; color:var(--primary); margin-bottom:5px; text-shadow:2px 2px 0 var(--text-light);">NOGIZAKA46</div>
+                    <div style="font-family:var(--font-display); font-size:3.5rem; font-weight:700; color:var(--primary); margin-bottom:5px; text-shadow:2px 2px 0 var(--text-light);">${t("NOGIZAKA46")}</div>
                     <div style="font-family:var(--font-body); font-size:1.2rem; text-transform:uppercase; letter-spacing:4px; color:#666; margin-bottom:40px; font-weight:600;">${t("Top 5 Oshi Members")}</div>
                 </div>
             `;
@@ -4559,7 +4565,10 @@
 
         function generateSenbatsuImage() {
             return new Promise((resolve, reject) => {
-                if (!window.lastSortedList || window.lastSortedList.length === 0) { resolve(); return; }
+                if (!window.lastSortedList || window.lastSortedList.length === 0) {
+                    alert(t("No results to copy!"));
+                    return;
+                }
 
                 // Get formation size
                 const sizeSelect = document.getElementById('senbatsu-size');
@@ -4650,7 +4659,7 @@
                 // Header
                 const headerHTML = `
                 <div style="position:relative; z-index:2; text-align:center; margin-bottom:25px;">
-                    <div style="font-family:var(--font-display); font-size:3.5rem; font-weight:700; color:var(--primary); margin-bottom:5px;">NOGIZAKA46</div>
+                    <div style="font-family:var(--font-display); font-size:3.5rem; font-weight:700; color:var(--primary); margin-bottom:5px;">${t("NOGIZAKA46")}</div>
                     <div style="font-family:var(--font-body); font-size:1.1rem; text-transform:uppercase; letter-spacing:3px; color:#666; font-weight:600;">${t("My Ideal Member Formation")}</div>
                 </div>
                 `;
@@ -4993,6 +5002,9 @@
         }
 
         function restartSorter() {
+            if (!confirm(t("Leaving this screen will clear your results. Continue?"))) {
+                return;
+            }
             queue = []; history = []; currentMerge = null; battlesCount = 0;
             document.getElementById('result-screen').classList.remove('active');
             document.getElementById('result-list').innerHTML = '';
@@ -5066,7 +5078,7 @@
             if (member) {
                 const displayName = currentLang === 'ja' && member.name_ja ? member.name_ja : member.name;
                 document.getElementById('m-name').innerText = displayName;
-                document.getElementById('m-meta').innerText = `${t(member.gen)} • ${member.date}`;
+                document.getElementById('m-meta').innerText = `${btn.dataset.gen} • ${btn.dataset.date}`;
             } else {
                 document.getElementById('m-name').innerText = name;
                 document.getElementById('m-meta').innerText = `${btn.dataset.gen} • ${btn.dataset.date}`;
@@ -5635,6 +5647,19 @@
 
         init();
         function goHome() {
+            // Prevent navigation if loading results
+            const loadingScreen = document.getElementById('result-loading');
+            if (loadingScreen && getComputedStyle(loadingScreen).display === 'flex') {
+                return;
+            }
+
+            // Confirm exit if on result screen
+            if (document.getElementById('result-screen').classList.contains('active')) {
+                if (!confirm(t("Leaving this screen will clear your results. Continue?"))) {
+                    return;
+                }
+            }
+
             document.getElementById('battle-screen').classList.remove('active');
             document.getElementById('result-screen').classList.remove('active');
             document.getElementById('start-screen').classList.add('active');
