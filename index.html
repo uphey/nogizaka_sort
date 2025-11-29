@@ -6,19 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
     <title>N46Sorter | 乃木坂46ソート</title>
-
     <meta name="description"
         content="Rank your favorite Nogizaka46 members with this premium sorter. Create your own top member list and share it with friends.">
 
-    <!-- Preconnect -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://wsrv.nl">
 
-    <!-- Fonts -->
+    <!-- Critical Fonts (Loader) - Blocking to prevent shift -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,600;0,800;1,400&family=Montserrat:wght@300;500;600;700&family=Noto+Sans+JP:wght@300;500;700&family=Zen+Old+Mincho:wght@400;500;600;700;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,600;0,800;1,400&family=Montserrat:wght@300;500;600;700&display=swap"
         rel="stylesheet">
+
+    <!-- Non-Critical Fonts (Japanese) - Deferred -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;500;700&family=Zen+Old+Mincho:wght@400;500;600;700;900&display=swap"
+        rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;500;700&family=Zen+Old+Mincho:wght@400;500;600;700;900&display=swap"
+            rel="stylesheet">
+    </noscript>
 
     <!-- HTML2Canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
@@ -3574,8 +3582,6 @@
         }
 
         async function init(retries = 3) {
-            const minLoadTime = new Promise(resolve => setTimeout(resolve, 1000));
-
             // Apply saved language immediately
             updateLanguage();
             const status = document.getElementById('status');
@@ -3616,8 +3622,9 @@
                         }
 
                         initWall();
-                        await minLoadTime;
-                        document.getElementById('initial-loader').classList.add('loaded');
+                        setTimeout(() => {
+                            document.getElementById('initial-loader').classList.add('loaded');
+                        }, 500);
                         return;
                     }
                 }
@@ -3704,9 +3711,9 @@
                     }
 
                     // Hide Loader
-                    // Hide Loader
-                    await minLoadTime;
-                    document.getElementById('initial-loader').classList.add('loaded');
+                    setTimeout(() => {
+                        document.getElementById('initial-loader').classList.add('loaded');
+                    }, 500);
                 } else {
                     throw new Error("No members parsed");
                 }
@@ -3734,9 +3741,9 @@
                     initWall();
 
                     // Hide Loader even on error
-                    // Hide Loader even on error
-                    await minLoadTime;
-                    document.getElementById('initial-loader').classList.add('loaded');
+                    setTimeout(() => {
+                        document.getElementById('initial-loader').classList.add('loaded');
+                    }, 500);
                 }
             }
         }
@@ -3784,17 +3791,8 @@
             track.innerHTML = '';
             wallMembers.forEach(m => {
                 const img = document.createElement('img');
-                img.className = 'wall-img';
                 img.src = m.img;
-                img.alt = m.name;
-                img.width = 100;
-                img.height = 130;
-                img.loading = "lazy";
-                // Add click to open modal
-                img.onclick = (e) => {
-                    e.stopPropagation();
-                    openModal(null, m);
-                };
+                img.className = 'wall-img';
                 img.onerror = function () { this.style.display = 'none' };
                 track.appendChild(img);
             });
@@ -4281,7 +4279,7 @@
 
                 div.innerHTML = `
                 <div class="rank-num">${currentRank}</div>
-                <img class="res-thumb" src="${m.img}" data-name="${m.name}" crossorigin="anonymous" onerror="handleError(this)" loading="lazy" width="70" height="70">
+                <img class="res-thumb" src="${m.img}" data-name="${m.name}" crossorigin="anonymous" onerror="handleError(this)">
                 <div class="res-info">
                     <div class="res-name">${displayName}</div>
                     <div class="res-gen" style="font-size:0.7rem; color:var(--primary); background:rgba(126,16,131,0.08); padding:2px 8px; border-radius:10px; display:inline-block; margin-top:4px;">${t(m.gen)}</div>
