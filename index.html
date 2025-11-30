@@ -61,7 +61,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Montserrat:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
     <!-- Non-Critical Fonts (Japanese) - Deferred -->
@@ -6752,14 +6752,7 @@
             "Yoda Yuuki": "yoda_yuuki",
             "Kakehashi Sayaka": "kakehashi_sayaka",
             "Kitagawa Yuri": "kitagawa_yuri",
-            "Seimiya Rei": "seimiya_rei",
-            "Yoshimoto Ayaka": "yoshimoto_ayaka",
-            "Yamamoto Honoka": "yamamoto_honoka",
-            "Hayakawa Seira": "hayakawa_seira",
-            "Kakehashi Sayaka": "kakehashi_sayaka",
-            "Saito Asuka": "saitoh_asuka",
-            "Suzuki Ayane": "suzuki_ayane",
-            "Yamazaki Rena": "yamazaki_rena"
+            "Seimiya Rei": "seimiya_rei"
         };
 
         function getFallbackUrl(name) {
@@ -6778,7 +6771,6 @@
 
         function handleError(img) {
             if (img.dataset.fallbackTried) {
-                // If fallback also fails, try one last generic placeholder or just fade out
                 img.style.opacity = 0.5;
                 return;
             }
@@ -6789,14 +6781,13 @@
 
                 if (fallbackUrl) {
                     // Proxy through wsrv.nl for caching and optimization
-                    // Force a cache bust or different parameter to ensure it tries a new request
-                    const proxiedUrl = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=400&output=webp&t=" + Date.now();
+                    const proxiedUrl = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=400&output=webp";
 
                     img.src = proxiedUrl;
                     img.dataset.fallbackTried = "true";
                     img.style.opacity = "1";
 
-                    // Update global member data so we don't keep retrying on re-renders
+                    // Update global member data
                     const member = members.find(m => m.name === name);
                     if (member) member.img = proxiedUrl;
 
