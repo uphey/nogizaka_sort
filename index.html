@@ -5251,96 +5251,159 @@
 
             isAnimationRunning = true;
 
-            // --- Preloading Logic ---
+            // --- Enhanced Preloading Logic ---
             const preloadBuffer = [];
-            const BUFFER_SIZE = 5;
+            const BUFFER_SIZE = 8; // Increased buffer for smoother experience
+            const usedIndices = new Set(); // Prevent immediate repeats
 
             function preloadNext() {
-                if (preloadBuffer.length >= BUFFER_SIZE) return;
+                if (preloadBuffer.length >= BUFFER_SIZE || !isAnimationRunning) return;
 
-                let nextIdx = Math.floor(Math.random() * validMembers.length);
+                // Select a random member we haven't used recently
+                let attempts = 0;
+                let nextIdx;
+                do {
+                    nextIdx = Math.floor(Math.random() * validMembers.length);
+                    attempts++;
+                } while (usedIndices.has(nextIdx) && attempts < 10 && validMembers.length > 3);
+
                 const m = validMembers[nextIdx];
+                usedIndices.add(nextIdx);
+
+                // Clear old indices if set gets too large
+                if (usedIndices.size > Math.min(10, validMembers.length)) {
+                    const arr = Array.from(usedIndices);
+                    usedIndices.clear();
+                    // Keep only the last 5
+                    arr.slice(-5).forEach(idx => usedIndices.add(idx));
+                }
 
                 const img = new Image();
+                img.crossOrigin = "anonymous";
                 img.src = m.img;
                 img.onload = () => {
                     preloadBuffer.push({ src: m.img, name: m.name });
                     if (isAnimationRunning && preloadBuffer.length < BUFFER_SIZE) preloadNext();
                 };
-                // If error, just try another one
+                // If error, try another one
                 img.onerror = () => {
+                    usedIndices.delete(nextIdx); // Remove from used since it failed
                     if (isAnimationRunning && preloadBuffer.length < BUFFER_SIZE) preloadNext();
                 };
             }
 
-            // Fill initial buffer
-            for (let i = 0; i < 3; i++) preloadNext();
-
-            // Initial Setup
-            let lastMemberIdx = Math.floor(Math.random() * validMembers.length);
-            const firstMember = validMembers[lastMemberIdx];
-
-            let secondMemberIdx = Math.floor(Math.random() * validMembers.length);
-            if (validMembers.length > 1) {
-                while (secondMemberIdx === lastMemberIdx) {
-                    secondMemberIdx = Math.floor(Math.random() * validMembers.length);
+            // Preload initial images and fill buffer before starting animation
+            async function initializeAnimation() {
+                // Fill initial buffer (at least 3 images)
+                const initialLoadPromises = [];
+                for (let i = 0; i < Math.min(5, validMembers.length); i++) {
+                    preloadNext();
                 }
+
+                // Wait for at least 3 images to be in buffer before starting
+                const checkBufferReady = () => {
+                    return new Promise((resolve) => {
+                        const checkInterval = setInterval(() => {
+                            if (preloadBuffer.length >= Math.min(3, validMembers.length) || !isAnimationRunning) {
+                                clearInterval(checkInterval);
+                                resolve();
+                            }
+                        }, 50);
+
+                        // Timeout after 3 seconds
+                        setTimeout(() => {
+                            clearInterval(checkInterval);
+                            resolve();
+                        }, 3000);
+                    });
+                };
+
+                await checkBufferReady();
+
+                if (!isAnimationRunning || preloadBuffer.length === 0) {
+                    // Fallback: use direct members if buffer failed
+                    if (validMembers.length > 0) {
+                        img1.src = validMembers[0].img;
+                        img1.alt = validMembers[0].name;
+                        if (validMembers.length > 1) {
+                            img2.src = validMembers[1].img;
+                            img2.alt = validMembers[1].name;
+                        }
+                    }
+                    img1.className = 'loading-member-img state-top';
+                    img2.className = 'loading-member-img state-back';
+                    startInterval();
+                    return;
+                }
+
+                // Set initial images from buffer
+                const firstData = preloadBuffer.shift();
+                const secondData = preloadBuffer.shift();
+                preloadNext(); // Replenish
+                preloadNext();
+
+                img1.src = firstData.src;
+                img1.alt = firstData.name;
+                img1.className = 'loading-member-img state-top';
+
+                img2.src = secondData ? secondData.src : firstData.src;
+                img2.alt = secondData ? secondData.name : firstData.name;
+                img2.className = 'loading-member-img state-back';
+
+                // Start the animation interval
+                startInterval();
             }
-            const secondMember = validMembers[secondMemberIdx];
 
-            img1.src = firstMember.img;
-            img1.alt = firstMember.name;
-            img1.className = 'loading-member-img state-top';
+            function startInterval() {
+                let activeIdx = 1; // 1 is currently TOP
 
-            img2.src = secondMember.img;
-            img2.alt = secondMember.name;
-            img2.className = 'loading-member-img state-back';
-
-            let activeIdx = 1; // 1 is currently TOP
-
-            loadingInterval = setInterval(() => {
-                if (!isAnimationRunning) return;
-
-                const currTop = activeIdx === 1 ? img1 : img2;
-                const currBack = activeIdx === 1 ? img2 : img1;
-
-                // 1. Animate Top -> Exit
-                currTop.classList.remove('state-top');
-                currTop.classList.add('state-exit');
-
-                // 2. Animate Back -> Top (Reveal)
-                currBack.classList.remove('state-back');
-                currBack.classList.add('state-top');
-
-                // 3. Prepare next card (after transition)
-                setTimeout(() => {
+                loadingInterval = setInterval(() => {
                     if (!isAnimationRunning) return;
 
-                    // Reset old Top to Back
-                    currTop.classList.remove('state-exit');
-                    currTop.classList.add('state-back');
+                    const currTop = activeIdx === 1 ? img1 : img2;
+                    const currBack = activeIdx === 1 ? img2 : img1;
 
-                    // Load NEW image from buffer or fallback
-                    let nextData;
-                    if (preloadBuffer.length > 0) {
-                        nextData = preloadBuffer.shift();
-                        preloadNext(); // Replenish
-                    } else {
-                        // Fallback if buffer empty
-                        let nextMemberIdx = Math.floor(Math.random() * validMembers.length);
-                        const m = validMembers[nextMemberIdx];
-                        nextData = { src: m.img, name: m.name };
-                    }
+                    // 1. Animate Top -> Exit
+                    currTop.classList.remove('state-top');
+                    currTop.classList.add('state-exit');
 
-                    currTop.src = nextData.src;
-                    currTop.alt = nextData.name;
+                    // 2. Animate Back -> Top (Reveal)
+                    currBack.classList.remove('state-back');
+                    currBack.classList.add('state-top');
 
-                }, 400); // Wait for exit transition
+                    // 3. Prepare next card (after transition)
+                    setTimeout(() => {
+                        if (!isAnimationRunning) return;
 
-                // Swap indices
-                activeIdx = activeIdx === 1 ? 2 : 1;
+                        // Reset old Top to Back
+                        currTop.classList.remove('state-exit');
+                        currTop.classList.add('state-back');
 
-            }, 800);
+                        // Load NEW image from buffer or fallback
+                        let nextData;
+                        if (preloadBuffer.length > 0) {
+                            nextData = preloadBuffer.shift();
+                            preloadNext(); // Replenish
+                        } else {
+                            // Fallback if buffer empty
+                            let nextMemberIdx = Math.floor(Math.random() * validMembers.length);
+                            const m = validMembers[nextMemberIdx];
+                            nextData = { src: m.img, name: m.name };
+                        }
+
+                        currTop.src = nextData.src;
+                        currTop.alt = nextData.name;
+
+                    }, 400); // Wait for exit transition
+
+                    // Swap indices
+                    activeIdx = activeIdx === 1 ? 2 : 1;
+
+                }, 800);
+            }
+
+            // Initialize and start
+            initializeAnimation();
         }
 
         function stopLoadingAnimation() {
