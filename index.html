@@ -5063,7 +5063,7 @@
         }
 
         function renderCard(side, member) {
-            const img = document.getElementById(`img - ${side} `);
+            const img = document.getElementById(`img-${side}`);
             img.style.opacity = "";
             img.dataset.name = member.name; // Add name for error handling
             img.removeAttribute('data-fallback-tried'); // Reset fallback state
@@ -5071,10 +5071,10 @@
             img.alt = member.name;
 
             const displayName = currentLang === 'ja' && member.name_ja ? member.name_ja : member.name;
-            document.getElementById(`name - ${side} `).innerText = displayName;
-            document.getElementById(`gen - ${side} `).innerText = t(member.gen);
+            document.getElementById(`name-${side}`).innerText = displayName;
+            document.getElementById(`gen-${side}`).innerText = t(member.gen);
 
-            const btn = document.querySelector(`#name - ${side} `).parentElement.querySelector('.btn-profile');
+            const btn = document.querySelector(`#name-${side}`).parentElement.querySelector('.btn-profile');
             btn.dataset.name = member.name; btn.dataset.gen = member.gen; btn.dataset.date = member.date; btn.dataset.img = member.img;
         }
 
