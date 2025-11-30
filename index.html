@@ -1906,8 +1906,8 @@
             .selection-content {
                 width: 100%;
                 max-width: 100%;
-                height: 90vh;
-                max-height: 90vh;
+                height: 85vh;
+                max-height: 85vh;
                 border-radius: 24px 24px 0 0;
                 margin: 0;
                 transform: translateY(100%);
@@ -6752,7 +6752,14 @@
             "Yoda Yuuki": "yoda_yuuki",
             "Kakehashi Sayaka": "kakehashi_sayaka",
             "Kitagawa Yuri": "kitagawa_yuri",
-            "Seimiya Rei": "seimiya_rei"
+            "Seimiya Rei": "seimiya_rei",
+            "Yoshimoto Ayaka": "yoshimoto_ayaka",
+            "Yamamoto Honoka": "yamamoto_honoka",
+            "Hayakawa Seira": "hayakawa_seira",
+            "Kakehashi Sayaka": "kakehashi_sayaka",
+            "Saito Asuka": "saitoh_asuka",
+            "Suzuki Ayane": "suzuki_ayane",
+            "Yamazaki Rena": "yamazaki_rena"
         };
 
         function getFallbackUrl(name) {
@@ -6771,6 +6778,7 @@
 
         function handleError(img) {
             if (img.dataset.fallbackTried) {
+                // If fallback also fails, try one last generic placeholder or just fade out
                 img.style.opacity = 0.5;
                 return;
             }
@@ -6781,13 +6789,14 @@
 
                 if (fallbackUrl) {
                     // Proxy through wsrv.nl for caching and optimization
-                    const proxiedUrl = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=400&output=webp";
+                    // Force a cache bust or different parameter to ensure it tries a new request
+                    const proxiedUrl = "https://wsrv.nl/?url=" + encodeURIComponent(fallbackUrl) + "&w=400&output=webp&t=" + Date.now();
 
                     img.src = proxiedUrl;
                     img.dataset.fallbackTried = "true";
                     img.style.opacity = "1";
 
-                    // Update global member data
+                    // Update global member data so we don't keep retrying on re-renders
                     const member = members.find(m => m.name === name);
                     if (member) member.img = proxiedUrl;
 
