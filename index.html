@@ -5572,14 +5572,15 @@
             // 3. Generate and wait for completion
             (async () => {
                 try {
-                    // A. Minimum wait time (runs in parallel with generation)
-                    const minWaitPromise = new Promise(resolve => setTimeout(resolve, 2500));
+                    // Start a timer to ensure minimum visibility
+                    const startTime = Date.now();
+                    const MIN_DISPLAY_TIME = 800; // Minimum time to show status (ms)
 
-                    // B. Generate the image first
+                    // A. Generate the image first
                     await generateSenbatsuImage();
 
-                    // C. Now wait for the NEW image to load (src has been updated by generateSenbatsuImage)
-                    const imageLoadPromise = new Promise(resolve => {
+                    // B. Now wait for the NEW image to load (src has been updated by generateSenbatsuImage)
+                    await new Promise(resolve => {
                         // The image src has been updated, so we need to wait for it to load
                         if (img.complete && img.naturalWidth > 0) {
                             resolve();
@@ -5589,8 +5590,8 @@
                         }
                     });
 
-                    // D. Wait for BOTH minimum time AND image load
-                    await Promise.all([minWaitPromise, imageLoadPromise]);
+                    // C. Wait 2 more seconds after the image is generated
+                    await new Promise(resolve => setTimeout(resolve, 2000));
 
                     // End Transition: Unblur & Scale Up
                     requestAnimationFrame(() => {
