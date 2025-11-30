@@ -3375,10 +3375,815 @@
 
         const IMG_BASE = "https://n46db.com/pictures/profilepics/";
         const IMG_FALLBACK_BASE = "https://www.nogizaka.info/member/alumna/";
-        const PROXY = "https://api.allorigins.win/raw?url=";
+        const PROXY = "https://corsproxy.io/?";
         const TARGET = encodeURIComponent("https://n46db.com/");
         const TARGET_GRADUATED = encodeURIComponent("https://n46db.com/index.php?graduated=yes&sortby=dob&noearly=on");
         const CACHE_KEY = 'n46_members_v1';
+
+        // EMBEDDED INITIAL DATA (Backup/Fast Load)
+        const INITIAL_MEMBERS = [
+    {
+        "name": "Yoshida Ayano Christie",
+        "name_ja": "吉田",
+        "gen": "3rd Gen",
+        "date": "1995.09.06",
+        "img": "https://n46db.com/pictures/profilepics/yoshida_ayano_christie.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Umezawa Minami",
+        "name_ja": "梅澤",
+        "gen": "3rd Gen",
+        "date": "1999.01.06",
+        "img": "https://n46db.com/pictures/profilepics/umezawa_minami.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Tamura Mayu",
+        "name_ja": "田村",
+        "gen": "4th Gen",
+        "date": "1999.01.12",
+        "img": "https://n46db.com/pictures/profilepics/tamura_mayu.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Yumiki Nao",
+        "name_ja": "弓木",
+        "gen": "4th Gen",
+        "date": "1999.02.03",
+        "img": "https://n46db.com/pictures/profilepics/yumiki_nao.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Kaki Haruka",
+        "name_ja": "賀喜",
+        "gen": "4th Gen",
+        "date": "2001.08.08",
+        "img": "https://n46db.com/pictures/profilepics/kaki_haruka.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Sato Rika",
+        "name_ja": "佐藤",
+        "gen": "4th Gen",
+        "date": "2001.08.09",
+        "img": "https://n46db.com/pictures/profilepics/sato_rika.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Endo Sakura",
+        "name_ja": "遠藤",
+        "gen": "4th Gen",
+        "date": "2001.10.03",
+        "img": "https://n46db.com/pictures/profilepics/endo_sakura.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Kanagawa Saya",
+        "name_ja": "金川",
+        "gen": "4th Gen",
+        "date": "2001.10.31",
+        "img": "https://n46db.com/pictures/profilepics/kanagawa_saya.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Ikeda Teresa",
+        "name_ja": "池田",
+        "gen": "5th Gen",
+        "date": "2002.05.12",
+        "img": "https://n46db.com/pictures/profilepics/ikeda_teresa.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Yakubo Mio",
+        "name_ja": "矢久保",
+        "gen": "4th Gen",
+        "date": "2002.08.14",
+        "img": "https://n46db.com/pictures/profilepics/yakubo_mio.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Ito Riria",
+        "name_ja": "伊藤",
+        "gen": "3rd Gen",
+        "date": "2002.10.08",
+        "img": "https://n46db.com/pictures/profilepics/ito_riria.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Shibata Yuna",
+        "name_ja": "柴田",
+        "gen": "4th Gen",
+        "date": "2003.03.03",
+        "img": "https://n46db.com/pictures/profilepics/shibata_yuna.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Nakanishi Aruno",
+        "name_ja": "中西",
+        "gen": "5th Gen",
+        "date": "2003.03.17",
+        "img": "https://n46db.com/pictures/profilepics/nakanishi_aruno.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Kawasaki Sakura",
+        "name_ja": "Kawasaki Sakura",
+        "gen": "5th Gen",
+        "date": "2003.04.17",
+        "img": "https://n46db.com/pictures/profilepics/kawasaki_sakura.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Ichinose Miku",
+        "name_ja": "一ノ瀬",
+        "gen": "5th Gen",
+        "date": "2003.05.24",
+        "img": "https://n46db.com/pictures/profilepics/ichinose_miku.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Hayashi Runa",
+        "name_ja": "瑠奈",
+        "gen": "4th Gen",
+        "date": "2003.10.02",
+        "img": "https://n46db.com/pictures/profilepics/hayashi_runa.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Okamoto Hina",
+        "name_ja": "岡本",
+        "gen": "5th Gen",
+        "date": "2003.12.17",
+        "img": "https://n46db.com/pictures/profilepics/okamoto_hina.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Matsuo Miyu",
+        "name_ja": "松尾",
+        "gen": "4th Gen",
+        "date": "2004.01.03",
+        "img": "https://n46db.com/pictures/profilepics/matsuo_miyu.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Kuromi Haruka",
+        "name_ja": "黒見",
+        "gen": "4th Gen",
+        "date": "2004.01.19",
+        "img": "https://n46db.com/pictures/profilepics/kuromi_haruka.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Iwamoto Renka",
+        "name_ja": "岩本",
+        "gen": "3rd Gen",
+        "date": "2004.02.02",
+        "img": "https://n46db.com/pictures/profilepics/iwamoto_renka.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Tsutsui Ayame",
+        "name_ja": "筒井",
+        "gen": "4th Gen",
+        "date": "2004.06.08",
+        "img": "https://n46db.com/pictures/profilepics/tsutsui_ayame.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Okoshi Hinano",
+        "name_ja": "大越",
+        "gen": "6th Gen",
+        "date": "2004.12.01",
+        "img": "https://n46db.com/pictures/profilepics/okoshi_hinano.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Inoue Nagi",
+        "name_ja": "井上",
+        "gen": "5th Gen",
+        "date": "2005.02.17",
+        "img": "https://n46db.com/pictures/profilepics/inoue_nagi.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Setoguchi Mitsuki",
+        "name_ja": "瀬戸口",
+        "gen": "6th Gen",
+        "date": "2005.07.16",
+        "img": "https://n46db.com/pictures/profilepics/setoguchi_mitsuki.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Ioki Mao",
+        "name_ja": "五百城",
+        "gen": "5th Gen",
+        "date": "2005.07.29",
+        "img": "https://n46db.com/pictures/profilepics/ioki_mao.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Okuda Iroha",
+        "name_ja": "奥田",
+        "gen": "5th Gen",
+        "date": "2005.08.20",
+        "img": "https://n46db.com/pictures/profilepics/okuda_iroha.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Atago Kokone",
+        "name_ja": "愛宕",
+        "gen": "6th Gen",
+        "date": "2005.09.17",
+        "img": "https://n46db.com/pictures/profilepics/atago_kokone.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Sugawara Satsuki",
+        "name_ja": "菅原",
+        "gen": "5th Gen",
+        "date": "2005.10.31",
+        "img": "https://n46db.com/pictures/profilepics/sugawara_satsuki.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Suzuki Yuuna",
+        "name_ja": "鈴木",
+        "gen": "6th Gen",
+        "date": "2006.05.18",
+        "img": "https://n46db.com/pictures/profilepics/suzuki_yuuna.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Tomisato Nao",
+        "name_ja": "冨里",
+        "gen": "5th Gen",
+        "date": "2006.09.18",
+        "img": "https://n46db.com/pictures/profilepics/tomisato_nao.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Kaibe Akari",
+        "name_ja": "海邉",
+        "gen": "6th Gen",
+        "date": "2007.02.14",
+        "img": "https://n46db.com/pictures/profilepics/kaibe_akari.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Ozu Reina",
+        "name_ja": "小津",
+        "gen": "6th Gen",
+        "date": "2007.04.17",
+        "img": "https://n46db.com/pictures/profilepics/ozu_reina.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Nagashima Rio",
+        "name_ja": "長嶋",
+        "gen": "6th Gen",
+        "date": "2007.05.25",
+        "img": "https://n46db.com/pictures/profilepics/nagashima_rio.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Ogawa Aya",
+        "name_ja": "小川",
+        "gen": "5th Gen",
+        "date": "2007.06.27",
+        "img": "https://n46db.com/pictures/profilepics/ogawa_aya.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Yada Moeka",
+        "name_ja": "矢田",
+        "gen": "6th Gen",
+        "date": "2008.01.27",
+        "img": "https://n46db.com/pictures/profilepics/yada_moeka.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Morihira Urumi",
+        "name_ja": "森平",
+        "gen": "6th Gen",
+        "date": "2008.10.05",
+        "img": "https://n46db.com/pictures/profilepics/morihira_urumi.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Masuda Mirine",
+        "name_ja": "増田",
+        "gen": "6th Gen",
+        "date": "2009.11.01",
+        "img": "https://n46db.com/pictures/profilepics/masuda_mirine.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Kawabata Hina",
+        "name_ja": "川端",
+        "gen": "6th Gen",
+        "date": "2011.01.14",
+        "img": "https://n46db.com/pictures/profilepics/kawabata_hina.jpg",
+        "graduated": false
+    },
+    {
+        "name": "Iwase Yumiko",
+        "name_ja": "岩瀬",
+        "gen": "1st Gen",
+        "date": "1990.06.12",
+        "img": "https://n46db.com/pictures/profilepics/iwase_yumiko.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Fukagawa Mai",
+        "name_ja": "深川",
+        "gen": "1st Gen",
+        "date": "1991.03.29",
+        "img": "https://n46db.com/pictures/profilepics/fukagawa_mai.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Shinuchi Mai",
+        "name_ja": "新内",
+        "gen": "2nd Gen",
+        "date": "1992.01.22",
+        "img": "https://n46db.com/pictures/profilepics/shinuchi_mai.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Shiraishi Mai",
+        "name_ja": "白石",
+        "gen": "1st Gen",
+        "date": "1992.08.20",
+        "img": "https://n46db.com/pictures/profilepics/shiraishi_mai.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Matsumura Sayuri",
+        "name_ja": "松村",
+        "gen": "1st Gen",
+        "date": "1992.08.27",
+        "img": "https://n46db.com/pictures/profilepics/matsumura_sayuri.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Eto Misa",
+        "name_ja": "衛藤",
+        "gen": "1st Gen",
+        "date": "1993.01.04",
+        "img": "https://n46db.com/pictures/profilepics/eto_misa.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Hashimoto Nanami",
+        "name_ja": "橋本",
+        "gen": "1st Gen",
+        "date": "1993.02.20",
+        "img": "https://n46db.com/pictures/profilepics/hashimoto_nanami.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Ando Mikumo",
+        "name_ja": "安藤",
+        "gen": "1st Gen",
+        "date": "1993.05.21",
+        "img": "https://n46db.com/pictures/profilepics/ando_mikumo.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Ito Karin",
+        "name_ja": "伊藤",
+        "gen": "2nd Gen",
+        "date": "1993.05.26",
+        "img": "https://n46db.com/pictures/profilepics/ito_karin.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Nishikawa Nanami",
+        "name_ja": "西川",
+        "gen": "2nd Gen",
+        "date": "1993.07.03",
+        "img": "https://n46db.com/pictures/profilepics/nishikawa_nanami.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Saito Yuuri",
+        "name_ja": "斉藤",
+        "gen": "1st Gen",
+        "date": "1993.07.20",
+        "img": "https://n46db.com/pictures/profilepics/saito_yuuri.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Akimoto Manatsu",
+        "name_ja": "秋元",
+        "gen": "1st Gen",
+        "date": "1993.08.20",
+        "img": "https://n46db.com/pictures/profilepics/akimoto_manatsu.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Miyazawa Seira",
+        "name_ja": "宮澤",
+        "gen": "1st Gen",
+        "date": "1993.10.29",
+        "img": "https://n46db.com/pictures/profilepics/miyazawa_seira.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Takayama Kazumi",
+        "name_ja": "高山",
+        "gen": "1st Gen",
+        "date": "1994.02.08",
+        "img": "https://n46db.com/pictures/profilepics/takayama_kazumi.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Sakurai Reika",
+        "name_ja": "桜井",
+        "gen": "1st Gen",
+        "date": "1994.05.16",
+        "img": "https://n46db.com/pictures/profilepics/sakurai_reika.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Nagashima Seira",
+        "name_ja": "永島",
+        "gen": "1st Gen",
+        "date": "1994.05.19",
+        "img": "https://n46db.com/pictures/profilepics/nagashima_seira.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Nishino Nanase",
+        "name_ja": "西野",
+        "gen": "1st Gen",
+        "date": "1994.05.25",
+        "img": "https://n46db.com/pictures/profilepics/nishino_nanase.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Wakatsuki Yumi",
+        "name_ja": "若月",
+        "gen": "1st Gen",
+        "date": "1994.06.27",
+        "img": "https://n46db.com/pictures/profilepics/wakatsuki_yumi.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Nakada Kana",
+        "name_ja": "中田",
+        "gen": "1st Gen",
+        "date": "1994.08.06",
+        "img": "https://n46db.com/pictures/profilepics/nakada_kana.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Kashiwa Yukina",
+        "name_ja": "幸奈",
+        "gen": "1st Gen",
+        "date": "1994.08.12",
+        "img": "https://n46db.com/pictures/profilepics/kashiwa_yukina.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Noujo Ami",
+        "name_ja": "能條",
+        "gen": "1st Gen",
+        "date": "1994.10.18",
+        "img": "https://n46db.com/pictures/profilepics/noujo_ami.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Inoue Sayuri",
+        "name_ja": "井上",
+        "gen": "1st Gen",
+        "date": "1994.12.14",
+        "img": "https://n46db.com/pictures/profilepics/inoue_sayuri.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Yamato Rina",
+        "name_ja": "大和",
+        "gen": "1st Gen",
+        "date": "1994.12.14",
+        "img": "https://n46db.com/pictures/profilepics/yamato_rina.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Yada Risako",
+        "name_ja": "矢田",
+        "gen": "2nd Gen",
+        "date": "1995.03.08",
+        "img": "https://n46db.com/pictures/profilepics/yada_risako.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Kawamura Mahiro",
+        "name_ja": "川村",
+        "gen": "1st Gen",
+        "date": "1995.07.23",
+        "img": "https://n46db.com/pictures/profilepics/kawamura_mahiro.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Hatanaka Seira",
+        "name_ja": "畠中",
+        "gen": "1st Gen",
+        "date": "1995.12.05",
+        "img": "https://n46db.com/pictures/profilepics/hatanaka_seira.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Ito Nene",
+        "name_ja": "伊藤",
+        "gen": "1st Gen",
+        "date": "1995.12.12",
+        "img": "https://n46db.com/pictures/profilepics/ito_nene.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Ikoma Rina",
+        "name_ja": "里奈",
+        "gen": "1st Gen",
+        "date": "1995.12.29",
+        "img": "https://n46db.com/pictures/profilepics/ikoma_rina.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Ichiki Rena",
+        "name_ja": "市來",
+        "gen": "1st Gen",
+        "date": "1996.01.22",
+        "img": "https://n46db.com/pictures/profilepics/ichiki_rena.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Ito Marika",
+        "name_ja": "伊藤",
+        "gen": "1st Gen",
+        "date": "1996.02.20",
+        "img": "https://n46db.com/pictures/profilepics/ito_marika.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Nakamoto Himeka",
+        "name_ja": "中元",
+        "gen": "1st Gen",
+        "date": "1996.04.13",
+        "img": "https://n46db.com/pictures/profilepics/nakamoto_himeka.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Kitano Hinako",
+        "name_ja": "北野",
+        "gen": "2nd Gen",
+        "date": "1996.07.17",
+        "img": "https://n46db.com/pictures/profilepics/kitano_hinako.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Yoshimoto Ayaka",
+        "name_ja": "吉本",
+        "gen": "1st Gen",
+        "date": "1996.08.18",
+        "img": "https://n46db.com/pictures/profilepics/yoshimoto_ayaka.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Hori Miona",
+        "name_ja": "未央奈",
+        "gen": "2nd Gen",
+        "date": "1996.10.15",
+        "img": "https://n46db.com/pictures/profilepics/hori_miona.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Ikuta Erika",
+        "name_ja": "絵梨花",
+        "gen": "1st Gen",
+        "date": "1997.01.22",
+        "img": "https://n46db.com/pictures/profilepics/ikuta_erika.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Saito Chiharu",
+        "name_ja": "斎藤",
+        "gen": "1st Gen",
+        "date": "1997.02.17",
+        "img": "https://n46db.com/pictures/profilepics/saito_chiharu.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Yamazaki Rena",
+        "name_ja": "山崎",
+        "gen": "2nd Gen",
+        "date": "1997.05.21",
+        "img": "https://n46db.com/pictures/profilepics/yamazaki_rena.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Sagara Iori",
+        "name_ja": "相楽",
+        "gen": "2nd Gen",
+        "date": "1997.11.26",
+        "img": "https://n46db.com/pictures/profilepics/sagara_iori.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Higuchi Hina",
+        "name_ja": "樋口",
+        "gen": "1st Gen",
+        "date": "1998.01.31",
+        "img": "https://n46db.com/pictures/profilepics/higuchi_hina.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Hoshino Minami",
+        "name_ja": "星野",
+        "gen": "1st Gen",
+        "date": "1998.02.06",
+        "img": "https://n46db.com/pictures/profilepics/hoshino_minami.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Kawago Hina",
+        "name_ja": "川後",
+        "gen": "1st Gen",
+        "date": "1998.03.22",
+        "img": "https://n46db.com/pictures/profilepics/kawago_hina.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Sato Kaede",
+        "name_ja": "佐藤",
+        "gen": "3rd Gen",
+        "date": "1998.03.23",
+        "img": "https://n46db.com/pictures/profilepics/sato_kaede.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Yamamoto Honoka",
+        "name_ja": "山本",
+        "gen": "1st Gen",
+        "date": "1998.03.31",
+        "img": "https://n46db.com/pictures/profilepics/yamamoto_honoka.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Wada Maaya",
+        "name_ja": "和田",
+        "gen": "1st Gen",
+        "date": "1998.04.23",
+        "img": "https://n46db.com/pictures/profilepics/wada_maaya.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Saito Asuka",
+        "name_ja": "齋藤",
+        "gen": "1st Gen",
+        "date": "1998.08.10",
+        "img": "https://n46db.com/pictures/profilepics/saito_asuka.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Sasaki Kotoko",
+        "name_ja": "琴子",
+        "gen": "2nd Gen",
+        "date": "1998.08.28",
+        "img": "https://n46db.com/pictures/profilepics/sasaki_kotoko.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Terada Ranze",
+        "name_ja": "寺田",
+        "gen": "2nd Gen",
+        "date": "1998.09.23",
+        "img": "https://n46db.com/pictures/profilepics/terada_ranze.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Ito Junna",
+        "name_ja": "伊藤",
+        "gen": "2nd Gen",
+        "date": "1998.11.30",
+        "img": "https://n46db.com/pictures/profilepics/ito_junna.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Suzuki Ayane",
+        "name_ja": "鈴木",
+        "gen": "2nd Gen",
+        "date": "1999.03.05",
+        "img": "https://n46db.com/pictures/profilepics/suzuki_ayane.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Yonetoku Kyoka",
+        "name_ja": "米徳",
+        "gen": "2nd Gen",
+        "date": "1999.04.14",
+        "img": "https://n46db.com/pictures/profilepics/yonetoku_kyoka.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Yamashita Mizuki",
+        "name_ja": "山下",
+        "gen": "3rd Gen",
+        "date": "1999.07.26",
+        "img": "https://n46db.com/pictures/profilepics/yamashita_mizuki.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Mukai Hazuki",
+        "name_ja": "向井",
+        "gen": "3rd Gen",
+        "date": "1999.08.23",
+        "img": "https://n46db.com/pictures/profilepics/mukai_hazuki.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Ozono Momoko",
+        "name_ja": "大園",
+        "gen": "3rd Gen",
+        "date": "1999.09.13",
+        "img": "https://n46db.com/pictures/profilepics/ozono_momoko.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Watanabe Miria",
+        "name_ja": "渡辺",
+        "gen": "2nd Gen",
+        "date": "1999.11.01",
+        "img": "https://n46db.com/pictures/profilepics/watanabe_miria.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Yoda Yuuki",
+        "name_ja": "与田",
+        "gen": "3rd Gen",
+        "date": "2000.05.05",
+        "img": "https://n46db.com/pictures/profilepics/yoda_yuuki.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Hayakawa Seira",
+        "name_ja": "早川",
+        "gen": "4th Gen",
+        "date": "2000.08.24",
+        "img": "https://n46db.com/pictures/profilepics/hayakawa_seira.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Kubo Shiori",
+        "name_ja": "久保",
+        "gen": "3rd Gen",
+        "date": "2001.07.14",
+        "img": "https://n46db.com/pictures/profilepics/kubo_shiori.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Kitagawa Yuri",
+        "name_ja": "北川",
+        "gen": "4th Gen",
+        "date": "2001.08.08",
+        "img": "https://n46db.com/pictures/profilepics/kitagawa_yuri.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Nakamura Reno",
+        "name_ja": "中村",
+        "gen": "3rd Gen",
+        "date": "2001.09.27",
+        "img": "https://n46db.com/pictures/profilepics/nakamura_reno.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Sakaguchi Tamami",
+        "name_ja": "阪口",
+        "gen": "3rd Gen",
+        "date": "2001.11.10",
+        "img": "https://n46db.com/pictures/profilepics/sakaguchi_tamami.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Kakehashi Sayaka",
+        "name_ja": "掛橋",
+        "gen": "4th Gen",
+        "date": "2002.11.20",
+        "img": "https://n46db.com/pictures/profilepics/kakehashi_sayaka.jpg",
+        "graduated": true
+    },
+    {
+        "name": "Seimiya Rei",
+        "name_ja": "清宮",
+        "gen": "4th Gen",
+        "date": "2003.08.01",
+        "img": "https://n46db.com/pictures/profilepics/seimiya_rei.jpg",
+        "graduated": true
+    }
+]
+;
         const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
         const PROGRESS_KEY = 'n46_sort_progress';
 
@@ -3666,38 +4471,15 @@
                     if (Date.now() - timestamp < CACHE_DURATION) {
                         console.log("Using cached data");
                         members = data;
-                        // Initialize selection state
-                        members.forEach(m => {
-                            m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
-                            if (m.selected === undefined) m.selected = !m.graduated;
-                            // Apply mapping
-                            if (NAME_JP_MAPPING[m.name]) {
-                                m.name_ja = NAME_JP_MAPPING[m.name];
-                            } else if (!m.name_ja) {
-                                m.name_ja = m.name;
-                            }
-                        });
-                        updateSelectionButton();
-                        document.getElementById('status').disabled = false;
-                        document.getElementById('start-btn').disabled = false;
-                        document.getElementById('demo-btn').disabled = false;
-
-                        // Check for saved progress
-                        if (localStorage.getItem(PROGRESS_KEY)) {
-                            document.getElementById('resume-btn').style.display = 'flex';
-                            document.getElementById('start-btn').innerHTML = `
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
-                                    <path d="M8 5v14l11-7z" />
-                                </svg>
-                                <span data-i18n="Start New Ranking">${t('Start New Ranking')}</span>
-                            `;
-                        }
-
+                        initializeMembers(members);
                         initWall();
-                        // Reduce artificial delay to improve perceived speed
+
+                        // Check for updates in background
+                        checkForUpdates();
+
                         setTimeout(() => {
                             document.getElementById('initial-loader').classList.add('loaded');
-                        }, 100);
+                        }, 1000);
                         return;
                     }
                 }
@@ -3706,8 +4488,56 @@
                 localStorage.removeItem(CACHE_KEY);
             }
 
+            // 2. Fallback to Embedded Data (Instant Load)
+            console.log("Using embedded initial data");
+            // Deep copy to avoid mutation issues if we reload
+            members = JSON.parse(JSON.stringify(INITIAL_MEMBERS));
+            initializeMembers(members);
+            initWall();
 
-            // 2. Fetch if no cache - fetch both current and graduated members
+            setTimeout(() => {
+                document.getElementById('initial-loader').classList.add('loaded');
+            }, 1000);
+
+            // 3. Fetch Updates in Background
+            checkForUpdates();
+        }
+
+        function initializeMembers(memberList) {
+            memberList.forEach(m => {
+                // Ensure image is proxied if not already (INITIAL_MEMBERS already has base, but cache might need check)
+                if (!m.img.includes('wsrv.nl')) {
+                    m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
+                }
+
+                if (m.selected === undefined) m.selected = !m.graduated;
+                // Apply mapping
+                if (NAME_JP_MAPPING[m.name]) {
+                    m.name_ja = NAME_JP_MAPPING[m.name];
+                } else if (!m.name_ja) {
+                    m.name_ja = m.name;
+                }
+            });
+
+            updateSelectionButton();
+            const status = document.getElementById('status');
+            if (status) status.disabled = false;
+            document.getElementById('start-btn').disabled = false;
+            document.getElementById('demo-btn').disabled = false;
+
+            // Check for saved progress
+            if (localStorage.getItem(PROGRESS_KEY)) {
+                document.getElementById('resume-btn').style.display = 'flex';
+                document.getElementById('start-btn').innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                    <span data-i18n="Start New Ranking">${t('Start New Ranking')}</span>
+                `;
+            }
+        }
+
+        async function checkForUpdates() {
             try {
                 // Fetch both URLs in parallel
                 const [currentRes, graduatedRes] = await Promise.all([
@@ -3745,80 +4575,262 @@
                 });
 
                 if (allMembers.length > 0) {
-                    // Save combined data to cache
+                    // Compare with current members
+                    const currentDataStr = JSON.stringify(members.map(m => ({ n: m.name, g: m.graduated })));
+                    const newDataStr = JSON.stringify(allMembers.map(m => ({ n: m.name, g: m.graduated })));
+
+                    if (currentDataStr !== newDataStr) {
+                        console.log("New data available");
+                        showUpdateNotification(allMembers);
+                    } else {
+                        console.log("Data is up to date");
+                        // Still update cache timestamp
+                        localStorage.setItem(CACHE_KEY, JSON.stringify({
+                            timestamp: Date.now(),
+                            data: allMembers
+                        }));
+                    }
+                }
+            } catch (e) {
+                console.warn("Background update check failed", e);
+            }
+        }
+
+        function showUpdateNotification(newMembers) {
+            // Remove existing notification if any
+            const existing = document.getElementById('update-notification');
+            if (existing) existing.remove();
+
+            const notification = document.createElement('div');
+            notification.id = 'update-notification';
+            // Using app's CSS variables for consistency
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 24px;
+                left: 50%;
+                transform: translateX(-50%) translateY(150%);
+                opacity: 0;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                padding: 10px 10px 10px 20px;
+                border-radius: 99px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255,0.6);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                z-index: 10000;
+                transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+                width: auto;
+                max-width: calc(100vw - 32px);
+                box-sizing: border-box;
+            `;
+
+            const text = document.createElement('span');
+            text.textContent = t("New member data available");
+            text.style.cssText = `
+                font-weight: 600;
+                color: var(--text-main);
+                font-size: 13px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                flex: 1;
+            `;
+
+            const btn = document.createElement('button');
+            btn.textContent = t("Update");
+            btn.id = 'update-action-btn';
+            btn.style.cssText = `
+                background: var(--primary);
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 99px;
+                font-weight: 600;
+                font-size: 12px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                box-shadow: 0 4px 12px rgba(126, 16, 131, 0.2);
+                white-space: nowrap;
+                flex-shrink: 0;
+            `;
+
+            // Hover effect
+            btn.onmouseover = () => {
+                btn.style.transform = 'translateY(-1px)';
+                btn.style.boxShadow = '0 6px 16px rgba(126, 16, 131, 0.3)';
+            };
+            btn.onmouseout = () => {
+                btn.style.transform = 'translateY(0)';
+                btn.style.boxShadow = '0 4px 12px rgba(126, 16, 131, 0.2)';
+            };
+
+            btn.onclick = () => updateData(newMembers);
+
+            const close = document.createElement('button');
+            close.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+            close.style.cssText = `
+                background: rgba(0,0,0,0.05);
+                border: none;
+                color: var(--text-secondary);
+                cursor: pointer;
+                width: 28px;
+                height: 28px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                transition: all 0.2s;
+                flex-shrink: 0;
+            `;
+            close.onmouseover = () => {
+                close.style.background = 'rgba(0,0,0,0.1)';
+                close.style.color = 'var(--text-main)';
+            };
+            close.onmouseout = () => {
+                close.style.background = 'rgba(0,0,0,0.05)';
+                close.style.color = 'var(--text-secondary)';
+            };
+            close.onclick = () => {
+                notification.style.transform = 'translateX(-50%) translateY(150%)';
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 500);
+            };
+
+            notification.appendChild(text);
+            notification.appendChild(btn);
+            notification.appendChild(close);
+            document.body.appendChild(notification);
+
+            // Animate in with a slight delay to ensure render
+            setTimeout(() => {
+                notification.style.transform = 'translateX(-50%) translateY(0)';
+                notification.style.opacity = '1';
+            }, 50);
+        }
+
+        function updateData(newMembers) {
+            const btn = document.getElementById('update-action-btn');
+            if (btn) {
+                // Loading state
+                btn.textContent = '...';
+                btn.disabled = true;
+                btn.style.opacity = '0.7';
+                btn.style.cursor = 'wait';
+            }
+
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.id = 'update-overlay';
+            overlay.style.cssText = `
+                position: fixed;
+                inset: 0;
+                background: rgba(255,255,255,0.6);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                z-index: 10001;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                transition: opacity 0.4s ease;
+            `;
+            overlay.innerHTML = `
+                <div style="text-align: center; transform: translateY(20px); transition: transform 0.4s ease;">
+                    <div class="loader-spinner" style="border-top-color: var(--primary); width: 48px; height: 48px; margin-bottom: 16px; border-width: 3px;"></div>
+                    <div style="font-weight: 700; color: var(--primary); letter-spacing: 2px; font-size: 0.9rem;">UPDATING</div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+
+            // Start transition on container
+            const container = document.querySelector('.container');
+            container.style.transition = 'all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            container.style.transform = 'scale(0.92)';
+            container.style.opacity = '0.4';
+            container.style.filter = 'grayscale(0.5)';
+
+            // Animate overlay in
+            requestAnimationFrame(() => {
+                overlay.style.opacity = '1';
+                overlay.querySelector('div').style.transform = 'translateY(0)';
+            });
+
+            setTimeout(() => {
+                try {
+                    // Update cache
                     localStorage.setItem(CACHE_KEY, JSON.stringify({
                         timestamp: Date.now(),
-                        data: allMembers
+                        data: newMembers
                     }));
 
-                    members = allMembers;
+                    // Update global members
+                    members = newMembers;
 
-                    // Global proxy usage and initialize selection
-                    members.forEach(m => {
-                        m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
-                        // Default selection: Current members only (graduated = false)
-                        if (m.selected === undefined) m.selected = !m.graduated;
-                        // Backfill name_ja from mapping if available
-                        if (NAME_JP_MAPPING[m.name]) {
-                            m.name_ja = NAME_JP_MAPPING[m.name];
-                        } else if (!m.name_ja) {
-                            m.name_ja = m.name; // Fallback
-                        }
-                    });
-
-                    updateSelectionButton();
-                    document.getElementById('status').disabled = false;
-                    document.getElementById('start-btn').disabled = false;
-                    document.getElementById('demo-btn').disabled = false;
+                    // Re-initialize UI
+                    initializeMembers(members);
                     initWall();
 
-                    // Check for saved progress
-                    if (localStorage.getItem(PROGRESS_KEY)) {
-                        document.getElementById('resume-btn').style.display = 'flex';
-                        document.getElementById('start-btn').innerHTML = `
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
-                                <path d="M8 5v14l11-7z" />
-                            </svg>
-                            <span data-i18n="Start New Ranking">${t('Start New Ranking')}</span>
+                    // Show success state in notification
+                    const notification = document.getElementById('update-notification');
+                    if (notification) {
+                        // Replace content with success message
+                        notification.innerHTML = '';
+                        notification.style.padding = '12px 24px';
+                        notification.style.gap = '8px';
+
+                        const icon = document.createElement('div');
+                        icon.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+                        icon.style.display = 'flex';
+
+                        const msg = document.createElement('span');
+                        msg.textContent = t("Updated successfully");
+                        msg.style.cssText = `
+                            font-weight: 600;
+                            color: var(--text-main);
+                            font-size: 14px;
+                            white-space: nowrap;
                         `;
+
+                        notification.appendChild(icon);
+                        notification.appendChild(msg);
+
+                        // Auto dismiss
+                        setTimeout(() => {
+                            notification.style.transform = 'translateX(-50%) translateY(150%)';
+                            setTimeout(() => notification.remove(), 400);
+                        }, 2500);
                     }
 
-                    // Hide Loader
-                    setTimeout(() => {
-                        document.getElementById('initial-loader').classList.add('loaded');
-                    }, 500);
-                } else {
-                    throw new Error("No members parsed");
-                }
+                    // Revert styles
+                    container.style.transform = 'scale(1)';
+                    container.style.opacity = '1';
+                    container.style.filter = 'grayscale(0)';
 
-            } catch (e) {
-                if (retries > 0) {
-                    setTimeout(() => init(retries - 1), 1500);
-                } else {
-                    loadBackup();
-                    status.innerHTML = `<span class="pulse-dot"></span> ${members.length} Members Ready (Offline)`;
-                    document.getElementById('start-btn').disabled = false;
-                    document.getElementById('demo-btn').disabled = false;
+                    // Remove overlay
+                    overlay.style.opacity = '0';
+                    setTimeout(() => overlay.remove(), 400);
 
-                    // Check for saved progress
-                    if (localStorage.getItem(PROGRESS_KEY)) {
-                        document.getElementById('resume-btn').style.display = 'flex';
-                        document.getElementById('start-btn').innerHTML = `
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
-                                <path d="M8 5v14l11-7z" />
-                            </svg>
-                            <span data-i18n="Start New Ranking">${t('Start New Ranking')}</span>
-                        `;
+                } catch (e) {
+                    console.error("Update failed", e);
+                    // Revert styles on error
+                    container.style.transform = 'scale(1)';
+                    container.style.opacity = '1';
+                    container.style.filter = 'grayscale(0)';
+                    overlay.remove();
+
+                    if (btn) {
+                        btn.textContent = t("Retry");
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                        btn.style.cursor = 'pointer';
+                        btn.style.background = '#ff4444';
                     }
-
-                    initWall();
-
-                    // Hide Loader even on error
-                    setTimeout(() => {
-                        document.getElementById('initial-loader').classList.add('loaded');
-                    }, 500);
                 }
-            }
+            }, 1200); // Longer delay for "premium" feel
         }
 
         function initWall() {
@@ -3885,69 +4897,7 @@
             return str.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
         }
 
-        function loadBackup() {
-            members = [
-                // 3rd Gen
-                { name: "Ito Riria", name_ja: "伊藤理々杏", gen: "3rd Gen", date: "2002.10.08", img: IMG_BASE + "ito_riria.jpg" },
-                { name: "Iwamoto Renka", name_ja: "岩本蓮加", gen: "3rd Gen", date: "2004.02.02", img: IMG_BASE + "iwamoto_renka.jpg" },
-                { name: "Umezawa Minami", name_ja: "梅澤美波", gen: "3rd Gen", date: "1999.01.06", img: IMG_BASE + "umezawa_minami.jpg" },
-                { name: "Kubo Shiori", name_ja: "久保史緒里", gen: "3rd Gen", date: "2001.07.14", img: IMG_BASE + "kubo_shiori.jpg" },
-                { name: "Yoshida Ayano Christie", name_ja: "吉田綾乃クリスティー", gen: "3rd Gen", date: "1995.09.06", img: IMG_BASE + "yoshida_ayano_christie.jpg" },
 
-                // 4th Gen
-                { name: "Endo Sakura", name_ja: "遠藤さくら", gen: "4th Gen", date: "2001.10.03", img: IMG_BASE + "endo_sakura.jpg" },
-                { name: "Kaki Haruka", name_ja: "賀喜遥香", gen: "4th Gen", date: "2001.08.08", img: IMG_BASE + "kaki_haruka.jpg" },
-                { name: "Kanagawa Saya", name_ja: "金川紗耶", gen: "4th Gen", date: "2001.10.31", img: IMG_BASE + "kanagawa_saya.jpg" },
-                { name: "Kuromi Haruka", name_ja: "黒見明香", gen: "4th Gen", date: "2004.01.19", img: IMG_BASE + "kuromi_haruka.jpg" },
-                { name: "Sato Rika", name_ja: "佐藤璃果", gen: "4th Gen", date: "2001.08.09", img: IMG_BASE + "sato_rika.jpg" },
-                { name: "Shibata Yuna", name_ja: "柴田柚菜", gen: "4th Gen", date: "2003.03.03", img: IMG_BASE + "shibata_yuna.jpg" },
-                { name: "Tamura Mayu", name_ja: "田村真佑", gen: "4th Gen", date: "1999.01.12", img: IMG_BASE + "tamura_mayu.jpg" },
-                { name: "Tsutsui Ayame", name_ja: "筒井あやめ", gen: "4th Gen", date: "2004.06.08", img: IMG_BASE + "tsutsui_ayame.jpg" },
-                { name: "Hayashi Runa", name_ja: "林瑠奈", gen: "4th Gen", date: "2003.10.02", img: IMG_BASE + "hayashi_runa.jpg" },
-                { name: "Matsuo Miyu", name_ja: "松尾美佑", gen: "4th Gen", date: "2004.01.03", img: IMG_BASE + "matsuo_miyu.jpg" },
-                { name: "Yakubo Mio", name_ja: "矢久保美緒", gen: "4th Gen", date: "2002.08.14", img: IMG_BASE + "yakubo_mio.jpg" },
-                { name: "Yumiki Nao", name_ja: "弓木奈於", gen: "4th Gen", date: "1999.02.03", img: IMG_BASE + "yumiki_nao.jpg" },
-
-                // 5th Gen
-                { name: "Ioki Mao", name_ja: "五百城茉央", gen: "5th Gen", date: "2005.07.29", img: IMG_BASE + "ioki_mao.jpg" },
-                { name: "Ikeda Teresa", name_ja: "池田瑛紗", gen: "5th Gen", date: "2002.05.12", img: IMG_BASE + "ikeda_teresa.jpg" },
-                { name: "Ichinose Miku", name_ja: "一ノ瀬美空", gen: "5th Gen", date: "2003.05.24", img: IMG_BASE + "ichinose_miku.jpg" },
-                { name: "Inoue Nagi", name_ja: "井上和", gen: "5th Gen", date: "2005.02.17", img: IMG_BASE + "inoue_nagi.jpg" },
-                { name: "Okamoto Hina", name_ja: "岡本姫奈", gen: "5th Gen", date: "2003.12.17", img: IMG_BASE + "okamoto_hina.jpg" },
-                { name: "Ogawa Aya", name_ja: "小川彩", gen: "5th Gen", date: "2007.06.27", img: IMG_BASE + "ogawa_aya.jpg" },
-                { name: "Okuda Iroha", name_ja: "奥田いろは", gen: "5th Gen", date: "2005.08.20", img: IMG_BASE + "okuda_iroha.jpg" },
-                { name: "Kawasaki Sakura", name_ja: "川﨑桜", gen: "5th Gen", date: "2003.04.17", img: IMG_BASE + "kawasaki_sakura.jpg" },
-                { name: "Sugawara Satsuki", name_ja: "菅原咲月", gen: "5th Gen", date: "2005.10.31", img: IMG_BASE + "sugawara_satsuki.jpg" },
-                { name: "Tomisato Nao", name_ja: "冨里奈央", gen: "5th Gen", date: "2006.09.18", img: IMG_BASE + "tomisato_nao.jpg" },
-                { name: "Nakanishi Aruno", name_ja: "中西アルノ", gen: "5th Gen", date: "2003.03.17", img: IMG_BASE + "nakanishi_aruno.jpg" },
-
-                // 6th Gen
-                { name: "Atago Kokone", name_ja: "安田虎子", gen: "6th Gen", date: "2005.09.17", img: IMG_BASE + "atago_kokone.jpg" },
-                { name: "Okoshi Hinano", name_ja: "大越陽菜乃", gen: "6th Gen", date: "2004.12.01", img: IMG_BASE + "okoshi_hinano.jpg" },
-                { name: "Kaibe Akari", name_ja: "海部あかり", gen: "6th Gen", date: "2007.02.14", img: IMG_BASE + "kaibe_akari.jpg" },
-                { name: "Kawabata Hina", name_ja: "川端日菜", gen: "6th Gen", date: "2011.01.14", img: IMG_BASE + "kawabata_hina.jpg" },
-                { name: "Suzuki Yuuna", name_ja: "鈴木優菜", gen: "6th Gen", date: "2006.05.18", img: IMG_BASE + "suzuki_yuuna.jpg" },
-                { name: "Setoguchi Mitsuki", name_ja: "瀬戸口満月", gen: "6th Gen", date: "2005.07.16", img: IMG_BASE + "setoguchi_mitsuki.jpg" },
-                { name: "Nagashima Rio", name_ja: "長島里音", gen: "6th Gen", date: "2007.05.25", img: IMG_BASE + "nagashima_rio.jpg" },
-                { name: "Masuda Mirine", name_ja: "増田海里音", gen: "6th Gen", date: "2009.11.01", img: IMG_BASE + "masuda_mirine.jpg" },
-                { name: "Morihira Urumi", name_ja: "森平麗美", gen: "6th Gen", date: "2008.10.05", img: IMG_BASE + "morihira_urumi.jpg" },
-                { name: "Yada Moeka", name_ja: "矢田萌香", gen: "6th Gen", date: "2008.01.27", img: IMG_BASE + "yada_moeka.jpg" },
-                { name: "Ozu Reina", name_ja: "小津麗奈", gen: "6th Gen", date: "2007.04.17", img: IMG_BASE + "ozu_reina.jpg" }
-            ];
-            members.forEach(m => {
-                m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
-                if (m.selected === undefined) m.selected = !m.graduated;
-                if (NAME_JP_MAPPING[m.name]) {
-                    m.name_ja = NAME_JP_MAPPING[m.name];
-                } else if (!m.name_ja) {
-                    m.name_ja = m.name;
-                }
-            });
-            const status = document.getElementById('status');
-            if (status) {
-                status.innerHTML = `<span class="pulse-dot"></span> ${members.length} Members Ready (Offline)`;
-            }
-        }
 
         function startSort() {
             if (localStorage.getItem(PROGRESS_KEY)) {
@@ -4108,7 +5058,7 @@
         }
 
         function renderCard(side, member) {
-            const img = document.getElementById(`img-${side}`);
+            const img = document.getElementById(`img - ${side} `);
             img.style.opacity = "";
             img.dataset.name = member.name; // Add name for error handling
             img.removeAttribute('data-fallback-tried'); // Reset fallback state
@@ -4116,10 +5066,10 @@
             img.alt = member.name;
 
             const displayName = currentLang === 'ja' && member.name_ja ? member.name_ja : member.name;
-            document.getElementById(`name-${side}`).innerText = displayName;
-            document.getElementById(`gen-${side}`).innerText = t(member.gen);
+            document.getElementById(`name - ${side} `).innerText = displayName;
+            document.getElementById(`gen - ${side} `).innerText = t(member.gen);
 
-            const btn = document.querySelector(`#name-${side}`).parentElement.querySelector('.btn-profile');
+            const btn = document.querySelector(`#name - ${side} `).parentElement.querySelector('.btn-profile');
             btn.dataset.name = member.name; btn.dataset.gen = member.gen; btn.dataset.date = member.date; btn.dataset.img = member.img;
         }
 
@@ -4179,11 +5129,11 @@
             localStorage.removeItem(PROGRESS_KEY);
             document.getElementById('resume-btn').style.display = 'none';
             document.getElementById('start-btn').innerHTML = `
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
-                    <path d="M8 5v14l11-7z" />
-                </svg>
-                <span data-i18n="Start Ranking">${t("Start Ranking")}</span>
-            `;
+                        < svg width = "20" height = "20" viewBox = "0 0 24 24" fill = "currentColor" style = "margin-right: 8px;" >
+                            <path d="M8 5v14l11-7z" />
+                </svg >
+                        <span data-i18n="Start Ranking">${t("Start Ranking")}</span>
+                    `;
         }
 
         function resumeSort() {
@@ -4402,21 +5352,21 @@
                 const displayName = currentLang === 'ja' && m.name_ja ? m.name_ja : m.name;
 
                 div.innerHTML = `
-                <div class="rank-num">${currentRank}</div>
-                <img class="res-thumb" src="${m.img}" alt="${m.name}" data-name="${m.name}" crossorigin="anonymous" onerror="handleError(this)">
-                <div class="res-info">
-                    <div class="res-name">${displayName}</div>
-                    <div class="res-gen" style="font-size:0.7rem; color:var(--primary); background:rgba(126,16,131,0.08); padding:2px 8px; border-radius:10px; display:inline-block; margin-top:4px;">${t(m.gen)}</div>
-                </div>
-                <div class="res-score">${currentScore} pts</div>
-                <button class="btn-profile" style="width:32px; height:32px; padding:0; border-radius:50%; display:flex; align-items:center; justify-content:center;" data-name="${m.name}" data-gen="${m.gen}" data-date="${m.date}" data-img="${m.img}" onclick="openModal(event)">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                    </svg>
-                </button>
-            `;
+                        < div class="rank-num" > ${currentRank}</div >
+                            <img class="res-thumb" src="${m.img}" alt="${m.name}" data-name="${m.name}" crossorigin="anonymous" onerror="handleError(this)">
+                                <div class="res-info">
+                                    <div class="res-name">${displayName}</div>
+                                    <div class="res-gen" style="font-size:0.7rem; color:var(--primary); background:rgba(126,16,131,0.08); padding:2px 8px; border-radius:10px; display:inline-block; margin-top:4px;">${t(m.gen)}</div>
+                                </div>
+                                <div class="res-score">${currentScore} pts</div>
+                                <button class="btn-profile" style="width:32px; height:32px; padding:0; border-radius:50%; display:flex; align-items:center; justify-content:center;" data-name="${m.name}" data-gen="${m.gen}" data-date="${m.date}" data-img="${m.img}" onclick="openModal(event)">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                    </svg>
+                                </button>
+                                `;
                 c.appendChild(div);
             });
 
@@ -4607,11 +5557,11 @@
 
                 // Header (Updated Text)
                 const headerHTML = `
-                <div style="position:relative; z-index:2;">
-                    <div style="font-family:var(--font-display); font-size:3.5rem; font-weight:700; color:var(--primary); margin-bottom:5px; text-shadow:2px 2px 0 var(--text-light);">${t("NOGIZAKA46")}</div>
-                    <div style="font-family:var(--font-body); font-size:1.2rem; text-transform:uppercase; letter-spacing:4px; color:#666; margin-bottom:40px; font-weight:600;">${t("Top 5 Oshi Members")}</div>
-                </div>
-            `;
+                                <div style="position:relative; z-index:2;">
+                                    <div style="font-family:var(--font-display); font-size:3.5rem; font-weight:700; color:var(--primary); margin-bottom:5px; text-shadow:2px 2px 0 var(--text-light);">${t("NOGIZAKA46")}</div>
+                                    <div style="font-family:var(--font-body); font-size:1.2rem; text-transform:uppercase; letter-spacing:4px; color:#666; margin-bottom:40px; font-weight:600;">${t("Top 5 Oshi Members")}</div>
+                                </div>
+                                `;
 
                 // List Container
                 const listContainer = document.createElement('div');
@@ -4687,14 +5637,14 @@
 
                     // Inner HTML
                     row.innerHTML = `
-                    <div style="font-family:var(--font-display); font-size:${rankSize}; font-weight:700; width:60px; color:${rankColor}; margin-right:25px;">${m.rank}</div>
-                `;
+                                <div style="font-family:var(--font-display); font-size:${rankSize}; font-weight:700; width:60px; color:${rankColor}; margin-right:25px;">${m.rank}</div>
+                                `;
                     row.appendChild(img);
                     const displayName = currentLang === 'ja' && m.name_ja ? m.name_ja : m.name;
                     row.innerHTML += `
-                    <div style="font-family:var(--font-display); font-size:${nameSize}; font-weight:700; color:${nameColor}; flex:1; text-align:left; padding-left:25px;">${displayName}</div>
-                    <div style="font-family:var(--font-body); font-size:1.1rem; font-weight:700; color:var(--primary); background:rgba(126,16,131,0.08); padding:6px 15px; border-radius:20px; margin-left:auto; white-space:nowrap;">${m.score} pts</div>
-                `;
+                                <div style="font-family:var(--font-display); font-size:${nameSize}; font-weight:700; color:${nameColor}; flex:1; text-align:left; padding-left:25px;">${displayName}</div>
+                                <div style="font-family:var(--font-body); font-size:1.1rem; font-weight:700; color:var(--primary); background:rgba(126,16,131,0.08); padding:6px 15px; border-radius:20px; margin-left:auto; white-space:nowrap;">${m.score} pts</div>
+                                `;
 
                     listContainer.appendChild(row);
                 });
@@ -4709,11 +5659,11 @@
                     dateStr = new Date().toLocaleDateString('en-US', dateOptions);
                 }
                 const footerHTML = `
-                <div style="margin-top:40px; font-size:1.2rem; color:var(--primary); border-top:1px solid rgba(126,16,131,0.2); padding-top:20px; display:flex; justify-content:space-between; font-weight:600; position:relative; z-index:2;">
-                    <span style="font-family:var(--font-body);">N46Sorter</span>
-                    <span style="color:var(--text-secondary); font-weight:400;">${dateStr}</span>
-                </div>
-            `;
+                                <div style="margin-top:40px; font-size:1.2rem; color:var(--primary); border-top:1px solid rgba(126,16,131,0.2); padding-top:20px; display:flex; justify-content:space-between; font-weight:600; position:relative; z-index:2;">
+                                    <span style="font-family:var(--font-body);">N46Sorter</span>
+                                    <span style="color:var(--text-secondary); font-weight:400;">${dateStr}</span>
+                                </div>
+                                `;
 
                 tempContainer.innerHTML = headerHTML;
                 tempContainer.appendChild(listContainer);
@@ -4844,11 +5794,11 @@
 
                 // Header
                 const headerHTML = `
-                <div style="position:relative; z-index:2; text-align:center; margin-bottom:25px;">
-                    <div style="font-family:var(--font-display); font-size:3.5rem; font-weight:700; color:var(--primary); margin-bottom:5px;">${t("NOGIZAKA46")}</div>
-                    <div style="font-family:var(--font-body); font-size:1.1rem; text-transform:uppercase; letter-spacing:3px; color:#666; font-weight:600;">${t("My Ideal Member Formation")}</div>
-                </div>
-                `;
+                                <div style="position:relative; z-index:2; text-align:center; margin-bottom:25px;">
+                                    <div style="font-family:var(--font-display); font-size:3.5rem; font-weight:700; color:var(--primary); margin-bottom:5px;">${t("NOGIZAKA46")}</div>
+                                    <div style="font-family:var(--font-body); font-size:1.1rem; text-transform:uppercase; letter-spacing:3px; color:#666; font-weight:600;">${t("My Ideal Member Formation")}</div>
+                                </div>
+                                `;
                 tempContainer.innerHTML += headerHTML;
 
                 // Formation Container
@@ -5021,11 +5971,11 @@
                     dateStr = new Date().toLocaleDateString('en-US', dateOptions);
                 }
                 const footerHTML = `
-                <div style="margin-top:50px; font-size:1.2rem; color:var(--primary); border-top:1px solid rgba(126,16,131,0.2); padding-top:25px; display:flex; justify-content:space-between; font-weight:600; position:relative; z-index:2;">
-                    <span style="font-family:var(--font-body);">N46Sorter</span>
-                    <span style="color:var(--text-secondary); font-weight:400;">${dateStr}</span>
-                </div>
-                `;
+                                <div style="margin-top:50px; font-size:1.2rem; color:var(--primary); border-top:1px solid rgba(126,16,131,0.2); padding-top:25px; display:flex; justify-content:space-between; font-weight:600; position:relative; z-index:2;">
+                                    <span style="font-family:var(--font-body);">N46Sorter</span>
+                                    <span style="color:var(--text-secondary); font-weight:400;">${dateStr}</span>
+                                </div>
+                                `;
                 tempContainer.innerHTML += footerHTML;
 
                 document.body.appendChild(tempContainer);
@@ -5168,11 +6118,11 @@
                 if (btnElement) {
                     const originalHTML = btnElement.innerHTML;
                     btnElement.innerHTML = `
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                        ${t("Copied to clipboard!")}
-                    `;
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                ${t("Copied to clipboard!")}
+                                `;
                     btnElement.style.background = "#e8f5e9";
                     btnElement.style.color = "#2e7d32";
                     btnElement.style.borderColor = "#2e7d32";
@@ -5370,42 +6320,42 @@
                         const isCollapsed = collapsedGens.has(collapseKey);
 
                         html += `<div class="generation-group ${isCollapsed ? 'collapsed' : ''}" data-context="${context}" data-gen="${gen}">
-                            <div class="generation-header" onclick="toggleGenVisibility('${gen}', '${context}')">
-                                <div class="gen-header-left">
-                                    <svg class="chevron" viewBox="0 0 24 24">
-                                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                                    </svg>
-                                    <span>${t(gen)}</span>
-                                    <span class="gen-count">${genSelected}/${genTotal}</span>
-                                </div>
-                                <button class="gen-toggle-btn" onclick="event.stopPropagation(); toggleGeneration('${gen}', '${context}')">${btnText}</button>
-                            </div>
-                            <div class="member-grid-wrapper">
-                                <div class="member-grid-inner">
-                                    <div class="member-grid">`;
+                                    <div class="generation-header" onclick="toggleGenVisibility('${gen}', '${context}')">
+                                        <div class="gen-header-left">
+                                            <svg class="chevron" viewBox="0 0 24 24">
+                                                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+                                            </svg>
+                                            <span>${t(gen)}</span>
+                                            <span class="gen-count">${genSelected}/${genTotal}</span>
+                                        </div>
+                                        <button class="gen-toggle-btn" onclick="event.stopPropagation(); toggleGeneration('${gen}', '${context}')">${btnText}</button>
+                                    </div>
+                                    <div class="member-grid-wrapper">
+                                        <div class="member-grid-inner">
+                                            <div class="member-grid">`;
                         groupedMembers[gen].forEach((m, i) => {
                             const memberIndex = members.findIndex(mem => mem.name === m.name);
                             const isSelected = tempSelection.has(memberIndex);
                             // Cap delay to first 10 items to prevent long blocking time
                             const delay = Math.min(i, 10) * 0.03;
                             html += `
-                                <div id="member-card-${memberIndex}" class="member-card ${isSelected ? 'selected' : ''}" onclick="toggleMember(${memberIndex})" style="animation-delay: ${delay}s">
-                                    <div class="member-img-frame">
-                                        <div class="member-checkbox"></div>
-                                        <div class="member-info-btn" onclick="openMemberProfile(event, ${memberIndex})">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                                <circle cx="12" cy="12" r="10"></circle>
-                                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                            </svg>
-                                        </div>
-                                        <img class="member-thumb" src="${m.img}" data-name="${m.name}" onerror="handleError(this)">
-                                    </div>
-                                    <div class="member-info">
-                                        <div class="member-name">${currentLang === 'ja' && m.name_ja ? m.name_ja : m.name}</div>
-                                        <div class="member-gen">${t(m.gen)}</div>
-                                    </div>
-                                </div>`;
+                                                <div id="member-card-${memberIndex}" class="member-card ${isSelected ? 'selected' : ''}" onclick="toggleMember(${memberIndex})" style="animation-delay: ${delay}s">
+                                                    <div class="member-img-frame">
+                                                        <div class="member-checkbox"></div>
+                                                        <div class="member-info-btn" onclick="openMemberProfile(event, ${memberIndex})">
+                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                                <circle cx="12" cy="12" r="10"></circle>
+                                                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                                            </svg>
+                                                        </div>
+                                                        <img class="member-thumb" src="${m.img}" data-name="${m.name}" onerror="handleError(this)">
+                                                    </div>
+                                                    <div class="member-info">
+                                                        <div class="member-name">${currentLang === 'ja' && m.name_ja ? m.name_ja : m.name}</div>
+                                                        <div class="member-gen">${t(m.gen)}</div>
+                                                    </div>
+                                                </div>`;
                         });
                         html += '</div></div></div></div>';
                     }
@@ -5415,13 +6365,13 @@
 
             let html = '';
             list.innerHTML = `
-                <div id="tab-content-current" class="tab-content ${activeTab === 'current' ? 'active' : ''}">
-                    ${renderMemberGroup(groupedCurrent, 'current')}
-                </div>
-                <div id="tab-content-graduated" class="tab-content ${activeTab === 'graduated' ? 'active' : ''}">
-                    ${renderMemberGroup(groupedGraduated, 'graduated')}
-                </div>
-            `;
+                                <div id="tab-content-current" class="tab-content ${activeTab === 'current' ? 'active' : ''}">
+                                    ${renderMemberGroup(groupedCurrent, 'current')}
+                                </div>
+                                <div id="tab-content-graduated" class="tab-content ${activeTab === 'graduated' ? 'active' : ''}">
+                                    ${renderMemberGroup(groupedGraduated, 'graduated')}
+                                </div>
+                                `;
 
             updateCounts(); // Initial count update
         }
@@ -5866,18 +6816,18 @@
             if (localStorage.getItem(PROGRESS_KEY)) {
                 document.getElementById('resume-btn').style.display = 'flex';
                 document.getElementById('start-btn').innerHTML = `
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
-                        <path d="M8 5v14l11-7z" />
-                    </svg>
-                    <span data-i18n="Start New Ranking">${t("Start New Ranking")}</span>
-                `;
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
+                                <span data-i18n="Start New Ranking">${t("Start New Ranking")}</span>
+                                `;
             } else {
                 document.getElementById('resume-btn').style.display = 'none';
                 document.getElementById('start-btn').innerHTML = `
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
-                        <path d="M8 5v14l11-7z" />
-                    </svg>
-                    <span data-i18n="Start Ranking">${t("Start Ranking")}</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
+                                <span data-i18n="Start Ranking">${t("Start Ranking")}</span>
                 `;
             }
 
