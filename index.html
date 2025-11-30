@@ -57,8 +57,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- Critical Fonts (Loader) - Blocking to prevent shift -->
+    <!-- Fonts (Preconnect for speed) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,600;0,800;1,400&family=Montserrat:wght@300;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Montserrat:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
     <!-- Non-Critical Fonts (Japanese) - Deferred -->
@@ -1562,7 +1565,7 @@
         }
 
         .cap-row.cap-rank-1 .cap-img {
-            border-color: var(--gold);
+            border: 3px solid var(--gold);
             width: 100px;
             height: 100px;
         }
@@ -3411,7 +3414,14 @@
 
         // --- LOCALIZATION ---
         const LANG_KEY = 'n46_lang_pref';
-        let currentLang = localStorage.getItem(LANG_KEY) || 'ja';
+
+        // Detect system language
+        const getSystemLang = () => {
+            const lang = navigator.language || navigator.userLanguage;
+            return (lang && lang.startsWith('en')) ? 'en' : 'ja';
+        };
+
+        let currentLang = localStorage.getItem(LANG_KEY) || getSystemLang();
         const translations = {
             "nogizaka_sort_mobile.html": "nogizaka_sort_mobile.html",
             "Nogizaka46 Member Sorter": "乃木坂46メンバーソート",
@@ -3483,8 +3493,8 @@
             "No results to copy!": "コピーできる結果がありません。",
             "Copied to clipboard!": "コピーしました！",
             "🏆 Nogizaka46 Sorter Full Results 🏆": "🏆 乃木坂46ソート 全結果 🏆",
-            "Create your own ranking at: https://yoursite.com": "自分だけのランキングを作る： https://yoursite.com",
-            "Find your Oshi here: https://yoursite.com": "あなたの推しを見つけよう： https://yoursite.com",
+            "Create your own ranking at: https://n46sorter.com": "自分だけのランキングを作る： https://n46sorter.com",
+            "Find your Oshi here: https://n46sorter.com": "あなたの推しを見つけよう： https://n46sorter.com",
             "My Ideal Member Formation": "理想のメンバーフォーメーション",
             "Top 5 Oshi Members": "推しメンTOP5",
             "CENTER": "センター",
@@ -3684,9 +3694,10 @@
                         }
 
                         initWall();
+                        // Reduce artificial delay to improve perceived speed
                         setTimeout(() => {
                             document.getElementById('initial-loader').classList.add('loaded');
-                        }, 500);
+                        }, 100);
                         return;
                     }
                 }
@@ -5061,7 +5072,7 @@
                 else if (i === 4) text += `5️⃣ 5. ${displayName}\n`;
                 else text += `${i + 1}. ${displayName}\n`;
             });
-            text += `\n${t("Find your Oshi here: https://yoursite.com")}`;
+            text += `\n${t("Find your Oshi here: https://n46sorter.com")}`;
             return text;
         }
 
@@ -5150,7 +5161,7 @@
                 text += `${rank}. ${name}\n`;
             });
 
-            text += `\n${t("Create your own ranking at: https://yoursite.com")}`;
+            text += `\n${t("Create your own ranking at: https://n46sorter.com")}`;
 
             navigator.clipboard.writeText(text).then(() => {
                 // alert("Full results copied to clipboard!");
@@ -5237,7 +5248,12 @@
             document.getElementById('m-name').innerText = displayName;
             document.getElementById('m-meta').innerText = `${t(member.gen)} • ${member.date}`;
 
-            const q = encodeURIComponent("Nogizaka46 " + member.name);
+            let q;
+            if (currentLang === 'ja' && member.name_ja) {
+                q = encodeURIComponent("乃木坂46 " + member.name_ja);
+            } else {
+                q = encodeURIComponent("Nogizaka46 " + member.name);
+            }
             document.getElementById('link-google').href = `https://www.google.com/search?q=${q}&tbm=isch`;
             document.getElementById('link-pinterest').href = `https://www.pinterest.com/search/pins/?q=${q}`;
             document.getElementById('link-youtube').href = `https://www.youtube.com/results?search_query=${q}`;
@@ -5260,7 +5276,12 @@
                 document.getElementById('m-name').innerText = name;
                 document.getElementById('m-meta').innerText = `${btn.dataset.gen} • ${btn.dataset.date}`;
             }
-            const q = encodeURIComponent("Nogizaka46 " + name);
+            let q;
+            if (currentLang === 'ja' && member && member.name_ja) {
+                q = encodeURIComponent("乃木坂46 " + member.name_ja);
+            } else {
+                q = encodeURIComponent("Nogizaka46 " + name);
+            }
             document.getElementById('link-google').href = `https://www.google.com/search?q=${q}&tbm=isch`;
             document.getElementById('link-pinterest').href = `https://www.pinterest.com/search/pins/?q=${q}`;
             document.getElementById('link-youtube').href = `https://www.youtube.com/results?search_query=${q}`;
