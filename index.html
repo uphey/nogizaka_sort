@@ -3375,10 +3375,15 @@
 
         const IMG_BASE = "https://n46db.com/pictures/profilepics/";
         const IMG_FALLBACK_BASE = "https://www.nogizaka.info/member/alumna/";
-        const PROXY = "https://corsproxy.io/?";
+        // Proxy Fallback List
+        const PROXIES = [
+            "https://api.codetabs.com/v1/proxy?quest=",
+            "https://api.allorigins.win/raw?url=",
+            "https://corsproxy.io/?"
+        ];
         const TARGET = encodeURIComponent("https://n46db.com/");
         const TARGET_GRADUATED = encodeURIComponent("https://n46db.com/index.php?graduated=yes&sortby=dob&noearly=on");
-        const CACHE_KEY = 'n46_members_v1';
+        const CACHE_KEY = 'n46_members_v2';
 
         // EMBEDDED INITIAL DATA (Backup/Fast Load)
         const INITIAL_MEMBERS = [
@@ -4510,11 +4515,15 @@
 
         function initializeMembers(memberList) {
             memberList.forEach(m => {
-                // Ensure image is proxied if not already (INITIAL_MEMBERS already has base, but cache might need check)
-                if (!m.img.includes('wsrv.nl')) {
-                    m.img = "https://wsrv.nl/?url=" + encodeURIComponent(m.img) + "&w=400&output=webp";
+                // Ensure image is proxied via Statically (faster in Asia)
+                // Format: https://cdn.statically.io/img/DOMAIN/PATH?params
+                if (!m.img.includes('cdn.statically.io')) {
+                    // If it's a raw URL (e.g. https://n46db.com/...)
+                    if (m.img.startsWith('https://')) {
+                        const noProtocol = m.img.replace('https://', '');
+                        m.img = `https://cdn.statically.io/img/${noProtocol}?w=400&quality=80&f=webp`;
+                    }
                 }
-
                 if (m.selected === undefined) m.selected = !m.graduated;
                 // Apply mapping
                 if (NAME_JP_MAPPING[m.name]) {
@@ -4544,60 +4553,68 @@
 
         async function checkForUpdates() {
             try {
-                // Fetch both URLs in parallel
-                const [currentRes, graduatedRes] = await Promise.all([
-                    fetch(PROXY + TARGET),
-                    fetch(PROXY + TARGET_GRADUATED)
-                ]);
+                let currentHTML = null;
+                let graduatedHTML = null;
+                let usedProxy = "";
 
-                const [currentText, graduatedText] = await Promise.all([
-                    currentRes.text(),
-                    graduatedRes.text()
-                ]);
+                // Try proxies sequentially
+                for (const proxy of PROXIES) {
+                    try {
+                        console.log(`Trying proxy: ${proxy}`);
+                        const [res1, res2] = await Promise.all([
+                            fetch(proxy + TARGET),
+                            fetch(proxy + TARGET_GRADUATED)
+                        ]);
 
-                if (!currentText) throw new Error("Empty response from current members");
-
-                // Parse both responses
-                const currentMembers = parseMembersFromHTML(currentText);
-                const graduatedMembers = parseMembersFromHTML(graduatedText);
-
-                // Create a Set of current member names for quick lookup
-                const currentNames = new Set(currentMembers.map(m => m.name));
-
-                // Mark graduated status and merge
-                const allMembers = [];
-
-                // Add current members (graduated: false)
-                currentMembers.forEach(m => {
-                    allMembers.push({ ...m, graduated: false });
-                });
-
-                // Add graduated members that are NOT in current members (graduated: true)
-                graduatedMembers.forEach(m => {
-                    if (!currentNames.has(m.name)) {
-                        allMembers.push({ ...m, graduated: true });
-                    }
-                });
-
-                if (allMembers.length > 0) {
-                    // Compare with current members
-                    const currentDataStr = JSON.stringify(members.map(m => ({ n: m.name, g: m.graduated })));
-                    const newDataStr = JSON.stringify(allMembers.map(m => ({ n: m.name, g: m.graduated })));
-
-                    if (currentDataStr !== newDataStr) {
-                        console.log("New data available");
-                        showUpdateNotification(allMembers);
-                    } else {
-                        console.log("Data is up to date");
-                        // Still update cache timestamp
-                        localStorage.setItem(CACHE_KEY, JSON.stringify({
-                            timestamp: Date.now(),
-                            data: allMembers
-                        }));
+                        if (res1.ok && res2.ok) {
+                            currentHTML = await res1.text();
+                            graduatedHTML = await res2.text();
+                            usedProxy = proxy;
+                            console.log(`Success with proxy: ${proxy}`);
+                            break; // Success, exit loop
+                        }
+                    } catch (err) {
+                        console.warn(`Proxy failed: ${proxy}`, err);
+                        // Continue to next proxy
                     }
                 }
+
+                if (!currentHTML || !graduatedHTML) {
+                    throw new Error("All proxies failed");
+                }
+
+                const currentMembers = parseMembersFromHTML(currentHTML);
+                const graduatedMembers = parseMembersFromHTML(graduatedHTML);
+
+                // Mark graduated members
+                graduatedMembers.forEach(m => m.graduated = true);
+
+                // Merge: Prioritize current members (e.g. if someone is in both lists, they are current)
+                // Create a map of current members by name
+                const currentMap = new Map();
+                currentMembers.forEach(m => currentMap.set(m.name, m));
+
+                const newMembers = [...currentMembers];
+                graduatedMembers.forEach(m => {
+                    if (!currentMap.has(m.name)) {
+                        newMembers.push(m);
+                    }
+                });
+
+                // Compare with current loaded members
+                // Simple check: length or name list hash
+                const currentNames = members.map(m => m.name).sort().join(',');
+                const newNames = newMembers.map(m => m.name).sort().join(',');
+
+                if (currentNames !== newNames) {
+                    console.log("Update available!");
+                    showUpdateNotification(newMembers);
+                } else {
+                    console.log("No updates found.");
+                }
+
             } catch (e) {
-                console.warn("Background update check failed", e);
+                console.error("Background update check failed", e);
             }
         }
 
