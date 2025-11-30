@@ -5114,6 +5114,12 @@
                     rightCard.classList.remove('switching');
                     setTimeout(() => { isAnimating = false; }, 300);
                 });
+            }).catch(e => {
+                console.error("Error updating UI:", e);
+                // Fallback: remove switching class anyway so user isn't stuck
+                leftCard.classList.remove('switching');
+                rightCard.classList.remove('switching');
+                isAnimating = false;
             });
         }
 
@@ -6067,6 +6073,10 @@
                             resolve(); // Resolve anyway to not block
                         });
                     }, 1000);
+                }).catch(e => {
+                    console.error("Error waiting for images:", e);
+                    document.body.removeChild(tempContainer);
+                    resolve();
                 });
             });
         }
