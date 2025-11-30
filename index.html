@@ -5569,36 +5569,51 @@
                 status.style.opacity = '1';
             });
 
-            // 3. Define Promises
-            // A. Minimum wait time
-            const minWaitPromise = new Promise(resolve => setTimeout(resolve, 2500));
+            // 3. Generate and wait for completion
+            (async () => {
+                try {
+                    // A. Minimum wait time (runs in parallel with generation)
+                    const minWaitPromise = new Promise(resolve => setTimeout(resolve, 2500));
 
-            // B. Generation + Image Load
-            const generationPromise = generateSenbatsuImage().then(() => {
-                return new Promise(resolve => {
-                    if (img.complete) {
-                        resolve();
-                    } else {
-                        img.onload = resolve;
-                        img.onerror = resolve;
-                    }
-                });
-            });
+                    // B. Generate the image first
+                    await generateSenbatsuImage();
 
-            // 4. Wait for BOTH
-            Promise.all([minWaitPromise, generationPromise]).then(() => {
-                // End Transition: Unblur & Scale Up
-                requestAnimationFrame(() => {
+                    // C. Now wait for the NEW image to load (src has been updated by generateSenbatsuImage)
+                    const imageLoadPromise = new Promise(resolve => {
+                        // The image src has been updated, so we need to wait for it to load
+                        if (img.complete && img.naturalWidth > 0) {
+                            resolve();
+                        } else {
+                            img.onload = resolve;
+                            img.onerror = resolve;
+                        }
+                    });
+
+                    // D. Wait for BOTH minimum time AND image load
+                    await Promise.all([minWaitPromise, imageLoadPromise]);
+
+                    // End Transition: Unblur & Scale Up
+                    requestAnimationFrame(() => {
+                        img.style.filter = 'blur(0px) brightness(1)';
+                        img.style.transform = 'scale(1)';
+                        status.style.opacity = '0';
+
+                        // Cleanup status display after fade out
+                        setTimeout(() => {
+                            status.style.display = 'none';
+                        }, 300);
+                    });
+                } catch (err) {
+                    console.error("Senbatsu update error:", err);
+                    // Restore state on error
                     img.style.filter = 'blur(0px) brightness(1)';
                     img.style.transform = 'scale(1)';
                     status.style.opacity = '0';
-
-                    // Cleanup status display after fade out
                     setTimeout(() => {
                         status.style.display = 'none';
                     }, 300);
-                });
-            });
+                }
+            })();
         }
 
         function generateResultImage() {
